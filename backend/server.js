@@ -11,6 +11,7 @@ const app = express();
 
 const allowedOrigins = [
   "https://redragoncolombo.lk",
+  "https://www.redragoncolombo.lk",
   'http://localhost:3000',  
   process.env.FRONTEND_URL, 
 ].filter(Boolean); 
