@@ -9,6 +9,8 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
   const [isPaused, setIsPaused] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMouseOver, setIsMouseOver] = useState(false);
+  const [isManualScrolling, setIsManualScrolling] = useState(false);
+  const manualScrollTimeout = useRef(null);
   const { width } = useWindowDimensions();
 
   const { cardWidth, gap } = useMemo(() => ({
@@ -35,8 +37,25 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
     }
   };
 
+  // Handle manual scrolling detection
+  const handleScroll = () => {
+    setIsManualScrolling(true);
+    setIsPaused(true);
+    
+    // Clear existing timeout
+    if (manualScrollTimeout.current) {
+      clearTimeout(manualScrollTimeout.current);
+    }
+    
+    // Resume auto-scroll after user stops scrolling
+    manualScrollTimeout.current = setTimeout(() => {
+      setIsManualScrolling(false);
+      setIsPaused(false);
+    }, 3000); // Resume after 3 seconds of no scrolling
+  };
+
   useEffect(() => {
-    if (isPaused || products.length === 0) return;
+    if (isPaused || isManualScrolling || products.length === 0) return;
 
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
@@ -80,7 +99,7 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
       clearTimeout(timeout);
       clearTimeout(scrollTimeout);
     };
-  }, [currentIndex, isPaused, products.length, cardWidth, gap]);
+  }, [currentIndex, isPaused, isManualScrolling, products.length, cardWidth, gap]);
 
   return (
     <div className="relative w-full py-4">
@@ -125,6 +144,7 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
           setIsMouseOver(false);
         }}
         onWheel={handleWheel}
+        onScroll={handleScroll}
       >
         {products.map((product, index) => (
           <motion.div
