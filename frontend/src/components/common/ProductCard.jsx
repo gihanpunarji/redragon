@@ -68,103 +68,114 @@ const ProductCard = ({ product }) => {
 
   return (
     <motion.div
-      whileHover={{
-        boxShadow: "0 30px 60px rgba(239, 68, 68, 0.35)"
-      }}
+      className="relative h-80 rounded-2xl overflow-hidden shadow-lg cursor-pointer group bg-black border border-gray-800"
+      whileHover={{ scale: 1.05 }}
       transition={{ type: "easeOut", duration: 0.25 }}
-      className="bg-gray-800 rounded-lg overflow-hidden shadow-lg h-full flex flex-col cursor-pointer"
       onClick={(e) => handleProductClick(e)}
     >
-      <div className="relative">
-        <img
-          src={productImage}
-          alt={product.name}
-          className="w-full h-64 object-cover bg-gray-700"
-          style={getAspectRatioStyle('1/1')}
-          onError={handleImageError}
-        />
+      {/* Product Image */}
+      <motion.img
+        src={productImage}
+        alt={product.name}
+        className="w-full h-full object-cover"
+        style={getAspectRatioStyle('1/1')}
+        onError={handleImageError}
+        whileHover={{ scale: 1.1 }}
+        transition={{ type: "easeOut", duration: 0.25 }}
+      />
+
+      {/* Badges */}
+      <div className="absolute top-3 left-3 flex gap-2 z-10">
         {hasDiscount && (
-          <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-bold">
-            SALE
+          <div className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+            Sale
           </div>
         )}
         {product.is_new_arrival && (
-          <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-sm font-bold">
-            NEW
+          <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+            New
           </div>
         )}
       </div>
-      <div className="p-3 flex flex-col flex-grow">
-        <div className="text-xs text-gray-400 mb-1">{product.brand_name}</div>
-        <h3 className="text-lg font-bold text-white mb-2 truncate">
+
+      {/* Wishlist Icon - Always Visible */}
+      <motion.button
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={(e) => e.stopPropagation()}
+        className="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-lg z-20 transition-colors"
+      >
+        <Heart className="w-5 h-5" />
+      </motion.button>
+
+      {/* Hover Overlay - Reveal on Hover */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileHover={{ opacity: 1, y: 0 }}
+        transition={{ type: "easeOut", duration: 0.25 }}
+        className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent flex flex-col justify-end p-4"
+      >
+        {/* Brand Name */}
+        <div className="text-red-500 text-xs font-bold uppercase tracking-wider mb-1">
+          {product.brand_name}
+        </div>
+
+        {/* Product Name */}
+        <h3 className="text-white font-bold text-sm mb-3 line-clamp-2 leading-tight">
           {product.name}
         </h3>
+
+        {/* Price */}
         <div className="mb-4">
           {hasDiscount ? (
             <div className="flex items-center gap-2">
-              <p className="text-red-500 font-bold text-xl">
+              <p className="text-red-500 font-bold text-lg">
                 Rs. {parseFloat(productPrice).toLocaleString()}
               </p>
-              <p className="text-gray-400 text-sm line-through">
+              <p className="text-gray-400 text-xs line-through">
                 Rs. {parseFloat(originalPrice).toLocaleString()}
               </p>
             </div>
           ) : (
-            <p className="text-red-500 font-bold text-xl">
+            <p className="text-red-500 font-bold text-lg">
               Rs. {parseFloat(productPrice).toLocaleString()}
             </p>
           )}
         </div>
+
+        {/* Action Buttons */}
         <div className="flex gap-2">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleAddToCart}
             disabled={isAddingToCart || product.stock_quantity <= 0}
-            className={`rounded-lg flex items-center justify-center p-2 sm:flex-1 sm:px-2 sm:py-1 sm:gap-1 transition-colors ${
+            className={`flex-1 rounded-lg flex items-center justify-center gap-2 py-2 font-semibold text-sm transition-colors ${
               product.stock_quantity <= 0
-                ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
+                ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
                 : isAddingToCart
-                ? 'bg-orange-500 text-white'
+                ? 'bg-orange-600 text-white'
                 : 'bg-red-600 text-white hover:bg-red-700'
             }`}
           >
-            <ShoppingCart className="w-5 h-5 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline text-xs sm:text-sm font-semibold">
-              {isAddingToCart 
-                ? 'Adding...' 
-                : product.stock_quantity <= 0 
-                ? 'Out of Stock' 
-                : 'Add to Cart'
-              }
-            </span>
+            <ShoppingCart className="w-4 h-4" />
+            <span>{isAddingToCart ? 'Adding...' : 'Add'}</span>
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleBuyNow}
             disabled={product.stock_quantity <= 0}
-            className={`flex-1 px-1 py-1 sm:px-2 sm:py-1 rounded-lg text-xs sm:text-sm font-semibold transition-colors ${
+            className={`flex-1 rounded-lg py-2 font-semibold text-sm transition-colors ${
               product.stock_quantity <= 0
-                ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
-                : 'bg-gray-700 text-white hover:bg-gray-600'
+                ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
+                : 'bg-orange-600 text-white hover:bg-orange-700'
             }`}
           >
             Buy Now
           </motion.button>
         </div>
-        <div className="mt-4 text-center">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={(e) => e.stopPropagation()}
-            className="text-gray-400 hover:text-white font-bold flex items-center justify-center gap-2"
-          >
-            <Heart className="w-5 h-5" />
-            Add to Watchlist
-          </motion.button>
-        </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 };
