@@ -11,46 +11,46 @@ const ProductManagement = () => {
 
   return (
     <AdminLayout>
-      <div>
-        <h1 className="text-4xl font-bold mb-8">Product Management</h1>
-        <div className="flex border-b border-blue-200">
+      <div className="px-2 sm:px-4 md:px-0">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 md:mb-8">Product Management</h1>
+        <div className="flex border-b border-blue-200 overflow-x-auto">
           <button
-            className={`px-6 py-3 text-lg font-medium ${activeTab === 'products' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-500'}`}
+            className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-xs sm:text-sm md:text-lg font-medium whitespace-nowrap ${activeTab === 'products' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-500'}`}
             onClick={() => setActiveTab('products')}
           >
             Products
           </button>
           <button
-            className={`px-6 py-3 text-lg font-medium ${activeTab === 'categories' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-500'}`}
+            className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-xs sm:text-sm md:text-lg font-medium whitespace-nowrap ${activeTab === 'categories' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-500'}`}
             onClick={() => setActiveTab('categories')}
           >
             Categories
           </button>
           <button
-            className={`px-6 py-3 text-lg font-medium ${activeTab === 'brands' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-500'}`}
+            className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-xs sm:text-sm md:text-lg font-medium whitespace-nowrap ${activeTab === 'brands' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-500'}`}
             onClick={() => setActiveTab('brands')}
           >
             Brands
           </button>
         </div>
-        <div className="py-8">
+        <div className="py-4 sm:py-6 md:py-8">
           {activeTab === 'products' && (
             <div>
-              <div className="flex border-b border-blue-200">
+              <div className="flex border-b border-blue-200 overflow-x-auto">
                 <button
-                  className={`px-4 py-2 text-md font-medium ${activeProductsTab === 'list' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-500'}`}
+                  className={`px-3 sm:px-4 py-2 text-xs sm:text-sm md:text-base font-medium whitespace-nowrap ${activeProductsTab === 'list' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-500'}`}
                   onClick={() => setActiveProductsTab('list')}
                 >
                   Product List
                 </button>
                 <button
-                  className={`px-4 py-2 text-md font-medium ${activeProductsTab === 'add' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-500'}`}
+                  className={`px-3 sm:px-4 py-2 text-xs sm:text-sm md:text-base font-medium whitespace-nowrap ${activeProductsTab === 'add' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-500'}`}
                   onClick={() => setActiveProductsTab('add')}
                 >
                   Add Product
                 </button>
               </div>
-              <div className="py-4">
+              <div className="py-2 sm:py-3 md:py-4">
                 {activeProductsTab === 'list' && <ProductList />}
                 {activeProductsTab === 'add' && <AddProduct />}
               </div>
