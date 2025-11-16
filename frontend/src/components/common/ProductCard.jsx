@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ShoppingCart, Heart, Star } from "lucide-react";
+import { ShoppingCart, Heart } from "lucide-react";
 import { getOptimizedImageUrl, handleImageError, getAspectRatioStyle } from "../../utils/imageUtils";
 import CartContext from "../../context/CartContext";
 
@@ -68,8 +68,11 @@ const ProductCard = ({ product }) => {
 
   return (
     <motion.div
-      whileHover={{ y: -10 }}
-      className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col cursor-pointer"
+      whileHover={{
+        boxShadow: "0 30px 60px rgba(239, 68, 68, 0.35)"
+      }}
+      transition={{ type: "easeOut", duration: 0.25 }}
+      className="bg-gray-800 rounded-lg overflow-hidden shadow-lg h-full flex flex-col cursor-pointer"
       onClick={(e) => handleProductClick(e)}
     >
       <div className="relative">
@@ -96,19 +99,6 @@ const ProductCard = ({ product }) => {
         <h3 className="text-lg font-bold text-white mb-2 truncate">
           {product.name}
         </h3>
-        <div className="flex items-center mb-2">
-          <div className="flex text-yellow-400">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-4 h-4 ${i < rating ? "fill-current" : ""}`}
-              />
-            ))}
-          </div>
-          <span className="text-gray-400 ml-2 text-sm">
-            ({reviews} reviews)
-          </span>
-        </div>
         <div className="mb-4">
           {hasDiscount ? (
             <div className="flex items-center gap-2">
