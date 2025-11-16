@@ -50,41 +50,50 @@ const AutoScrollCategories = ({ categories }) => {
   }, [isPaused]);
 
   return (
-    <div className="relative w-full overflow-hidden py-4">
+    <div className="relative w-full px-8 overflow-visible">
 
       <div
         ref={scrollRef}
-        className="flex gap-6 overflow-x-hidden scroll-smooth"
+        className="flex gap-6 overflow-x-auto scroll-smooth py-8 overflow-y-visible"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={() => setIsPaused(true)}
         onTouchEnd={() => setIsPaused(false)}
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', overflowY: 'visible' }}
       >
         {/* REAL CATEGORIES LIST */}
         {categories.map((category, index) => (
           <motion.div
             key={`${category.name}-${index}`}
-            className="flex-shrink-0 w-40 group cursor-pointer"
-            whileHover={{ y: -5 }}
-            transition={{ duration: 0.3 }}
+            className="flex-shrink-0 w-40 cursor-pointer"
             onClick={() => handleCategoryClick(category.name)}
           >
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden hover:bg-white/20 transition-all duration-300 border border-white/10 hover:border-red-500/50 shadow-lg hover:shadow-red-500/20">
-              <div className="relative h-32 overflow-hidden bg-gray-900/50">
-                <img
-                  src={category.image}
-                  alt={category.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              </div>
-              <div className="p-3">
-                <h3 className="text-sm font-bold text-white text-center uppercase tracking-wide">
+            <motion.div
+              className="bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden
+        border border-white/10
+        shadow-md h-44 flex flex-col relative"
+              whileHover={{
+                scale: 1.2,
+                y: -15,
+                boxShadow: "0 30px 60px rgba(239, 68, 68, 0.4)",
+                borderColor: "rgb(239, 68, 68)",
+              }}
+              transition={{ type: "easeOut", duration: 0.25 }}
+            >
+              <motion.img
+                src={category.image}
+                alt={category.name}
+                className="w-full h-full object-cover absolute inset-0"
+                whileHover={{ scale: 1.1 }}
+                transition={{ type: "easeOut", duration: 0.25 }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/70" />
+              <div className="absolute bottom-0 left-0 right-0 p-3 flex items-center justify-center min-h-14">
+                <h3 className="text-sm font-bold text-white text-center uppercase tracking-wide line-clamp-2">
                   {category.name}
                 </h3>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         ))}
 
