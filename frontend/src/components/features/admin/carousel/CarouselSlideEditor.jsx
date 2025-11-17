@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Upload, X } from 'lucide-react';
 
 const CarouselSlideEditor = ({ slide, slideNumber, isExpanded, onToggle, onChange }) => {
   const [imagePreview, setImagePreview] = useState(slide.image);
+
+  // Update imagePreview when slide.image changes (e.g., after data refresh)
+  useEffect(() => {
+    setImagePreview(slide.image);
+  }, [slide.image]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];

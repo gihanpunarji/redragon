@@ -38,9 +38,9 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['Montserrat', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Rajdhani', 'sans-serif'],
-        montserrat: ['Montserrat', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
       },
       boxShadow: {
         'red': '0 4px 14px 0 rgba(220, 38, 38, 0.39)',

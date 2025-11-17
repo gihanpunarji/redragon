@@ -163,7 +163,7 @@ const ProductList = () => {
 
     try {
       // Basic validation
-      if (!editFormData.name || !editFormData.price || !editFormData.stock_quantity) {
+      if (!editFormData.name || !editFormData.price || editFormData.stock_quantity === '' || editFormData.stock_quantity === null || editFormData.stock_quantity === undefined) {
         setError('Please fill in required fields');
         return;
       }
@@ -590,13 +590,25 @@ const ProductList = () => {
 
                     {/* Description */}
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Description</label>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                        Description
+                        <span className="text-xs text-gray-500 font-normal ml-2">(Line breaks and formatting will be preserved)</span>
+                      </label>
                       <textarea
                         value={editFormData.description || ''}
                         onChange={(e) => handleEditFormChange('description', e.target.value)}
-                        placeholder="Enter product description"
-                        rows="4"
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
+                        placeholder={`Enter product description with formatting:
+
+• Use bullet points
+• Multiple lines supported
+• Indentation preserved
+
+Features:
+  - Advanced technology
+  - Premium build quality
+  - Warranty included`}
+                        rows="6"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400 font-mono"
                       />
                     </div>
 

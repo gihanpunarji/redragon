@@ -1,75 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import CarouselSlideEditor from '../components/features/admin/carousel/CarouselSlideEditor';
 import { Save, RotateCcw, AlertCircle } from 'lucide-react';
 import ErrorPopup from '../components/common/ErrorPopup';
 import SuccessPopup from '../components/common/SuccessPopup';
+import { carouselAPI } from '../services/api';
 
 export const CarouselManagement = () => {
-  const [slides, setSlides] = useState([
-    {
-      id: 1,
-      image: '/images/slider_images/1.jpg',
-      title: 'Ultimate Gaming Experience',
-      subtitle: 'High-performance PCs for the dedicated gamer.',
-      position: 'center',
-      alt: 'Redragon gaming setup with high-performance gaming PC and peripherals'
-    },
-    {
-      id: 2,
-      image: '/images/slider_images/2.jpg',
-      title: 'Precision Engineered Keyboards',
-      subtitle: 'Mechanical keyboards for unmatched speed and accuracy.',
-      position: 'center',
-      alt: 'Redragon mechanical gaming keyboard with RGB lighting and precision keys'
-    },
-    {
-      id: 3,
-      image: '/images/slider_images/3.jpg',
-      title: 'Crystal Clear Audio',
-      subtitle: 'Immersive headsets to hear every detail.',
-      position: 'center',
-      alt: 'Redragon gaming headset with crystal clear audio and noise cancellation'
-    },
-    {
-      id: 4,
-      image: '/images/slider_images/4.jpg',
-      title: 'Next-Gen Graphics Cards',
-      subtitle: 'Experience games in stunning 8K resolution.',
-      position: 'center',
-      alt: 'High-end graphics cards for 8K gaming resolution and performance'
-    },
-    {
-      id: 5,
-      image: '/images/slider_images/5.jpg',
-      title: 'Ergonomic Gaming Mice',
-      subtitle: 'Designed for comfort and precision in the heat of battle.',
-      position: 'center',
-      alt: 'Redragon ergonomic gaming mouse with precision sensors and RGB lighting'
-    },
-    {
-      id: 6,
-      image: '/images/slider_images/6.jpg',
-      title: 'Custom PC Builds',
-      subtitle: 'Tailor-made systems to match your gaming style.',
-      position: 'center',
-      alt: 'Custom built gaming PC with high-performance components and RGB lighting'
-    },
-    {
-      id: 7,
-      image: '/images/slider_images/7.jpg',
-      title: 'Liquid Cooling Solutions',
-      subtitle: 'Keep your system cool under pressure for maximum performance.',
-      position: 'center',
-      alt: 'Advanced liquid cooling system for gaming PCs with optimal temperature control'
-    }
-  ]);
-
+  const [slides, setSlides] = useState([]);
+  const [originalSlides, setOriginalSlides] = useState([]);
   const [expandedSlide, setExpandedSlide] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [hasChanges, setHasChanges] = useState(false);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
+
+  // Load slides from API on component mount
+  useEffect(() => {
+    fetchSlides();
+  }, []);
+
+  const fetchSlides = async () => {
+    try {
+      setIsLoading(true);
+      const response = await carouselAPI.getAllSlides();
+      
+      if (response.data.success) {
+        const slidesData = response.data.data.map(slide => ({
+          id: slide.id,
+          image: slide.image_path,
+          title: slide.title,
+          subtitle: slide.subtitle || '',
+          position: 'center', // Default position
+          alt: slide.alt_text || ''
+        }));
+        
+        setSlides(slidesData);
+        setOriginalSlides(JSON.parse(JSON.stringify(slidesData))); // Deep copy
+      } else {
+        setError('Failed to load carousel slides');
+      }
+    } catch (err) {
+      console.error('Error fetching slides:', err);
+      setError('Failed to load carousel slides. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSlideChange = (slideId, field, value) => {
     setSlides(slides.map(slide =>
@@ -81,17 +59,39 @@ export const CarouselManagement = () => {
   const handleSaveChanges = async () => {
     setIsSaving(true);
     try {
-      // TODO: Replace with actual API call when backend is ready
-      // const response = await carouselApi.updateSlides(slides);
+      // Prepare slides data for API
+      const slidesData = {
+        slides: slides.map(slide => ({
+          id: slide.id,
+          title: slide.title,
+          subtitle: slide.subtitle,
+          alt: slide.alt,
+          image: slide.image // This will be handled by the backend if it's a data URI
+        }))
+      };
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await carouselAPI.updateMultipleSlides(slidesData);
 
-      setSuccess('Carousel slides updated successfully!');
-      setHasChanges(false);
+      if (response.data.success) {
+        setSuccess('Carousel slides updated successfully!');
+        setHasChanges(false);
+        
+        // Store current expanded slide to preserve UI state
+        const currentExpandedSlide = expandedSlide;
+        
+        // Refresh data from server to get the latest values
+        await fetchSlides();
+        
+        // Restore expanded slide state after data refresh
+        setTimeout(() => {
+          setExpandedSlide(currentExpandedSlide);
+        }, 100);
+      } else {
+        setError(response.data.message || 'Failed to update carousel slides');
+      }
     } catch (err) {
-      setError('Failed to update carousel slides. Please try again.');
       console.error('Error saving carousel:', err);
+      setError('Failed to update carousel slides. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -99,7 +99,8 @@ export const CarouselManagement = () => {
 
   const handleReset = () => {
     if (window.confirm('Are you sure you want to discard all changes?')) {
-      // Reset to original state from API or localStorage
+      // Reset to original state from API
+      setSlides(JSON.parse(JSON.stringify(originalSlides)));
       setHasChanges(false);
     }
   };
@@ -107,6 +108,17 @@ export const CarouselManagement = () => {
   const toggleSlide = (slideId) => {
     setExpandedSlide(expandedSlide === slideId ? null : slideId);
   };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="px-2 sm:px-4 md:px-0">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-2 sm:px-4 md:px-0">

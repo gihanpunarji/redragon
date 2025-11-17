@@ -289,7 +289,7 @@ const Navbar = () => {
                               Account
                             </a>
                             <a 
-                              href="/orders" 
+                              href="/account" 
                               className="block px-3 py-2 text-center text-sm text-gray-700 hover:text-red-500 hover:bg-red-100 rounded-lg font-bold transition-all"
                             >
                               Orders
