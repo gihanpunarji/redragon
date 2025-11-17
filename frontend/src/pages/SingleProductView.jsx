@@ -760,10 +760,10 @@ const SingleProductView = () => {
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">
                       Product Description
                     </h3>
-                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-                      {product.description ||
+                    <div className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
+                      {(product.description && product.description.replace(/\r\n/g, '\n')) ||
                         "Experience the ultimate gaming performance with this premium product. Designed for gamers who demand the best, it combines cutting-edge technology with exceptional build quality."}
-                    </p>
+                    </div>
                   </div>
 
                   {product.features && product.features.length > 0 && (
