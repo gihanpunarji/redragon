@@ -45,7 +45,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip unsupported schemes (chrome-extension, etc.)
+  if (!event.request.url.startsWith('http://') && !event.request.url.startsWith('https://')) {
+    return;
+  }
+
+  // Skip chrome extension and other non-HTTP requests
   const url = new URL(event.request.url);
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return;
+  }
   
   // Network first for HTML files (always get latest version)
   if (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html')) {
@@ -91,7 +100,9 @@ self.addEventListener('fetch', (event) => {
             event.request.url.includes('.js')
           ) {
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache);
+              return cache.put(event.request, responseToCache);
+            }).catch((error) => {
+              console.log('Cache put failed:', error);
             });
           }
 

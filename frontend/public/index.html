@@ -120,16 +120,24 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
 
-    <!-- Register Service Worker for caching and offline support -->
+    <!-- Register Service Worker for cache busting only -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js')
-            .then((registration) => {
-              console.log('Service Worker registered successfully:', registration);
+          navigator.serviceWorker.register('/service-worker-simple.js')
+            .then((registration) => {              
+              // Force update check
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    window.location.reload();
+                  }
+                });
+              });
             })
-            .catch((error) => {
-              console.log('Service Worker registration failed:', error);
+            .catch(() => {
+              // Silently fail in production
             });
         });
       }

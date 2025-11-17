@@ -52,6 +52,11 @@
     <FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2)$">
         Header set Cache-Control "public, max-age=31536000"
     </FilesMatch>
+    
+    # Allow CORS for API calls (specific origins for production)
+    Header always set Access-Control-Allow-Origin "https://redragoncolombo.lk"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
 </IfModule>
 
 # React Router - Handle client-side routing
