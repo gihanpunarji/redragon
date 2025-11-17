@@ -85,10 +85,6 @@
   border: 2px solid #0a0a0a;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #ff006e, #00f0ff);
-}
-
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;

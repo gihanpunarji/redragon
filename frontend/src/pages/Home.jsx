@@ -143,31 +143,35 @@ const HomePage = () => {
 
       {/* Redragon Video Section - Full Width */}
       <motion.div
-        className="w-screen relative left-1/2 right-1/2 -mx-[50vw] bg-black"
+        className="w-full bg-black overflow-hidden"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.8, ease: "easeInOut" }}
+        viewport={{ once: true, amount: 0.05 }}
+        transition={{ duration: 1.2, ease: "easeInOut" }}
       >
         <motion.div
           className="relative w-full overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: 1, ease: "easeOut", delay: 0.1 }}
         >
           {/* Video Container with Aspect Ratio */}
           <div className="relative w-full bg-black" style={{ paddingBottom: "56.25%" }}>
-            <video
+            <motion.video
               className="absolute top-0 left-0 w-full h-full object-cover"
               autoPlay
               loop
               muted
               playsInline
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.05 }}
+              transition={{ duration: 1.5, ease: "easeInOut", delay: 0.2 }}
             >
-              <source src={process.env.REACT_APP_HERO_VIDEO_URL} type="video/mp4" />
+              <source src="/redragon_video.mp4" type="video/mp4" />
               Your browser does not support the video tag.
-            </video>
+            </motion.video>
           </div>
         </motion.div>
       </motion.div>
