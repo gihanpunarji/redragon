@@ -114,3 +114,8 @@ frontend/public/*.sql
 
 frontend/public/images/test/
 .claude/
+
+frontend/public/*.mp4
+frontend/public/*.mp3
+frontend/public/*.webm
+frontend/public/*.mov
