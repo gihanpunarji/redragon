@@ -1,7 +1,11 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+<<<<<<< HEAD
 import { ShoppingCart, Heart, Star } from "lucide-react";
+=======
+import { ShoppingCart, Heart } from "lucide-react";
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
 import { getOptimizedImageUrl, handleImageError, getAspectRatioStyle } from "../../utils/imageUtils";
 import CartContext from "../../context/CartContext";
 
@@ -68,6 +72,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <motion.div
+<<<<<<< HEAD
       whileHover={{ y: -10 }}
       className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col cursor-pointer"
       onClick={(e) => handleProductClick(e)}
@@ -83,6 +88,34 @@ const ProductCard = ({ product }) => {
         {hasDiscount && (
           <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-bold">
             SALE
+=======
+      className="relative h-80 rounded-2xl overflow-hidden shadow-lg cursor-pointer group bg-black border border-gray-800"
+      whileHover={{ scale: 1.05 }}
+      transition={{ type: "easeOut", duration: 0.25 }}
+      onClick={(e) => handleProductClick(e)}
+    >
+      {/* Product Image */}
+      <motion.img
+        src={productImage}
+        alt={product.name}
+        className="w-full h-full object-cover"
+        style={getAspectRatioStyle('1/1')}
+        onError={handleImageError}
+        whileHover={{ scale: 1.1 }}
+        transition={{ type: "easeOut", duration: 0.25 }}
+      />
+
+      {/* Badges */}
+      <div className="absolute top-3 left-3 flex gap-2 z-10">
+        {hasDiscount && (
+          <div className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+            Sale
+          </div>
+        )}
+        {product.is_new_arrival && (
+          <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+            New
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           </div>
         )}
         {product.is_new_arrival && (
@@ -91,6 +124,7 @@ const ProductCard = ({ product }) => {
           </div>
         )}
       </div>
+<<<<<<< HEAD
       <div className="p-3 flex flex-col flex-grow">
         <div className="text-xs text-gray-400 mb-1">{product.brand_name}</div>
         <h3 className="text-lg font-bold text-white mb-2 truncate">
@@ -116,10 +150,49 @@ const ProductCard = ({ product }) => {
                 Rs. {parseFloat(productPrice).toLocaleString()}
               </p>
               <p className="text-gray-400 text-sm line-through">
+=======
+
+      {/* Wishlist Icon - Always Visible */}
+      <motion.button
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={(e) => e.stopPropagation()}
+        className="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-lg z-20 transition-colors"
+      >
+        <Heart className="w-5 h-5" />
+      </motion.button>
+
+      {/* Hover Overlay - Reveal on Hover */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileHover={{ opacity: 1, y: 0 }}
+        transition={{ type: "easeOut", duration: 0.25 }}
+        className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent flex flex-col justify-end p-4"
+      >
+        {/* Brand Name */}
+        <div className="text-red-500 text-xs font-bold uppercase tracking-wider mb-1">
+          {product.brand_name}
+        </div>
+
+        {/* Product Name */}
+        <h3 className="text-white font-bold text-sm mb-3 line-clamp-2 leading-tight">
+          {product.name}
+        </h3>
+
+        {/* Price */}
+        <div className="mb-4">
+          {hasDiscount ? (
+            <div className="flex items-center gap-2">
+              <p className="text-red-500 font-bold text-lg">
+                Rs. {parseFloat(productPrice).toLocaleString()}
+              </p>
+              <p className="text-gray-400 text-xs line-through">
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                 Rs. {parseFloat(originalPrice).toLocaleString()}
               </p>
             </div>
           ) : (
+<<<<<<< HEAD
             <p className="text-red-500 font-bold text-xl">
               Rs. {parseFloat(productPrice).toLocaleString()}
             </p>
@@ -175,6 +248,47 @@ const ProductCard = ({ product }) => {
           </motion.button>
         </div>
       </div>
+=======
+            <p className="text-red-500 font-bold text-lg">
+              Rs. {parseFloat(productPrice).toLocaleString()}
+            </p>
+          )}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleAddToCart}
+            disabled={isAddingToCart || product.stock_quantity <= 0}
+            className={`flex-1 rounded-lg flex items-center justify-center gap-2 py-2 font-semibold text-sm transition-colors ${
+              product.stock_quantity <= 0
+                ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
+                : isAddingToCart
+                ? 'bg-orange-600 text-white'
+                : 'bg-red-600 text-white hover:bg-red-700'
+            }`}
+          >
+            <ShoppingCart className="w-4 h-4" />
+            <span>{isAddingToCart ? 'Adding...' : 'Add'}</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleBuyNow}
+            disabled={product.stock_quantity <= 0}
+            className={`flex-1 rounded-lg py-2 font-semibold text-sm transition-colors ${
+              product.stock_quantity <= 0
+                ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
+                : 'bg-orange-600 text-white hover:bg-orange-700'
+            }`}
+          >
+            Buy Now
+          </motion.button>
+        </div>
+      </motion.div>
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
     </motion.div>
   );
 };

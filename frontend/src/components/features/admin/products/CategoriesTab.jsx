@@ -212,7 +212,11 @@ const CategoriesTab = () => {
 
   if (loading) {
     return (
+<<<<<<< HEAD
       <div className="bg-blue-50 rounded-2xl shadow-lg p-8">
+=======
+      <div className="bg-blue-50 rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 lg:p-8">
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600"></div>
         </div>
@@ -221,12 +225,21 @@ const CategoriesTab = () => {
   }
 
   return (
+<<<<<<< HEAD
     <div className="bg-blue-50 rounded-2xl shadow-lg p-8">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Categories ({mainCategories.length} main, {subCategories.length} sub)</h2>
         <motion.button onClick={() => setIsModalOpen(true)} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center px-4 py-2 text-white bg-red-600 rounded-lg">
           <Plus className="w-5 h-5 mr-2" />
           Add Main Category
+=======
+    <div className="bg-blue-50 rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 lg:p-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Categories ({mainCategories.length} main, {subCategories.length} sub)</h2>
+        <motion.button onClick={() => setIsModalOpen(true)} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center px-3 sm:px-4 py-2 text-xs sm:text-sm text-white bg-red-600 rounded-lg whitespace-nowrap">
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+          Add Category
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
         </motion.button>
       </div>
       <div className="space-y-2">
@@ -234,6 +247,7 @@ const CategoriesTab = () => {
           const categorySubCategories = getSubCategoriesForMain(category.id);
           return (
             <div key={category.id} className="bg-blue-100 rounded-lg">
+<<<<<<< HEAD
               <div 
                 className="flex items-center justify-between p-4 cursor-pointer hover:bg-blue-200"
                 onClick={() => toggleCategory(category.id)}
@@ -245,13 +259,32 @@ const CategoriesTab = () => {
                   )}
                 </div>
                 <div className="flex items-center space-x-2">
+=======
+              <div
+                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 cursor-pointer hover:bg-blue-200 gap-2"
+                onClick={() => toggleCategory(category.id)}
+              >
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-sm sm:text-base break-words">{category.name}</h3>
+                  {category.description && (
+                    <p className="text-xs sm:text-sm text-gray-600 mt-1 break-words">{category.description}</p>
+                  )}
+                </div>
+                <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                   <motion.button
                     onClick={(e) => handleEditCategory(e, category)}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
+<<<<<<< HEAD
                     className="p-2 rounded-lg bg-blue-200 text-blue-800 hover:bg-blue-300"
                   >
                     <Edit className="w-5 h-5" />
+=======
+                    className="p-1.5 sm:p-2 rounded-lg bg-blue-200 text-blue-800 hover:bg-blue-300"
+                  >
+                    <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                   </motion.button>
                   <motion.button
                     onClick={(e) => {
@@ -260,9 +293,15 @@ const CategoriesTab = () => {
                     }}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
+<<<<<<< HEAD
                     className="p-2 rounded-lg bg-red-200 text-red-800 hover:bg-red-300"
                   >
                     <Trash2 className="w-5 h-5" />
+=======
+                    className="p-1.5 sm:p-2 rounded-lg bg-red-200 text-red-800 hover:bg-red-300"
+                  >
+                    <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                   </motion.button>
                   <motion.div animate={{ rotate: expandedCategory === category.id ? 180 : 0 }}>
                     <ChevronDown />
@@ -277,6 +316,7 @@ const CategoriesTab = () => {
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden"
                   >
+<<<<<<< HEAD
                     <div className="p-4 border-t border-blue-200">
                       <div className="flex justify-between items-center mb-2">
                         <h4 className="font-semibold">Sub-categories ({categorySubCategories.length})</h4>
@@ -288,10 +328,24 @@ const CategoriesTab = () => {
                         >
                           <Plus className="w-4 h-4 mr-1" />
                           Add Sub-category
+=======
+                    <div className="p-3 sm:p-4 border-t border-blue-200">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+                        <h4 className="font-semibold text-sm sm:text-base">Sub-categories ({categorySubCategories.length})</h4>
+                        <motion.button
+                          onClick={() => handleAddSubCategory(category)}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex items-center px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm text-white bg-green-600 rounded-lg whitespace-nowrap"
+                        >
+                          <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                          Add Sub
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         </motion.button>
                       </div>
                       <ul className="space-y-2">
                         {categorySubCategories.map((subcategory) => (
+<<<<<<< HEAD
                           <li key={subcategory.id} className="flex items-center justify-between p-3 bg-blue-200 rounded-lg">
                             <div>
                               <span className="font-medium">{subcategory.name}</span>
@@ -300,21 +354,43 @@ const CategoriesTab = () => {
                               )}
                             </div>
                             <div className="flex space-x-2">
+=======
+                          <li key={subcategory.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-2 sm:p-3 bg-blue-200 rounded-lg gap-2">
+                            <div className="flex-1 min-w-0">
+                              <span className="font-medium text-sm sm:text-base block break-words">{subcategory.name}</span>
+                              {subcategory.description && (
+                                <p className="text-xs sm:text-sm text-gray-600 mt-1 break-words">{subcategory.description}</p>
+                              )}
+                            </div>
+                            <div className="flex gap-1 sm:gap-2 flex-shrink-0">
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                               <motion.button
                                 onClick={() => handleEditSubcategory(subcategory)}
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
+<<<<<<< HEAD
                                 className="p-2 rounded-lg bg-blue-300 text-blue-800 hover:bg-blue-400"
                               >
                                 <Edit className="w-4 h-4" />
+=======
+                                className="p-1.5 sm:p-2 rounded-lg bg-blue-300 text-blue-800 hover:bg-blue-400"
+                              >
+                                <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                               </motion.button>
                               <motion.button
                                 onClick={() => handleDeleteSubCategory(subcategory.id, subcategory.name)}
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
+<<<<<<< HEAD
                                 className="p-2 rounded-lg bg-red-300 text-red-800 hover:bg-red-400"
                               >
                                 <Trash2 className="w-4 h-4" />
+=======
+                                className="p-1.5 sm:p-2 rounded-lg bg-red-300 text-red-800 hover:bg-red-400"
+                              >
+                                <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                               </motion.button>
                             </div>
                           </li>
@@ -349,6 +425,7 @@ const CategoriesTab = () => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
+<<<<<<< HEAD
               className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl"
             >
               <div className="flex justify-between items-center mb-4">
@@ -356,17 +433,33 @@ const CategoriesTab = () => {
                 <button
                   onClick={handleCancelEdit}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+=======
+              className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 max-w-md w-full mx-4 shadow-2xl"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg md:text-xl font-bold text-gray-900">Edit Category</h3>
+                <button
+                  onClick={handleCancelEdit}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                 >
                   <X className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
+<<<<<<< HEAD
               <div className="space-y-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Category Name</label>
+=======
+              <div className="space-y-3 md:space-y-4 mb-4 md:mb-6">
+                <div>
+                  <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">Category Name</label>
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                   <input
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
+<<<<<<< HEAD
                     className="w-full px-4 py-3 text-gray-800 bg-gray-100 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
                     autoFocus
                   />
@@ -378,22 +471,46 @@ const CategoriesTab = () => {
                     value={editDescription}
                     onChange={(e) => setEditDescription(e.target.value)}
                     className="w-full px-4 py-3 text-gray-800 bg-gray-100 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
+=======
+                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base text-gray-800 bg-gray-100 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+                  <textarea
+                    value={editDescription}
+                    onChange={(e) => setEditDescription(e.target.value)}
+                    className="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base text-gray-800 bg-gray-100 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                     rows="3"
                     placeholder="Brief description of this category..."
                   />
                 </div>
               </div>
+<<<<<<< HEAD
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={handleCancelEdit}
                   className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+=======
+              <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
+                <button
+                  onClick={handleCancelEdit}
+                  className="px-3 md:px-4 py-2 md:py-2.5 text-sm md:text-base bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveCategoryEdit}
                   disabled={updating}
+<<<<<<< HEAD
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold disabled:opacity-50"
+=======
+                  className="px-3 md:px-4 py-2 md:py-2.5 text-sm md:text-base bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold disabled:opacity-50"
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                 >
                   {updating ? 'Saving...' : 'Save Changes'}
                 </button>

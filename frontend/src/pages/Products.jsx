@@ -720,7 +720,11 @@ const Products = () => {
                             product.primary_image || "/image_not_there.avif"
                           }
                           alt={product.name}
+<<<<<<< HEAD
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+=======
+                          className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         />
                         {product.stock_quantity === 0 && (
                           <div className="absolute inset-0 bg-black/60 flex items-center justify-center">

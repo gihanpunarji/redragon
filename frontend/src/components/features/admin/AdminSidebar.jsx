@@ -1,6 +1,10 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+<<<<<<< HEAD
 import { LayoutDashboard, ShoppingCart, Users, BarChart2, Package, X, TruckIcon, LogOut, User, Tag, Settings } from 'lucide-react';
+=======
+import { LayoutDashboard, ShoppingCart, Users, BarChart2, Package, X, TruckIcon, LogOut, User, Tag, Settings, Film } from 'lucide-react';
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 
 const AdminSidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) => {
@@ -8,6 +12,10 @@ const AdminSidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen
   const navLinks = [
     { name: 'Dashboard', id: 'dashboard', icon: LayoutDashboard },
     { name: 'Products', id: 'products', icon: Package },
+<<<<<<< HEAD
+=======
+    { name: 'Carousel', id: 'carousel', icon: Film },
+>>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
     { name: 'Orders', id: 'orders', icon: ShoppingCart },
     { name: 'Customers', id: 'customers', icon: Users },
     { name: 'Promotions', id: 'promotions', icon: Tag },
