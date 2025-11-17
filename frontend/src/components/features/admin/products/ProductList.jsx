@@ -316,34 +316,6 @@ const ProductList = () => {
   }
 
   return (
-<<<<<<< HEAD
-    <div className="bg-blue-50 rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 lg:p-8">
-      {/* Filter Bar */}
-      <div className="mb-4 md:mb-6">
-        <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center mb-4 gap-3 md:gap-4">
-          <h3 className="text-base md:text-lg font-semibold text-gray-700">Product List ({allProducts.length})</h3>
-
-          {/* Search Bar */}
-          <div className="flex-1 lg:max-w-md">
-            <div className="relative">
-              <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search by ID or name..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 text-sm md:text-base text-gray-800 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400 transition-colors"
-              />
-            </div>
-          </div>
-
-          <div className="flex space-x-2">
-            <button
-              onClick={resetFilters}
-              className="flex-1 lg:flex-initial px-3 md:px-4 py-2 text-xs md:text-sm bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors whitespace-nowrap"
-            >
-              <X className="w-3 h-3 md:w-4 md:h-4 inline mr-1" />
-=======
     <div className="bg-blue-50 rounded-2xl shadow-lg p-4 md:p-8">
       {/* Filter Bar */}
       <div className="mb-4 md:mb-6">
@@ -369,45 +341,29 @@ const ProductList = () => {
               className="px-3 md:px-4 py-2 text-xs md:text-sm bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors whitespace-nowrap flex items-center gap-1"
             >
               <X className="w-3 h-3 md:w-4 md:h-4" />
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
               <span className="hidden sm:inline">Reset</span>
             </button>
             <button
               onClick={() => setShowFilters(!showFilters)}
-<<<<<<< HEAD
-              className="flex-1 lg:flex-initial px-3 md:px-4 py-2 text-xs md:text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors whitespace-nowrap"
-            >
-              <Filter className="w-3 h-3 md:w-4 md:h-4 inline mr-1" />
-=======
               className="px-3 md:px-4 py-2 text-xs md:text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors whitespace-nowrap flex items-center gap-1"
             >
               <Filter className="w-3 h-3 md:w-4 md:h-4" />
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
               {showFilters ? 'Hide' : 'Show'}
             </button>
           </div>
         </div>
 
-<<<<<<< HEAD
-        {/* Filter Options */}
-=======
         {/* Filter Options - Horizontally scrollable on mobile */}
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
         {showFilters && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-<<<<<<< HEAD
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 p-3 md:p-4 bg-blue-100 rounded-lg"
-          >
-=======
             className="p-3 md:p-4 bg-blue-100 rounded-lg overflow-x-auto"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4"
             >
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
             {/* Stock Status Filter */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">Stock Status</label>
@@ -491,33 +447,12 @@ const ProductList = () => {
                 ))}
               </select>
             </div>
-<<<<<<< HEAD
-=======
             </div>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           </motion.div>
         )}
       </div>
 
       {/* Product Table */}
-<<<<<<< HEAD
-      <div className="overflow-x-auto -mx-4 md:mx-0">
-        <div className="inline-block min-w-full align-middle">
-          <table className="min-w-full text-left">
-            <thead>
-              <tr className="border-b border-blue-200">
-                <th className="p-2 md:p-3 text-xs md:text-sm">ID</th>
-                <th className="p-2 md:p-3 text-xs md:text-sm">Name</th>
-                <th className="p-2 md:p-3 text-xs md:text-sm hidden lg:table-cell">Cost</th>
-                <th className="p-2 md:p-3 text-xs md:text-sm">Price</th>
-                <th className="p-2 md:p-3 text-xs md:text-sm hidden xl:table-cell">Date</th>
-                <th className="p-2 md:p-3 text-xs md:text-sm">Stock</th>
-                <th className="p-2 md:p-3 text-xs md:text-sm hidden sm:table-cell">Sold</th>
-                <th className="p-2 md:p-3 text-xs md:text-sm hidden md:table-cell">Status</th>
-                <th className="p-2 md:p-3 text-xs md:text-sm">Edit</th>
-              </tr>
-            </thead>
-=======
       <div className="overflow-x-auto -mx-4 md:mx-0 md:rounded-xl">
         <table className="w-full text-left">
           <thead>
@@ -533,7 +468,6 @@ const ProductList = () => {
               <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700 whitespace-nowrap">Edit</th>
             </tr>
           </thead>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
             <tbody>
               {products.map((product, index) => (
                 <motion.tr
@@ -543,21 +477,12 @@ const ProductList = () => {
                   transition={{ delay: index * 0.05 }}
                   className="border-b border-blue-200 hover:bg-blue-100"
                 >
-<<<<<<< HEAD
-                  <td className="p-2 md:p-3 text-xs md:text-sm">#{product.id}</td>
-                  <td className="p-2 md:p-3 text-xs md:text-sm font-medium max-w-[150px] md:max-w-none truncate">{product.name}</td>
-                  <td className="p-2 md:p-3 text-xs md:text-sm hidden lg:table-cell">Rs. {product.cost_price ? parseFloat(product.cost_price).toFixed(2) : '0.00'}</td>
-                  <td className="p-2 md:p-3 text-xs md:text-sm font-semibold whitespace-nowrap">Rs. {parseFloat(product.price).toFixed(2)}</td>
-                  <td className="p-2 md:p-3 text-xs md:text-sm hidden xl:table-cell whitespace-nowrap">{new Date(product.created_at).toLocaleDateString()}</td>
-                  <td className="p-2 md:p-3 text-xs md:text-sm">
-=======
                   <td className="p-3 md:p-4 text-xs md:text-sm font-medium whitespace-nowrap">#{product.id}</td>
                   <td className="p-3 md:p-4 text-xs md:text-sm font-medium whitespace-nowrap">{product.name}</td>
                   <td className="p-3 md:p-4 text-xs md:text-sm hidden lg:table-cell whitespace-nowrap">Rs. {product.cost_price ? parseFloat(product.cost_price).toFixed(2) : '0.00'}</td>
                   <td className="p-3 md:p-4 text-xs md:text-sm font-semibold whitespace-nowrap">Rs. {parseFloat(product.price).toFixed(2)}</td>
                   <td className="p-3 md:p-4 text-xs md:text-sm hidden xl:table-cell whitespace-nowrap">{new Date(product.created_at).toLocaleDateString()}</td>
                   <td className="p-3 md:p-4 text-xs md:text-sm">
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                     <span className={`px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
                       product.stock_quantity === 0
                         ? 'bg-red-100 text-red-800'
@@ -568,13 +493,8 @@ const ProductList = () => {
                       {product.stock_quantity}
                     </span>
                   </td>
-<<<<<<< HEAD
-                  <td className="p-2 md:p-3 text-xs md:text-sm hidden sm:table-cell">{product.sold_count || 0}</td>
-                  <td className="p-2 md:p-3 text-xs md:text-sm hidden md:table-cell">
-=======
                   <td className="p-3 md:p-4 text-xs md:text-sm hidden sm:table-cell whitespace-nowrap">{product.sold_count || 0}</td>
                   <td className="p-3 md:p-4 text-xs md:text-sm hidden md:table-cell">
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                     <span className={`px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
                       product.is_active === 1
                         ? 'bg-green-100 text-green-800'
@@ -583,34 +503,20 @@ const ProductList = () => {
                       {product.is_active === 1 ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-<<<<<<< HEAD
-                  <td className="p-2 md:p-3">
-=======
                   <td className="p-3 md:p-4">
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                     <motion.button
                       onClick={() => handleEditClick(product)}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-<<<<<<< HEAD
-                      className="p-1.5 md:p-2 rounded-lg bg-blue-100 text-blue-500 hover:bg-blue-200"
-=======
                       className="p-1.5 md:p-2 rounded-lg bg-blue-100 text-blue-500 hover:bg-blue-200 transition-colors"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                     >
                       <Edit className="w-3 h-3 md:w-4 md:h-4" />
                     </motion.button>
                   </td>
                 </motion.tr>
               ))}
-<<<<<<< HEAD
-            </tbody>
-          </table>
-        </div>
-=======
           </tbody>
         </table>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
       </div>
 
       {/* Edit Product Modal */}
@@ -630,15 +536,6 @@ const ProductList = () => {
               onClick={(e) => e.stopPropagation()}
               className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 lg:p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
             >
-<<<<<<< HEAD
-              <div className="flex justify-between items-center mb-4 md:mb-6">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900">Edit Product</h2>
-                <button
-                  onClick={() => setEditingProduct(null)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <X className="w-6 h-6 text-gray-600" />
-=======
               <div className="flex justify-between items-center mb-4 sm:mb-6">
                 <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">Edit Product</h2>
                 <button
@@ -646,24 +543,15 @@ const ProductList = () => {
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
                 >
                   <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                 </button>
               </div>
 
               {/* Tab Navigation */}
-<<<<<<< HEAD
-              <div className="flex border-b border-gray-200 mb-4 md:mb-8 overflow-x-auto">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('details')}
-                  className={`px-4 md:px-6 py-2 md:py-3 text-sm md:text-lg font-medium transition-all whitespace-nowrap ${
-=======
               <div className="flex border-b border-gray-200 mb-4 sm:mb-6 md:mb-8 overflow-x-auto">
                 <button
                   type="button"
                   onClick={() => setActiveTab('details')}
                   className={`px-3 sm:px-4 md:px-6 py-2 md:py-3 text-xs sm:text-sm md:text-lg font-medium transition-all whitespace-nowrap ${
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                     activeTab === 'details'
                       ? 'text-red-500 border-b-2 border-red-500'
                       : 'text-gray-500 hover:text-gray-700'
@@ -674,11 +562,7 @@ const ProductList = () => {
                 <button
                   type="button"
                   onClick={() => setActiveTab('images')}
-<<<<<<< HEAD
-                  className={`px-4 md:px-6 py-2 md:py-3 text-sm md:text-lg font-medium transition-all whitespace-nowrap ${
-=======
                   className={`px-3 sm:px-4 md:px-6 py-2 md:py-3 text-xs sm:text-sm md:text-lg font-medium transition-all whitespace-nowrap ${
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                     activeTab === 'images'
                       ? 'text-red-500 border-b-2 border-red-500'
                       : 'text-gray-500 hover:text-gray-700'
@@ -691,60 +575,32 @@ const ProductList = () => {
               {/* Form Content */}
               <form onSubmit={handleEditSubmit}>
                 {activeTab === 'details' && (
-<<<<<<< HEAD
-                  <div className="space-y-6">
-                    {/* Product Title */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Product Title *</label>
-=======
                   <div className="space-y-4 sm:space-y-6">
                     {/* Product Title */}
                     <div>
                       <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Product Title *</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                       <input
                         type="text"
                         value={editFormData.name || ''}
                         onChange={(e) => handleEditFormChange('name', e.target.value)}
                         placeholder="Enter product name"
-<<<<<<< HEAD
-                        className="w-full px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
                         className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                       />
                     </div>
 
                     {/* Description */}
                     <div>
-<<<<<<< HEAD
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-=======
                       <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Description</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                       <textarea
                         value={editFormData.description || ''}
                         onChange={(e) => handleEditFormChange('description', e.target.value)}
                         placeholder="Enter product description"
                         rows="4"
-<<<<<<< HEAD
-                        className="w-full px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
                         className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                       />
                     </div>
 
                     {/* Brand and Category Row */}
-<<<<<<< HEAD
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Brand *</label>
-                        <select
-                          value={editFormData.brand_name || ''}
-                          onChange={(e) => handleEditFormChange('brand_name', e.target.value)}
-                          className="w-full px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Brand *</label>
@@ -752,7 +608,6 @@ const ProductList = () => {
                           value={editFormData.brand_name || ''}
                           onChange={(e) => handleEditFormChange('brand_name', e.target.value)}
                           className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         >
                           <option value="">Select Brand</option>
                           {brands.map(brand => (
@@ -761,19 +616,11 @@ const ProductList = () => {
                         </select>
                       </div>
                       <div>
-<<<<<<< HEAD
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
-                        <select
-                          value={editFormData.main_category_name || ''}
-                          onChange={(e) => handleEditFormChange('main_category_name', e.target.value)}
-                          className="w-full px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
                         <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Category *</label>
                         <select
                           value={editFormData.main_category_name || ''}
                           onChange={(e) => handleEditFormChange('main_category_name', e.target.value)}
                           className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         >
                           <option value="">Select Category</option>
                           {mainCategories.map(category => (
@@ -784,15 +631,6 @@ const ProductList = () => {
                     </div>
 
                     {/* Sub-category and Color Row */}
-<<<<<<< HEAD
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Sub-category</label>
-                        <select
-                          value={editFormData.sub_category_name || ''}
-                          onChange={(e) => handleEditFormChange('sub_category_name', e.target.value)}
-                          className="w-full px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Sub-category</label>
@@ -800,7 +638,6 @@ const ProductList = () => {
                           value={editFormData.sub_category_name || ''}
                           onChange={(e) => handleEditFormChange('sub_category_name', e.target.value)}
                           className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         >
                           <option value="">Select Sub-category</option>
                           {subCategories.map(subcategory => (
@@ -809,19 +646,11 @@ const ProductList = () => {
                         </select>
                       </div>
                       <div>
-<<<<<<< HEAD
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                        <select
-                          value={editFormData.is_active === 1 ? 'Active' : 'Inactive'}
-                          onChange={(e) => handleEditFormChange('is_active', e.target.value === 'Active' ? 1 : 0)}
-                          className="w-full px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
                         <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Status</label>
                         <select
                           value={editFormData.is_active === 1 ? 'Active' : 'Inactive'}
                           onChange={(e) => handleEditFormChange('is_active', e.target.value === 'Active' ? 1 : 0)}
                           className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         >
                           <option value="Active">Active</option>
                           <option value="Inactive">Inactive</option>
@@ -830,34 +659,20 @@ const ProductList = () => {
                     </div>
 
                     {/* Quantity and Cost Row */}
-<<<<<<< HEAD
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Stock Quantity *</label>
-=======
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Stock Quantity *</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         <input
                           type="number"
                           value={editFormData.stock_quantity || ''}
                           onChange={(e) => handleEditFormChange('stock_quantity', e.target.value)}
                           placeholder="0"
                           min="0"
-<<<<<<< HEAD
-                          className="w-full px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Cost (Rs.) *</label>
-=======
                           className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
                         />
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Cost (Rs.) *</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         <input
                           type="number"
                           value={editFormData.cost_price || ''}
@@ -865,25 +680,15 @@ const ProductList = () => {
                           placeholder="0.00"
                           min="0"
                           step="0.01"
-<<<<<<< HEAD
-                          className="w-full px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
                           className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         />
                       </div>
                     </div>
 
                     {/* Price and Sale Price Row */}
-<<<<<<< HEAD
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Regular Price (Rs.) *</label>
-=======
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Regular Price (Rs.) *</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         <input
                           type="number"
                           value={editFormData.price || ''}
@@ -891,19 +696,11 @@ const ProductList = () => {
                           placeholder="0.00"
                           min="0"
                           step="0.01"
-<<<<<<< HEAD
-                          className="w-full px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Sale Price (Rs.)</label>
-=======
                           className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
                         />
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Sale Price (Rs.)</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         <input
                           type="number"
                           value={editFormData.sale_price || ''}
@@ -911,11 +708,7 @@ const ProductList = () => {
                           placeholder="Leave empty for no sale"
                           min="0"
                           step="0.01"
-<<<<<<< HEAD
-                          className="w-full px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
                           className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         />
                       </div>
                     </div>
@@ -923,15 +716,6 @@ const ProductList = () => {
                 )}
 
                 {activeTab === 'images' && (
-<<<<<<< HEAD
-                  <div className="space-y-6">
-                    {/* Image Upload Section */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-3">
-                        Product Images (Recommended: 800x800px, JPG/PNG, Max 2MB each)
-                      </label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
-=======
                   <div className="space-y-4 sm:space-y-6">
                     {/* Image Upload Section */}
                     <div>
@@ -939,7 +723,6 @@ const ProductList = () => {
                         Product Images (Recommended: 800x800px, JPG/PNG, Max 2MB each)
                       </label>
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         {[0, 1, 2, 3, 4].map((index) => (
                           <div key={index} className="relative aspect-square">
                             {imagePreviews[index] ? (
@@ -986,15 +769,6 @@ const ProductList = () => {
 
                     {/* Specifications Section */}
                     <div>
-<<<<<<< HEAD
-                      <label className="block text-sm font-medium text-gray-700 mb-3">Product Specifications</label>
-                      <div className="space-y-3">
-                        <div className="flex items-center space-x-3">
-                          <input
-                            type="text"
-                            placeholder="Specification name (e.g., Switch Type)"
-                            className="w-1/3 px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
                       <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-3">Product Specifications</label>
                       <div className="space-y-3">
                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
@@ -1002,30 +776,19 @@ const ProductList = () => {
                             type="text"
                             placeholder="Spec name (e.g., Switch Type)"
                             className="flex-1 px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                           />
                           <input
                             type="text"
                             placeholder="Value (e.g., Cherry MX Red)"
-<<<<<<< HEAD
-                            className="flex-1 px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
                             className="flex-1 px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-base text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                           />
                           <motion.button
                             type="button"
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
-<<<<<<< HEAD
-                            className="p-3 rounded-lg bg-red-100 text-red-500 hover:bg-red-200 transition-colors"
-                          >
-                            <Trash2 className="w-5 h-5" />
-=======
                             className="p-2 sm:p-3 rounded-lg bg-red-100 text-red-500 hover:bg-red-200 transition-colors flex-shrink-0"
                           >
                             <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                           </motion.button>
                         </div>
                       </div>
@@ -1033,15 +796,9 @@ const ProductList = () => {
                         type="button"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-<<<<<<< HEAD
-                        className="flex items-center mt-4 px-4 py-2 text-sm text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-=======
                         className="flex items-center mt-3 sm:mt-4 px-3 sm:px-4 py-2 text-xs sm:text-sm text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
                       >
                         <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         Add Specification
                       </motion.button>
                     </div>
@@ -1049,21 +806,13 @@ const ProductList = () => {
                 )}
 
                 {/* Action Buttons */}
-<<<<<<< HEAD
-                <div className="flex justify-end mt-8 space-x-4 pt-6 border-t border-gray-200">
-=======
                 <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                   <motion.button
                     type="button"
                     onClick={() => setEditingProduct(null)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-<<<<<<< HEAD
-                    className="px-6 py-3 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
-=======
                     className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                   >
                     Cancel
                   </motion.button>
@@ -1072,11 +821,7 @@ const ProductList = () => {
                     disabled={isUpdating}
                     whileHover={{ scale: isUpdating ? 1 : 1.02 }}
                     whileTap={{ scale: isUpdating ? 1 : 0.98 }}
-<<<<<<< HEAD
-                    className="px-6 py-3 font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-=======
                     className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                   >
                     {isUpdating ? 'Saving...' : 'Save Changes'}
                   </motion.button>

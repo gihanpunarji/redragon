@@ -9,11 +9,8 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
   const [isPaused, setIsPaused] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMouseOver, setIsMouseOver] = useState(false);
-<<<<<<< HEAD
-=======
   const [isManualScrolling, setIsManualScrolling] = useState(false);
   const manualScrollTimeout = useRef(null);
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
   const { width } = useWindowDimensions();
 
   const { cardWidth, gap } = useMemo(() => ({
@@ -40,10 +37,6 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
     }
   };
 
-<<<<<<< HEAD
-  useEffect(() => {
-    if (isPaused || products.length === 0) return;
-=======
   // Handle manual scrolling detection
   const handleScroll = () => {
     setIsManualScrolling(true);
@@ -63,7 +56,6 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
 
   useEffect(() => {
     if (isPaused || isManualScrolling || products.length === 0) return;
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
 
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
@@ -107,17 +99,10 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
       clearTimeout(timeout);
       clearTimeout(scrollTimeout);
     };
-<<<<<<< HEAD
-  }, [currentIndex, isPaused, products.length, cardWidth, gap]);
-
-  return (
-    <div className="relative w-full py-4">
-=======
   }, [currentIndex, isPaused, isManualScrolling, products.length, cardWidth, gap]);
 
   return (
     <div className="relative w-full py-4 overflow-visible">
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
       {/* Navigation Buttons - Desktop */}
       {width >= 768 && (
         <>
@@ -143,11 +128,7 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
       {/* Scrollable Container */}
       <div
         ref={scrollRef}
-<<<<<<< HEAD
-        className="flex gap-6 overflow-x-auto scroll-smooth px-4 pb-4"
-=======
         className="flex gap-6 overflow-x-auto scroll-smooth px-4 pb-4 py-8"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
         style={{
           scrollbarWidth: 'thin',
           scrollbarColor: '#ef4444 #1f2937',
@@ -163,23 +144,14 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
           setIsMouseOver(false);
         }}
         onWheel={handleWheel}
-<<<<<<< HEAD
-=======
         onScroll={handleScroll}
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
       >
         {products.map((product, index) => (
           <motion.div
             key={product.id}
-<<<<<<< HEAD
-            className={`flex-shrink-0 ${width < 768 ? 'w-64' : 'w-72'} group cursor-pointer`}
-            whileHover={{ y: -8, scale: 1.05 }}
-            transition={{ duration: 0.3 }}
-=======
             className={`flex-shrink-0 ${width < 768 ? 'w-64' : 'w-72'} cursor-pointer`}
             whileHover={{ y: -12, scale: 1.08 }}
             transition={{ type: "easeOut", duration: 0.25 }}
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           >
             <ProductCard product={product} />
           </motion.div>
@@ -204,12 +176,6 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
         }
       `}</style>
 
-<<<<<<< HEAD
-      {/* Gradient overlays */}
-      <div className={`absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r ${bg_color} to-transparent pointer-events-none z-10 ${width < 768 ? 'hidden' : ''}`} />
-      <div className={`absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l ${bg_color} to-transparent pointer-events-none z-10`} />
-=======
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
     </div>
   );
 });

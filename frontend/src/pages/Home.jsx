@@ -141,100 +141,6 @@ const HomePage = () => {
       <WhatsAppButton />
       <FullScreenCarousel />
 
-<<<<<<< HEAD
-      {/* Shop by Category Section - Auto Scrolling */}
-      <div className="py-16 bg-black">
-        <div className="container mx-auto px-4">
-          <motion.h2
-            className="text-3xl font-bold text-center mb-8 uppercase tracking-wider"
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            style={{
-              color: "#ef4444",
-            }}
-          >
-            Shop by Category
-          </motion.h2>
-          {categories.length > 0 ? (
-            <AutoScrollCategories categories={categories} />
-          ) : (
-            <p className="text-center text-gray-400">No categories available at the moment.</p>
-          )}
-        </div>
-      </div>
-
-      {/* New Arrivals Section */}
-      <div className="py-16 bg-black">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-white text-center mb-8 uppercase">New Arrivals</h2>
-          {newArrivals.length > 0 ? (
-            <AutoScrollProducts products={newArrivals} bg_color="from-black" />
-          ) : (
-            <p className="text-center text-gray-400">No new arrivals available at the moment.</p>
-          )}
-        </div>
-      </div>
-
-      {/* Exclusive Redragon Section */}
-      <div className="py-16 bg-black">
-        <div className="container mx-auto px-4">
-                    <motion.h2
-            className="text-3xl font-bold text-center mb-8 uppercase"
-            style={{
-                color: "#ef4444",
-            }}
-          >
-            Exclusive Redragon
-          </motion.h2>
-          {redragonProducts.length > 0 ? (
-            <AutoScrollProducts products={redragonProducts} bg_color="from-black" />
-          ) : (
-            <p className="text-center text-gray-400">No Redragon products available at the moment.</p>
-          )}
-        </div>
-      </div>
-
-      {/* Featured Products Section */}
-      <div className="py-16 bg-black">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-white text-center mb-8 uppercase">Featured Products</h2>
-          {featuredProducts.length > 0 ? (
-            <AutoScrollProducts products={featuredProducts} bg_color="from-black" />
-            
-          ) : (
-            <p className="text-center text-gray-400">No featured products available at the moment.</p>
-          )}
-        </div>
-      </div>
-
-      {/* Shop by Brand Section - Auto Scrolling */}
-      <div className="py-16 bg-black">
-        <div className="container mx-auto px-4">
-          <motion.h2
-            className="text-3xl font-bold text-center mb-8 uppercase tracking-wider"
-            initial={{ opacity: 0, y: -20 }}
-            // whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            style={{
-                color: "#3b82f6",
-            }}
-          >
-            Shop by Brand
-          </motion.h2>
-          {brands.length > 0 ? (
-            <AutoScrollBrands brands={brands} />
-          ) : (
-            <p className="text-center text-gray-400">No brands available at the moment.</p>
-          )}
-        </div>
-      </div>
-
-      {/* Community Reviews Section */}
-      <div className="py-16 bg-black">
-=======
       {/* Redragon Video Section - Full Width */}
       <motion.div
         className="w-full bg-black overflow-hidden"
@@ -272,7 +178,6 @@ const HomePage = () => {
 
       {/* Shop by Category Section - Auto Scrolling */}
       <div className="py-16 bg-black overflow-visible">
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
         <div className="container mx-auto px-4">
           <motion.h2
             className="text-3xl font-bold text-center mb-8 uppercase tracking-wider"
@@ -281,16 +186,6 @@ const HomePage = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             style={{
-<<<<<<< HEAD
-                color: "#3b82f6",
-            }}
-          >
-            Community Reviews
-          </motion.h2>
-          <div className="flex justify-center max-w-4xl mx-auto shadow-xl">
-            <GoogleReviewsWidget />
-          </div>
-=======
               color: "#ef4444",
             }}
           >
@@ -301,7 +196,6 @@ const HomePage = () => {
           ) : (
             <p className="text-center text-gray-400">No categories available at the moment.</p>
           )}
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
         </div>
       </div>
 

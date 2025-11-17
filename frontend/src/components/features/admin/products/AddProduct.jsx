@@ -90,60 +90,32 @@ const AddProduct = () => {
   };
 
   const renderProductDetails = () => (
-<<<<<<< HEAD
-    <div className="space-y-6">
-      {/* Product Title */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Product Title *</label>
-=======
     <div className="space-y-4 sm:space-y-6">
       {/* Product Title */}
       <div>
         <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Product Title *</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
         <input
           type="text"
           value={product.title}
           onChange={(e) => handleInputChange('title', e.target.value)}
           placeholder="Enter product name"
-<<<<<<< HEAD
-          className="w-full px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
           className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
         />
       </div>
 
       {/* Description */}
       <div>
-<<<<<<< HEAD
-        <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
-=======
         <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Description *</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
         <textarea
           value={product.description}
           onChange={(e) => handleInputChange('description', e.target.value)}
           placeholder="Enter product description"
           rows="4"
-<<<<<<< HEAD
-          className="w-full px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
           className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
         ></textarea>
       </div>
 
       {/* Brand and Category Row */}
-<<<<<<< HEAD
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Brand *</label>
-          <select
-            value={product.brand}
-            onChange={(e) => handleInputChange('brand', e.target.value)}
-            className="w-full px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div>
           <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Brand *</label>
@@ -151,7 +123,6 @@ const AddProduct = () => {
             value={product.brand}
             onChange={(e) => handleInputChange('brand', e.target.value)}
             className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           >
             <option value="">Select Brand</option>
             {brands.map(brand => (
@@ -160,19 +131,11 @@ const AddProduct = () => {
           </select>
         </div>
         <div>
-<<<<<<< HEAD
-          <label className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
-          <select
-            value={product.category}
-            onChange={(e) => handleInputChange('category', e.target.value)}
-            className="w-full px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
           <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Category *</label>
           <select
             value={product.category}
             onChange={(e) => handleInputChange('category', e.target.value)}
             className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           >
             <option value="">Select Category</option>
             {mainCategories.map(category => (
@@ -183,15 +146,6 @@ const AddProduct = () => {
       </div>
 
       {/* Sub-category and Color Row */}
-<<<<<<< HEAD
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Sub-category</label>
-          <select
-            value={product.subcategory}
-            onChange={(e) => handleInputChange('subcategory', e.target.value)}
-            className="w-full px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div>
           <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Sub-category</label>
@@ -199,7 +153,6 @@ const AddProduct = () => {
             value={product.subcategory}
             onChange={(e) => handleInputChange('subcategory', e.target.value)}
             className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           >
             <option value="">Select Sub-category</option>
             {subCategories.map(subcategory => (
@@ -208,54 +161,32 @@ const AddProduct = () => {
           </select>
         </div>
         <div>
-<<<<<<< HEAD
-          <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
-=======
           <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Color</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           <input
             type="text"
             value={product.color}
             onChange={(e) => handleInputChange('color', e.target.value)}
             placeholder="e.g., Black, Red, RGB"
-<<<<<<< HEAD
-            className="w-full px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
             className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           />
         </div>
       </div>
 
       {/* Quantity, Cost, Price, and Shipping Fee Row */}
-<<<<<<< HEAD
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Stock Quantity *</label>
-=======
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div>
           <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Stock Quantity *</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           <input
             type="number"
             value={product.stock}
             onChange={(e) => handleInputChange('stock', e.target.value)}
             placeholder="0"
             min="0"
-<<<<<<< HEAD
-            className="w-full px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Cost (Rs.) *</label>
-=======
             className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
           />
         </div>
         <div>
           <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Cost (Rs.) *</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           <input
             type="number"
             value={product.cost}
@@ -263,25 +194,15 @@ const AddProduct = () => {
             placeholder="0.00"
             min="0"
             step="0.01"
-<<<<<<< HEAD
-            className="w-full px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
             className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           />
         </div>
       </div>
 
       {/* Price, Sale Price, and Weight Row */}
-<<<<<<< HEAD
-      <div className="grid grid-cols-3 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Regular Price (Rs.) *</label>
-=======
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         <div>
           <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Regular Price (Rs.) *</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           <input
             type="number"
             value={product.price}
@@ -289,19 +210,11 @@ const AddProduct = () => {
             placeholder="0.00"
             min="0"
             step="0.01"
-<<<<<<< HEAD
-            className="w-full px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Sale Price (Rs.)</label>
-=======
             className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
           />
         </div>
         <div>
           <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Sale Price (Rs.)</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           <input
             type="number"
             value={product.salePrice}
@@ -309,30 +222,18 @@ const AddProduct = () => {
             placeholder="Leave empty for no sale"
             min="0"
             step="0.01"
-<<<<<<< HEAD
-            className="w-full px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Weight (grams)</label>
-=======
             className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
           />
         </div>
         <div>
           <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Weight (grams)</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           <input
             type="number"
             value={product.weight}
             onChange={(e) => handleInputChange('weight', e.target.value)}
             placeholder="0"
             min="0"
-<<<<<<< HEAD
-            className="w-full px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
             className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           />
         </div>
       </div>
@@ -347,19 +248,11 @@ const AddProduct = () => {
             onChange={(e) => handleInputChange('isFeatured', e.target.checked)}
             className="w-5 h-5 text-red-600 bg-blue-100 border-blue-300 rounded focus:ring-red-500 focus:ring-2"
           />
-<<<<<<< HEAD
-          <label htmlFor="isFeatured" className="ml-3 text-sm font-medium text-gray-700">
-            Featured Product
-          </label>
-          <p className="ml-2 text-xs text-gray-500">
-            (Check to display this product in the featured section)
-=======
           <label htmlFor="isFeatured" className="ml-3 text-xs sm:text-sm font-medium text-gray-700">
             Featured Product
           </label>
           <p className="ml-2 text-xs text-gray-500">
             (Check to display in featured section)
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           </p>
         </div>
       </div>
@@ -367,15 +260,6 @@ const AddProduct = () => {
   );
 
   const renderImagesAndSpecs = () => (
-<<<<<<< HEAD
-    <div className="space-y-6">
-      {/* Image Upload Section */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          Product Images (Recommended: 800x800px, JPG/PNG, Max 2MB each)
-        </label>
-        <div className="grid grid-cols-5 gap-4">
-=======
     <div className="space-y-4 sm:space-y-6">
       {/* Image Upload Section */}
       <div>
@@ -383,7 +267,6 @@ const AddProduct = () => {
           Product Images (Recommended: 800x800px, JPG/PNG, Max 2MB each)
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           {product.images.map((image, index) => (
             <div key={index} className="relative aspect-square">
               {image ? (
@@ -406,15 +289,9 @@ const AddProduct = () => {
                 </div>
               ) : (
                 <label className="flex flex-col items-center justify-center w-full h-full border-2 border-dashed border-blue-300 rounded-lg cursor-pointer hover:border-red-400 hover:bg-blue-50 transition-all">
-<<<<<<< HEAD
-                  <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                  <span className="text-xs text-gray-500 text-center px-2">
-                    Upload<br />Image {index + 1}
-=======
                   <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400 mb-1 sm:mb-2" />
                   <span className="text-xs text-gray-500 text-center px-1">
                     Image {index + 1}
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                   </span>
                   <input
                     type="file"
@@ -434,18 +311,6 @@ const AddProduct = () => {
 
       {/* Specifications Section */}
       <div>
-<<<<<<< HEAD
-        <label className="block text-sm font-medium text-gray-700 mb-3">Product Specifications</label>
-        <div className="space-y-3">
-          {product.specifications.map((spec, index) => (
-            <div key={index} className="flex items-center space-x-3">
-              <input
-                type="text"
-                placeholder="Specification name (e.g., Switch Type)"
-                value={spec.key}
-                onChange={(e) => handleSpecChange(index, 'key', e.target.value)}
-                className="w-1/3 px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
         <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-3">Product Specifications</label>
         <div className="space-y-3">
           {product.specifications.map((spec, index) => (
@@ -456,33 +321,22 @@ const AddProduct = () => {
                 value={spec.key}
                 onChange={(e) => handleSpecChange(index, 'key', e.target.value)}
                 className="flex-1 px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
               />
               <input
                 type="text"
                 placeholder="Value (e.g., Cherry MX Red)"
                 value={spec.value}
                 onChange={(e) => handleSpecChange(index, 'value', e.target.value)}
-<<<<<<< HEAD
-                className="flex-1 px-4 py-3 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
                 className="flex-1 px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-base text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
               />
               <motion.button
                 type="button"
                 onClick={() => removeSpecField(index)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-<<<<<<< HEAD
-                className="p-3 rounded-lg bg-red-100 text-red-500 hover:bg-red-200 transition-colors"
-              >
-                <Trash2 className="w-5 h-5" />
-=======
                 className="p-2 sm:p-3 rounded-lg bg-red-100 text-red-500 hover:bg-red-200 transition-colors flex-shrink-0"
               >
                 <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
               </motion.button>
             </div>
           ))}
@@ -492,15 +346,9 @@ const AddProduct = () => {
           onClick={addSpecField}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-<<<<<<< HEAD
-          className="flex items-center mt-4 px-4 py-2 text-sm text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-=======
           className="flex items-center mt-3 sm:mt-4 px-3 sm:px-4 py-2 text-xs sm:text-sm text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
         >
           <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           Add Specification
         </motion.button>
       </div>
@@ -619,16 +467,6 @@ const AddProduct = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-<<<<<<< HEAD
-      className="bg-blue-50 rounded-2xl shadow-lg p-8"
-    >
-      {/* Tab Navigation */}
-      <div className="flex border-b border-blue-200 mb-8">
-        <button
-          type="button"
-          onClick={() => setActiveTab('details')}
-          className={`px-6 py-3 text-lg font-medium transition-all ${
-=======
       className="bg-blue-50 rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 lg:p-8"
     >
       {/* Tab Navigation */}
@@ -637,7 +475,6 @@ const AddProduct = () => {
           type="button"
           onClick={() => setActiveTab('details')}
           className={`px-3 sm:px-4 md:px-6 py-2 md:py-3 text-xs sm:text-sm md:text-lg font-medium transition-all whitespace-nowrap ${
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
             activeTab === 'details'
               ? 'text-red-500 border-b-2 border-red-500'
               : 'text-gray-500 hover:text-gray-700'
@@ -648,11 +485,7 @@ const AddProduct = () => {
         <button
           type="button"
           onClick={() => setActiveTab('images')}
-<<<<<<< HEAD
-          className={`px-6 py-3 text-lg font-medium transition-all ${
-=======
           className={`px-3 sm:px-4 md:px-6 py-2 md:py-3 text-xs sm:text-sm md:text-lg font-medium transition-all whitespace-nowrap ${
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
             activeTab === 'images'
               ? 'text-red-500 border-b-2 border-red-500'
               : 'text-gray-500 hover:text-gray-700'
@@ -668,20 +501,12 @@ const AddProduct = () => {
         {activeTab === 'images' && renderImagesAndSpecs()}
 
         {/* Action Buttons */}
-<<<<<<< HEAD
-        <div className="flex justify-end mt-8 space-x-4">
-=======
         <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-blue-200">
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           <motion.button
             type="button"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-<<<<<<< HEAD
-            className="px-6 py-3 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
-=======
             className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           >
             Cancel
           </motion.button>
@@ -690,11 +515,7 @@ const AddProduct = () => {
             disabled={isSubmitting}
             whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
             whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
-<<<<<<< HEAD
-            className="px-6 py-3 font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-=======
             className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           >
             {isSubmitting ? 'Creating Product...' : 'Add Product'}
           </motion.button>

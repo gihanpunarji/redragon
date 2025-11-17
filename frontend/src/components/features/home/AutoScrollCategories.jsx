@@ -50,55 +50,21 @@ const AutoScrollCategories = ({ categories }) => {
   }, [isPaused]);
 
   return (
-<<<<<<< HEAD
-    <div className="relative w-full overflow-hidden py-4">
-
-      <div
-        ref={scrollRef}
-        className="flex gap-6 overflow-x-hidden scroll-smooth"
-=======
     <div className="relative w-full px-8 overflow-visible">
 
       <div
         ref={scrollRef}
         className="flex gap-6 overflow-x-auto scroll-smooth py-8 overflow-y-visible"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={() => setIsPaused(true)}
         onTouchEnd={() => setIsPaused(false)}
-<<<<<<< HEAD
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-=======
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', overflowY: 'visible' }}
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
       >
         {/* REAL CATEGORIES LIST */}
         {categories.map((category, index) => (
           <motion.div
             key={`${category.name}-${index}`}
-<<<<<<< HEAD
-            className="flex-shrink-0 w-40 group cursor-pointer"
-            whileHover={{ y: -5 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => handleCategoryClick(category.name)}
-          >
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden hover:bg-white/20 transition-all duration-300 border border-white/10 hover:border-red-500/50 shadow-lg hover:shadow-red-500/20">
-              <div className="relative h-32 overflow-hidden bg-gray-900/50">
-                <img
-                  src={category.image}
-                  alt={category.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              </div>
-              <div className="p-3">
-                <h3 className="text-sm font-bold text-white text-center uppercase tracking-wide">
-                  {category.name}
-                </h3>
-              </div>
-            </div>
-=======
             className="flex-shrink-0 w-40 cursor-pointer"
             onClick={() => handleCategoryClick(category.name)}
           >
@@ -128,7 +94,6 @@ const AutoScrollCategories = ({ categories }) => {
                 </h3>
               </div>
             </motion.div>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           </motion.div>
         ))}
 

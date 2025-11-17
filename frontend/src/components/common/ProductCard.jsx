@@ -1,11 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-<<<<<<< HEAD
-import { ShoppingCart, Heart, Star } from "lucide-react";
-=======
 import { ShoppingCart, Heart } from "lucide-react";
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
 import { getOptimizedImageUrl, handleImageError, getAspectRatioStyle } from "../../utils/imageUtils";
 import CartContext from "../../context/CartContext";
 
@@ -72,23 +68,6 @@ const ProductCard = ({ product }) => {
 
   return (
     <motion.div
-<<<<<<< HEAD
-      whileHover={{ y: -10 }}
-      className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col cursor-pointer"
-      onClick={(e) => handleProductClick(e)}
-    >
-      <div className="relative">
-        <img
-          src={productImage}
-          alt={product.name}
-          className="w-full h-64 object-cover bg-gray-700"
-          style={getAspectRatioStyle('1/1')}
-          onError={handleImageError}
-        />
-        {hasDiscount && (
-          <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-bold">
-            SALE
-=======
       className="relative h-80 rounded-2xl overflow-hidden shadow-lg cursor-pointer group bg-black border border-gray-800"
       whileHover={{ scale: 1.05 }}
       transition={{ type: "easeOut", duration: 0.25 }}
@@ -115,7 +94,6 @@ const ProductCard = ({ product }) => {
         {product.is_new_arrival && (
           <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
             New
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
           </div>
         )}
         {product.is_new_arrival && (
@@ -124,33 +102,6 @@ const ProductCard = ({ product }) => {
           </div>
         )}
       </div>
-<<<<<<< HEAD
-      <div className="p-3 flex flex-col flex-grow">
-        <div className="text-xs text-gray-400 mb-1">{product.brand_name}</div>
-        <h3 className="text-lg font-bold text-white mb-2 truncate">
-          {product.name}
-        </h3>
-        <div className="flex items-center mb-2">
-          <div className="flex text-yellow-400">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-4 h-4 ${i < rating ? "fill-current" : ""}`}
-              />
-            ))}
-          </div>
-          <span className="text-gray-400 ml-2 text-sm">
-            ({reviews} reviews)
-          </span>
-        </div>
-        <div className="mb-4">
-          {hasDiscount ? (
-            <div className="flex items-center gap-2">
-              <p className="text-red-500 font-bold text-xl">
-                Rs. {parseFloat(productPrice).toLocaleString()}
-              </p>
-              <p className="text-gray-400 text-sm line-through">
-=======
 
       {/* Wishlist Icon - Always Visible */}
       <motion.button
@@ -187,68 +138,10 @@ const ProductCard = ({ product }) => {
                 Rs. {parseFloat(productPrice).toLocaleString()}
               </p>
               <p className="text-gray-400 text-xs line-through">
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                 Rs. {parseFloat(originalPrice).toLocaleString()}
               </p>
             </div>
           ) : (
-<<<<<<< HEAD
-            <p className="text-red-500 font-bold text-xl">
-              Rs. {parseFloat(productPrice).toLocaleString()}
-            </p>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleAddToCart}
-            disabled={isAddingToCart || product.stock_quantity <= 0}
-            className={`rounded-lg flex items-center justify-center p-2 sm:flex-1 sm:px-2 sm:py-1 sm:gap-1 transition-colors ${
-              product.stock_quantity <= 0
-                ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
-                : isAddingToCart
-                ? 'bg-orange-500 text-white'
-                : 'bg-red-600 text-white hover:bg-red-700'
-            }`}
-          >
-            <ShoppingCart className="w-5 h-5 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline text-xs sm:text-sm font-semibold">
-              {isAddingToCart 
-                ? 'Adding...' 
-                : product.stock_quantity <= 0 
-                ? 'Out of Stock' 
-                : 'Add to Cart'
-              }
-            </span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleBuyNow}
-            disabled={product.stock_quantity <= 0}
-            className={`flex-1 px-1 py-1 sm:px-2 sm:py-1 rounded-lg text-xs sm:text-sm font-semibold transition-colors ${
-              product.stock_quantity <= 0
-                ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
-                : 'bg-gray-700 text-white hover:bg-gray-600'
-            }`}
-          >
-            Buy Now
-          </motion.button>
-        </div>
-        <div className="mt-4 text-center">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={(e) => e.stopPropagation()}
-            className="text-gray-400 hover:text-white font-bold flex items-center justify-center gap-2"
-          >
-            <Heart className="w-5 h-5" />
-            Add to Watchlist
-          </motion.button>
-        </div>
-      </div>
-=======
             <p className="text-red-500 font-bold text-lg">
               Rs. {parseFloat(productPrice).toLocaleString()}
             </p>
@@ -288,7 +181,6 @@ const ProductCard = ({ product }) => {
           </motion.button>
         </div>
       </motion.div>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
     </motion.div>
   );
 };

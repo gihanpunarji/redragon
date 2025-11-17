@@ -117,11 +117,7 @@ const BrandsTab = () => {
 
   if (loading) {
     return (
-<<<<<<< HEAD
-      <div className="bg-blue-50 rounded-2xl shadow-lg p-8">
-=======
       <div className="bg-blue-50 rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 lg:p-8">
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600"></div>
         </div>
@@ -130,69 +126,6 @@ const BrandsTab = () => {
   }
 
   return (
-<<<<<<< HEAD
-    <div className="bg-blue-50 rounded-2xl shadow-lg p-8">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Brands ({brands.length})</h2>
-        <motion.button onClick={() => setIsModalOpen(true)} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center px-4 py-2 text-white bg-red-600 rounded-lg">
-          <Plus className="w-5 h-5 mr-2" />
-          Add Brand
-        </motion.button>
-      </div>
-      <table className="w-full text-left">
-        <thead>
-          <tr className="border-b border-blue-200">
-            <th className="p-4">Brand</th>
-            <th className="p-4">Logo</th>
-            <th className="p-4">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {brands.map((brand, index) => (
-            <motion.tr
-              key={brand.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="border-b border-blue-200 hover:bg-blue-100"
-            >
-              <td className="p-4 font-semibold">{brand.name}</td>
-              <td className="p-4">
-                {(brand.logo_url || brand.image_url) ? (
-                  <img 
-                    src={brand.logo_url || brand.image_url} 
-                    alt={brand.name}
-                    className="h-8 w-auto object-contain"
-                  />
-                ) : (
-                  <span className="text-gray-400 text-sm">No logo</span>
-                )}
-              </td>
-              <td className="p-4">
-                <div className="flex space-x-2">
-                  <motion.button
-                    onClick={() => handleEditClick(brand)}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="p-2 rounded-lg bg-blue-100 text-blue-500 hover:bg-blue-200"
-                  >
-                    <Edit className="w-5 h-5" />
-                  </motion.button>
-                  <motion.button
-                    onClick={() => handleDeleteBrand(brand.id, brand.name)}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="p-2 rounded-lg bg-red-100 text-red-500 hover:bg-red-200"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </motion.button>
-                </div>
-              </td>
-            </motion.tr>
-          ))}
-        </tbody>
-      </table>
-=======
     <div className="bg-blue-50 rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 lg:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
         <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Brands ({brands.length})</h2>
@@ -256,7 +189,6 @@ const BrandsTab = () => {
           </tbody>
         </table>
       </div>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
 
       {/* Edit Brand Modal */}
       <AnimatePresence>
@@ -273,15 +205,6 @@ const BrandsTab = () => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-<<<<<<< HEAD
-              className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-gray-900">Edit Brand</h3>
-                <button
-                  onClick={handleCancelEdit}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-=======
               className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 max-w-md w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto"
             >
               <div className="flex justify-between items-center mb-4">
@@ -289,70 +212,36 @@ const BrandsTab = () => {
                 <button
                   onClick={handleCancelEdit}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                 >
                   <X className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
-<<<<<<< HEAD
-              <div className="space-y-4 mb-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Brand Name</label>
-=======
               <div className="space-y-3 md:space-y-4 mb-4 md:mb-6">
                 <div>
                   <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">Brand Name</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                   <input
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-<<<<<<< HEAD
-                    className="w-full px-4 py-3 text-gray-800 bg-gray-100 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
-=======
                     className="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base text-gray-800 bg-gray-100 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-red-400"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                     autoFocus
                   />
                 </div>
 
                 {/* Brand Image Upload */}
                 <div>
-<<<<<<< HEAD
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Brand Logo</label>
-=======
                   <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">Brand Logo</label>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                   <div className="relative group">
                     {editImage ? (
                       <div className="relative">
                         <img
                           src={typeof editImage === 'string' ? editImage : URL.createObjectURL(editImage)}
                           alt="Brand logo preview"
-<<<<<<< HEAD
-                          className="w-full h-48 object-contain bg-white rounded-lg border-2 border-gray-200 p-4"
-=======
                           className="w-full h-32 md:h-48 object-contain bg-white rounded-lg border-2 border-gray-200 p-2 md:p-4"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         />
                         <button
                           type="button"
                           onClick={removeImage}
-<<<<<<< HEAD
-                          className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-red-400 hover:bg-gray-50 transition-all">
-                        <Upload className="w-10 h-10 text-gray-400 mb-2" />
-                        <span className="text-sm text-gray-500 text-center px-2 font-semibold">
-                          Click to upload brand logo
-                        </span>
-                        <span className="text-xs text-gray-400 mt-1">Recommended: 400x200px (2:1 ratio)</span>
-                        <span className="text-xs text-gray-400">PNG, JPG, SVG (transparent background preferred)</span>
-=======
                           className="absolute top-1 right-1 md:top-2 md:right-2 p-1.5 md:p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
                         >
                           <X className="w-3 h-3 md:w-4 md:h-4" />
@@ -365,7 +254,6 @@ const BrandsTab = () => {
                           Click to upload brand logo
                         </span>
                         <span className="text-xs text-gray-400 mt-1">Recommended: 400x200px</span>
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                         <input
                           type="file"
                           accept="image/*"
@@ -377,28 +265,17 @@ const BrandsTab = () => {
                   </div>
                 </div>
               </div>
-<<<<<<< HEAD
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={handleCancelEdit}
-                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-=======
               <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
                 <button
                   onClick={handleCancelEdit}
                   className="px-3 md:px-4 py-2 md:py-2.5 text-sm md:text-base bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveEdit}
                   disabled={updating}
-<<<<<<< HEAD
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold disabled:opacity-50"
-=======
                   className="px-3 md:px-4 py-2 md:py-2.5 text-sm md:text-base bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold disabled:opacity-50"
->>>>>>> 0b2aa37826deb1fcfa3678a2122e36d9c111f9d6
                 >
                   {updating ? 'Saving...' : 'Save Changes'}
                 </button>

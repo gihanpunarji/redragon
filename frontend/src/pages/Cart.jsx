@@ -50,7 +50,15 @@ const Cart = () => {
     const item = cartItems.find(item => item.id === productId);
     if (item) {
       const newQuantity = Math.max(1, item.quantity + change);
-      await updateQuantity(productId, newQuantity);
+      try {
+        await updateQuantity(productId, newQuantity);
+      } catch (error) {
+        if (error.message.includes('stock') || error.message.includes('not available')) {
+          setPopupError(error.message);
+        } else {
+          setPopupError('Failed to update quantity. Please try again.');
+        }
+      }
     }
   };
 
