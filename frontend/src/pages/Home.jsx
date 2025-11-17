@@ -142,7 +142,7 @@ const HomePage = () => {
       <FullScreenCarousel />
 
       {/* Shop by Category Section - Auto Scrolling */}
-      <div className="py-16 bg-black">
+      <div className="py-16 bg-black overflow-visible">
         <div className="container mx-auto px-4">
           <motion.h2
             className="text-3xl font-bold text-center mb-8 uppercase tracking-wider"
@@ -165,7 +165,7 @@ const HomePage = () => {
       </div>
 
       {/* New Arrivals Section */}
-      <div className="py-16 bg-black">
+      <div className="py-16 bg-black overflow-visible">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-8 uppercase">New Arrivals</h2>
           {newArrivals.length > 0 ? (
@@ -177,7 +177,7 @@ const HomePage = () => {
       </div>
 
       {/* Exclusive Redragon Section */}
-      <div className="py-16 bg-black">
+      <div className="py-16 bg-black overflow-visible">
         <div className="container mx-auto px-4">
                     <motion.h2
             className="text-3xl font-bold text-center mb-8 uppercase"
@@ -196,12 +196,12 @@ const HomePage = () => {
       </div>
 
       {/* Featured Products Section */}
-      <div className="py-16 bg-black">
+      <div className="py-16 bg-black overflow-visible">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-8 uppercase">Featured Products</h2>
           {featuredProducts.length > 0 ? (
             <AutoScrollProducts products={featuredProducts} bg_color="from-black" />
-            
+
           ) : (
             <p className="text-center text-gray-400">No featured products available at the moment.</p>
           )}
@@ -209,7 +209,7 @@ const HomePage = () => {
       </div>
 
       {/* Shop by Brand Section - Auto Scrolling */}
-      <div className="py-16 bg-black">
+      <div className="py-16 bg-black overflow-visible">
         <div className="container mx-auto px-4">
           <motion.h2
             className="text-3xl font-bold text-center mb-8 uppercase tracking-wider"
