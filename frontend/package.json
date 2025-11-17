@@ -29,8 +29,12 @@
   "scripts": {
     "start": "cross-env PORT=3001 react-scripts start",
     "build": "react-scripts build",
+    "build:production": "npm run build && echo 'Build completed with version:' && date",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "version:patch": "npm version patch --no-git-tag-version",
+    "version:minor": "npm version minor --no-git-tag-version",
+    "deploy": "npm run version:patch && npm run build"
   },
   "eslintConfig": {
     "extends": [

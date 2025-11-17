@@ -1,5 +1,5 @@
-// Service Worker for caching and offline support
-const CACHE_NAME = 'redragon-colombo-v1';
+// Service Worker for caching and offline support with cache busting
+const CACHE_NAME = `redragon-colombo-v${Date.now()}`;
 const urlsToCache = [
   '/',
   '/index.html',
@@ -38,13 +38,32 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - Network first for HTML, cache first for assets
 self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (event.request.method !== 'GET') {
     return;
   }
 
+  const url = new URL(event.request.url);
+  
+  // Network first for HTML files (always get latest version)
+  if (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => caches.match('/index.html'))
+    );
+    return;
+  }
+
+  // Cache first for other assets
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
@@ -62,12 +81,14 @@ self.addEventListener('fetch', (event) => {
           // Clone the response
           const responseToCache = response.clone();
 
-          // Cache GET requests for images, fonts, API responses
+          // Cache images, fonts, and static assets
           if (
             event.request.url.includes('/images/') ||
-            event.request.url.includes('/api/') ||
+            event.request.url.includes('/static/') ||
             event.request.url.includes('.woff') ||
-            event.request.url.includes('.woff2')
+            event.request.url.includes('.woff2') ||
+            event.request.url.includes('.css') ||
+            event.request.url.includes('.js')
           ) {
             caches.open(CACHE_NAME).then((cache) => {
               cache.put(event.request, responseToCache);
@@ -78,7 +99,7 @@ self.addEventListener('fetch', (event) => {
         });
       })
       .catch(() => {
-        // Return a offline page if available
+        // Return offline page if available
         return caches.match('/index.html');
       })
   );
