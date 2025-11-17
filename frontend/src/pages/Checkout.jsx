@@ -29,6 +29,7 @@ const Checkout = () => {
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const [paymentMethodError, setPaymentMethodError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Location data
   const [provinces, setProvinces] = useState([]);
@@ -398,7 +399,13 @@ const Checkout = () => {
   };
 
   const handleFinalSubmit = async () => {
+    // Prevent double submission
+    if (isSubmitting) {
+      return;
+    }
+
     try {
+      setIsSubmitting(true);
       setLoading(true);
 
       // Generate unique order ID
@@ -422,34 +429,11 @@ const Checkout = () => {
 
       // Check payment method type
       if (paymentMethod === 'bank_transfer') {
-        // For bank transfer, create order and show bank details
-        const orderData = {
-          order_number: orderId,
-          subtotal: cartSubtotal,
-          shipping_fee: deliveryCharge,
-          payment_fee: paymentFee,
-          total: totalAmount,
-          payment_method: paymentMethod,
-          shipping_info: processedShippingInfo,
-          items: cartItems.map(item => ({
-            product_id: item.id,
-            product_name: item.name,
-            product_image: item.primary_image,
-            price: item.sale_price || item.price,
-            quantity: item.quantity,
-            subtotal: (item.sale_price || item.price) * item.quantity
-          }))
-        };
-
-        const orderResponse = await orderAPI.createOrder(orderData);
-
-        if (orderResponse.data.success) {
-          setLoading(false);
-          setStep(4); // Move to bank transfer details step
-          return;
-        } else {
-          throw new Error('Failed to create order');
-        }
+        // For bank transfer, just show bank details (order created on confirm)
+        setLoading(false);
+        setIsSubmitting(false);
+        setStep(4); // Move to bank transfer details step
+        return;
       }
 
       // Handle Koko Payment
@@ -550,6 +534,7 @@ const Checkout = () => {
       setError(error.response?.data?.message || 'Failed to process payment. Please try again.');
     } finally {
       setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -1082,10 +1067,15 @@ const Checkout = () => {
                   </button>
                   <button
                     onClick={handleFinalSubmit}
-                    className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-4 rounded-xl font-black uppercase shadow-lg transition-all flex items-center justify-center gap-2"
+                    disabled={isSubmitting || loading}
+                    className={`flex-1 py-4 rounded-xl font-black uppercase shadow-lg transition-all flex items-center justify-center gap-2 ${
+                      isSubmitting || loading 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
+                    } text-white`}
                   >
                     <Lock className="w-5 h-5" />
-                    Place Order
+                    {isSubmitting || loading ? 'Processing...' : 'Place Order'}
                   </button>
                 </div>
               </motion.div>
@@ -1170,7 +1160,13 @@ const Checkout = () => {
                   </button>
                   <button
                     onClick={async () => {
+                      // Prevent double submission
+                      if (isSubmitting) {
+                        return;
+                      }
+
                       try {
+                        setIsSubmitting(true);
                         setLoading(true);
                         
                         // Generate unique order ID
@@ -1226,12 +1222,18 @@ const Checkout = () => {
                         setError('Failed to create order. Please try again.');
                       } finally {
                         setLoading(false);
+                        setIsSubmitting(false);
                       }
                     }}
-                    className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-4 rounded-xl font-black uppercase shadow-lg transition-all flex items-center justify-center gap-2"
+                    disabled={isSubmitting || loading}
+                    className={`flex-1 py-4 rounded-xl font-black uppercase shadow-lg transition-all flex items-center justify-center gap-2 ${
+                      isSubmitting || loading 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
+                    } text-white`}
                   >
                     <Check className="w-5 h-5" />
-                    Confirm Order
+                    {isSubmitting || loading ? 'Processing...' : 'Confirm Order'}
                   </button>
                 </div>
               </motion.div>
