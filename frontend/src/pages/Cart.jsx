@@ -53,6 +53,7 @@ const Cart = () => {
       try {
         await updateQuantity(productId, newQuantity);
       } catch (error) {
+        // Handle stock validation errors gracefully
         if (error.message.includes('stock') || error.message.includes('not available')) {
           setPopupError(error.message);
         } else {
@@ -186,7 +187,7 @@ const Cart = () => {
                           className="w-full sm:w-32 h-32 bg-gradient-to-br from-gray-50 to-white rounded-xl overflow-hidden border-2 border-gray-200 cursor-pointer hover:border-red-500 transition-colors"
                         >
                           <img
-                            src={item.primary_image ? item.primary_image : item.images[0].image_path ? item.images[0].image_path : "/image_not_there.avif"}
+                            src={item.primary_image ? item.primary_image : (item.images && item.images.length > 0 && item.images[0].image_path) ? item.images[0].image_path : "/image_not_there.avif"}
                             alt={item.name}
                             className="w-full h-full object-contain p-3"
                           />

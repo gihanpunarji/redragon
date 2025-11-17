@@ -733,7 +733,7 @@ const Checkout = () => {
                       onChange={(e) =>
                         setShippingInfo({ ...shippingInfo, email: e.target.value })
                       }
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                      className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                     />
                   </div>
 
@@ -749,7 +749,7 @@ const Checkout = () => {
                         setShippingInfo({ ...shippingInfo, phone: e.target.value })
                       }
                       placeholder="+94 77 123 4567"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                      className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                     />
                   </div>
 
@@ -765,7 +765,7 @@ const Checkout = () => {
                         setShippingInfo({ ...shippingInfo, addressLine1: e.target.value })
                       }
                       placeholder="Street address, building number"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                      className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                     />
                   </div>
 
@@ -780,7 +780,7 @@ const Checkout = () => {
                         setShippingInfo({ ...shippingInfo, addressLine2: e.target.value })
                       }
                       placeholder="Apartment, suite, unit, etc. (optional)"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                      className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                     />
                   </div>
 
@@ -812,7 +812,7 @@ const Checkout = () => {
                         value={shippingInfo.district}
                         onChange={handleDistrictChange}
                         disabled={!shippingInfo.province}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm sm:text-base"
                       >
                         <option value="">Select District</option>
                         {Array.isArray(districts) && districts.map((district) => (
@@ -836,7 +836,7 @@ const Checkout = () => {
                           setShippingInfo({ ...shippingInfo, city: e.target.value })
                         }
                         disabled={!shippingInfo.district}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm sm:text-base"
                       >
                         <option value="">Select City</option>
                         {Array.isArray(cities) && cities.map((city) => (
@@ -871,7 +871,7 @@ const Checkout = () => {
                       required
                       value={selectedZone || ''}
                       onChange={(e) => setSelectedZone(parseInt(e.target.value))}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                      className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                     >
                       <option value="">Select delivery zone</option>
                       {deliveryZones.map((zone) => (
@@ -906,7 +906,7 @@ const Checkout = () => {
           
 
                 {/* Payment Method Selection */}
-                <div className={`bg-white rounded-2xl shadow-lg p-8 ${paymentMethodError ? 'border-2 border-red-500' : 'border-2 border-transparent'}`}>
+                <div className={`bg-white rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 ${paymentMethodError ? 'border-2 border-red-500' : 'border-2 border-transparent'}`}>
                   <div className="flex items-center gap-3 mb-6">
                     <CreditCard className="w-6 h-6 text-red-500" />
                     <h2 className="text-2xl font-black text-gray-900 uppercase">
