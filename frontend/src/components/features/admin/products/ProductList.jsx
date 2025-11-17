@@ -163,7 +163,7 @@ const ProductList = () => {
 
     try {
       // Basic validation
-      if (!editFormData.name || !editFormData.price || !editFormData.stock_quantity) {
+      if (!editFormData.name || !editFormData.price || editFormData.stock_quantity === '' || editFormData.stock_quantity === null || editFormData.stock_quantity === undefined) {
         setError('Please fill in required fields');
         return;
       }

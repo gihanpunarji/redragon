@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
@@ -6,62 +6,68 @@ import 'swiper/css/navigation';
 import { EffectFade, Autoplay, Navigation } from 'swiper/modules';
 import { motion, AnimatePresence } from 'framer-motion';
 import CustomPagination from './CustomPagination';
+import { carouselAPI } from '../../../services/api';
 
-
-const slides = [
-  {
-    image: '/images/slider_images/1.jpg',
-    title: 'Ultimate Gaming Experience',
-    subtitle: 'High-performance PCs for the dedicated gamer.',
-    position: 'center',
-    alt: 'Redragon gaming setup with high-performance gaming PC and peripherals'
-  },
-  {
-    image: '/images/slider_images/2.jpg',
-    title: 'Precision Engineered Keyboards',
-    subtitle: 'Mechanical keyboards for unmatched speed and accuracy.',
-    position: 'center',
-    alt: 'Redragon mechanical gaming keyboard with RGB lighting and precision keys'
-  },
-  {
-    image: '/images/slider_images/3.jpg',
-    title: 'Crystal Clear Audio',
-    subtitle: 'Immersive headsets to hear every detail.',
-    position: 'center',
-    alt: 'Redragon gaming headset with crystal clear audio and noise cancellation'
-  },
-  {
-    image: '/images/slider_images/4.jpg',
-    title: 'Next-Gen Graphics Cards',
-    subtitle: 'Experience games in stunning 8K resolution.',
-    position: 'center',
-    alt: 'High-end graphics cards for 8K gaming resolution and performance'
-  },
-  {
-    image: '/images/slider_images/5.jpg',
-    title: 'Ergonomic Gaming Mice',
-    subtitle: 'Designed for comfort and precision in the heat of battle.',
-    position: 'center',
-    alt: 'Redragon ergonomic gaming mouse with precision sensors and RGB lighting'
-  },
-  {
-    image: '/images/slider_images/6.jpg',
-    title: 'Custom PC Builds',
-    subtitle: 'Tailor-made systems to match your gaming style.',
-    position: 'center',
-    alt: 'Custom built gaming PC with high-performance components and RGB lighting'
-  },
-  {
-    image: '/images/slider_images/7.jpg',
-    title: 'Liquid Cooling Solutions',
-    subtitle: 'Keep your system cool under pressure for maximum performance.',
-    position: 'center',
-    alt: 'Advanced liquid cooling system for gaming PCs with optimal temperature control'
-  },
-];
 
 const FullScreenCarousel = () => {
+  const [slides, setSlides] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch slides from API on component mount
+  useEffect(() => {
+    fetchSlides();
+  }, []);
+
+  const fetchSlides = async () => {
+    try {
+      const response = await carouselAPI.getAllSlides();
+      
+      if (response.data.success) {
+        const slidesData = response.data.data.map(slide => ({
+          id: slide.id,
+          image: slide.image_path,
+          title: slide.title,
+          subtitle: slide.subtitle || '',
+          position: 'center',
+          alt: slide.alt_text || slide.title
+        }));
+        
+        setSlides(slidesData);
+      } else {
+        console.error('Failed to load carousel slides');
+        // Fallback to empty array
+        setSlides([]);
+      }
+    } catch (error) {
+      console.error('Error fetching carousel slides:', error);
+      // Fallback to empty array
+      setSlides([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="relative w-full h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-600"></div>
+      </div>
+    );
+  }
+
+  // Show fallback if no slides
+  if (slides.length === 0) {
+    return (
+      <div className="relative w-full h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
+        <div className="text-center text-white">
+          <h2 className="text-4xl font-bold mb-4">Welcome to Redragon</h2>
+          <p className="text-xl">Gaming gear that elevates your experience</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-screen">

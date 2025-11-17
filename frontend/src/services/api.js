@@ -285,4 +285,27 @@ export const reviewAPI = {
   deleteReview: (reviewId) => api.delete(`/reviews/${reviewId}`),
 };
 
+// Create public API instance for carousel slides (public endpoint)
+const publicCarouselAPI = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Carousel API functions
+export const carouselAPI = {
+  // Get all carousel slides (public endpoint)
+  getAllSlides: () => publicCarouselAPI.get('/carousel'),
+
+  // Get slide by ID (public endpoint)
+  getSlideById: (slideId) => publicCarouselAPI.get(`/carousel/${slideId}`),
+
+  // Admin functions (require admin auth)
+  createSlide: (slideData) => api.post('/carousel', slideData),
+  updateSlide: (slideId, slideData) => api.put(`/carousel/${slideId}`, slideData),
+  updateMultipleSlides: (slidesData) => api.put('/carousel', slidesData),
+  deleteSlide: (slideId) => api.delete(`/carousel/${slideId}`),
+};
+
 export default api;
