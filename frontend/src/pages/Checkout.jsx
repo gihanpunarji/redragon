@@ -588,7 +588,8 @@ const Checkout = () => {
       <div className="container mx-auto px-4 py-12">
         {/* Progress Steps */}
         <div className="max-w-4xl mx-auto mb-12">
-          <div className="flex items-center justify-between">
+          {/* Desktop Step Indicator */}
+          <div className="hidden md:flex items-center justify-between">
             {["Shipping", "Payment", "Review", ...(paymentMethod === 'bank_transfer' && step === 4 ? ["Bank Transfer"] : [])].map((stepName, index) => (
               <div key={stepName} className="flex items-center">
                 <div className="flex flex-col items-center">
@@ -607,15 +608,68 @@ const Checkout = () => {
                     {stepName}
                   </span>
                 </div>
-                {index < 2 && (
+                {index < 2 + (paymentMethod === 'bank_transfer' && step === 4 ? 1 : 0) && (
                   <div
-                    className={`h-1 w-24 mx-4 ${
+                    className={`h-1 flex-1 max-w-24 mx-4 ${
                       step > index + 1 ? "bg-green-500" : "bg-gray-200"
                     }`}
                   />
                 )}
               </div>
             ))}
+          </div>
+
+          {/* Mobile Step Indicator */}
+          <div className="md:hidden">
+            <div className="flex items-center justify-center mb-4">
+              <div className="flex items-center space-x-2">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                    step === 1 ? "bg-red-500 text-white" : step > 1 ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"
+                  }`}
+                >
+                  {step > 1 ? <Check className="w-4 h-4" /> : 1}
+                </div>
+                <div className={`h-0.5 w-8 ${step > 1 ? "bg-green-500" : "bg-gray-200"}`} />
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                    step === 2 ? "bg-red-500 text-white" : step > 2 ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"
+                  }`}
+                >
+                  {step > 2 ? <Check className="w-4 h-4" /> : 2}
+                </div>
+                <div className={`h-0.5 w-8 ${step > 2 ? "bg-green-500" : "bg-gray-200"}`} />
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                    step === 3 ? "bg-red-500 text-white" : step > 3 ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"
+                  }`}
+                >
+                  {step > 3 ? <Check className="w-4 h-4" /> : 3}
+                </div>
+                {paymentMethod === 'bank_transfer' && step === 4 && (
+                  <>
+                    <div className={`h-0.5 w-8 ${step > 3 ? "bg-green-500" : "bg-gray-200"}`} />
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                        step === 4 ? "bg-red-500 text-white" : "bg-gray-200 text-gray-500"
+                      }`}
+                    >
+                      4
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="text-center">
+              <span className="text-sm font-bold text-gray-900">
+                Step {step} of {paymentMethod === 'bank_transfer' && step === 4 ? 4 : 3}: {
+                  step === 1 ? "Shipping Info" :
+                  step === 2 ? "Payment Method" :
+                  step === 3 ? "Review Order" :
+                  step === 4 ? "Bank Transfer" : "Unknown"
+                }
+              </span>
+            </div>
           </div>
         </div>
 
@@ -627,7 +681,7 @@ const Checkout = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl shadow-lg p-8"
+                className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8"
               >
                 <div className="flex items-center gap-3 mb-6">
                   <MapPin className="w-6 h-6 text-red-500" />
@@ -636,8 +690,8 @@ const Checkout = () => {
                   </h2>
                 </div>
 
-                <form onSubmit={handleShippingSubmit} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
+                <form onSubmit={handleShippingSubmit} className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-2">
                         First Name *
@@ -649,7 +703,7 @@ const Checkout = () => {
                         onChange={(e) =>
                           setShippingInfo({ ...shippingInfo, firstName: e.target.value })
                         }
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                        className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                       />
                     </div>
                     <div>
@@ -663,7 +717,7 @@ const Checkout = () => {
                         onChange={(e) =>
                           setShippingInfo({ ...shippingInfo, lastName: e.target.value })
                         }
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                        className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                       />
                     </div>
                   </div>
@@ -679,7 +733,7 @@ const Checkout = () => {
                       onChange={(e) =>
                         setShippingInfo({ ...shippingInfo, email: e.target.value })
                       }
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                      className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                     />
                   </div>
 
@@ -695,7 +749,7 @@ const Checkout = () => {
                         setShippingInfo({ ...shippingInfo, phone: e.target.value })
                       }
                       placeholder="+94 77 123 4567"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                      className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                     />
                   </div>
 
@@ -711,7 +765,7 @@ const Checkout = () => {
                         setShippingInfo({ ...shippingInfo, addressLine1: e.target.value })
                       }
                       placeholder="Street address, building number"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                      className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                     />
                   </div>
 
@@ -726,11 +780,11 @@ const Checkout = () => {
                         setShippingInfo({ ...shippingInfo, addressLine2: e.target.value })
                       }
                       placeholder="Apartment, suite, unit, etc. (optional)"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                      className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-2">
                         Province *
@@ -739,7 +793,7 @@ const Checkout = () => {
                         required
                         value={shippingInfo.province}
                         onChange={handleProvinceChange}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                        className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                       >
                         <option value="">Select Province</option>
                         {Array.isArray(provinces) && provinces.map((province) => (
@@ -758,7 +812,7 @@ const Checkout = () => {
                         value={shippingInfo.district}
                         onChange={handleDistrictChange}
                         disabled={!shippingInfo.province}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm sm:text-base"
                       >
                         <option value="">Select District</option>
                         {Array.isArray(districts) && districts.map((district) => (
@@ -770,7 +824,7 @@ const Checkout = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-2">
                         City *
@@ -782,7 +836,7 @@ const Checkout = () => {
                           setShippingInfo({ ...shippingInfo, city: e.target.value })
                         }
                         disabled={!shippingInfo.district}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm sm:text-base"
                       >
                         <option value="">Select City</option>
                         {Array.isArray(cities) && cities.map((city) => (
@@ -803,7 +857,7 @@ const Checkout = () => {
                         onChange={(e) =>
                           setShippingInfo({ ...shippingInfo, postalCode: e.target.value })
                         }
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                        className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                       />
                     </div>
                   </div>
@@ -817,7 +871,7 @@ const Checkout = () => {
                       required
                       value={selectedZone || ''}
                       onChange={(e) => setSelectedZone(parseInt(e.target.value))}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                      className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                     >
                       <option value="">Select delivery zone</option>
                       {deliveryZones.map((zone) => (
@@ -834,7 +888,7 @@ const Checkout = () => {
 
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-4 rounded-xl font-black uppercase shadow-lg transition-all"
+                    className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-3 sm:py-4 rounded-xl font-black uppercase shadow-lg transition-all text-sm sm:text-base"
                   >
                     Continue to Payment
                   </button>
@@ -852,7 +906,7 @@ const Checkout = () => {
           
 
                 {/* Payment Method Selection */}
-                <div className={`bg-white rounded-2xl shadow-lg p-8 ${paymentMethodError ? 'border-2 border-red-500' : 'border-2 border-transparent'}`}>
+                <div className={`bg-white rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 ${paymentMethodError ? 'border-2 border-red-500' : 'border-2 border-transparent'}`}>
                   <div className="flex items-center gap-3 mb-6">
                     <CreditCard className="w-6 h-6 text-red-500" />
                     <h2 className="text-2xl font-black text-gray-900 uppercase">
@@ -913,7 +967,7 @@ const Checkout = () => {
                           }
                           placeholder="1234 5678 9012 3456"
                           maxLength="19"
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none"
+                          className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none text-sm sm:text-base"
                         />
                       </div>
 
@@ -929,11 +983,11 @@ const Checkout = () => {
                             setCardInfo({ ...cardInfo, cardName: e.target.value })
                           }
                           placeholder="JOHN DOE"
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none"
+                          className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none text-sm sm:text-base"
                         />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-bold text-gray-700 mb-2">
                             Expiry Date *
@@ -947,7 +1001,7 @@ const Checkout = () => {
                             }
                             placeholder="MM/YY"
                             maxLength="5"
-                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none"
+                            className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none text-sm sm:text-base"
                           />
                         </div>
                         <div>
@@ -963,23 +1017,23 @@ const Checkout = () => {
                             }
                             placeholder="123"
                             maxLength="4"
-                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none"
+                            className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none text-sm sm:text-base"
                           />
                         </div>
                       </div>
 
-                      <div className="flex gap-4 mt-6">
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
                         <button
                           type="button"
                           onClick={() => setStep(1)}
-                          className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-4 rounded-xl font-black uppercase transition-all"
+                          className="w-full sm:flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 sm:py-4 rounded-xl font-black uppercase transition-all text-sm sm:text-base"
                         >
-                          <ArrowLeft className="w-5 h-5 inline mr-2" />
+                          <ArrowLeft className="w-4 sm:w-5 h-4 sm:h-5 inline mr-2" />
                           Back
                         </button>
                         <button
                           type="submit"
-                          className="flex-1 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-4 rounded-xl font-black uppercase shadow-lg transition-all"
+                          className="w-full sm:flex-1 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-3 sm:py-4 rounded-xl font-black uppercase shadow-lg transition-all text-sm sm:text-base"
                         >
                           Review Order
                         </button>
@@ -988,12 +1042,12 @@ const Checkout = () => {
                   )}
 
                   {paymentMethod !== "card" && (
-                    <div className="flex gap-4 mt-6">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
                       <button
                         onClick={() => setStep(1)}
-                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-4 rounded-xl font-black uppercase transition-all"
+                        className="w-full sm:flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 sm:py-4 rounded-xl font-black uppercase transition-all text-sm sm:text-base"
                       >
-                        <ArrowLeft className="w-5 h-5 inline mr-2" />
+                        <ArrowLeft className="w-4 sm:w-5 h-4 sm:h-5 inline mr-2" />
                         Back
                       </button>
                       <button
@@ -1006,7 +1060,7 @@ const Checkout = () => {
                           setPaymentMethodError(false);
                           setStep(3);
                         }}
-                        className="flex-1 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-4 rounded-xl font-black uppercase shadow-lg transition-all"
+                        className="w-full sm:flex-1 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-3 sm:py-4 rounded-xl font-black uppercase shadow-lg transition-all text-sm sm:text-base"
                       >
                         Review Order
                       </button>
@@ -1021,7 +1075,7 @@ const Checkout = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl shadow-lg p-8"
+                className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8"
               >
                 <div className="flex items-center gap-3 mb-6">
                   <Check className="w-6 h-6 text-red-500" />
@@ -1057,24 +1111,24 @@ const Checkout = () => {
                   </p>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <button
                     onClick={() => setStep(2)}
-                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-4 rounded-xl font-black uppercase transition-all"
+                    className="w-full sm:flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 sm:py-4 rounded-xl font-black uppercase transition-all text-sm sm:text-base"
                   >
-                    <ArrowLeft className="w-5 h-5 inline mr-2" />
+                    <ArrowLeft className="w-4 sm:w-5 h-4 sm:h-5 inline mr-2" />
                     Back
                   </button>
                   <button
                     onClick={handleFinalSubmit}
                     disabled={isSubmitting || loading}
-                    className={`flex-1 py-4 rounded-xl font-black uppercase shadow-lg transition-all flex items-center justify-center gap-2 ${
+                    className={`w-full sm:flex-1 py-3 sm:py-4 rounded-xl font-black uppercase shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base ${
                       isSubmitting || loading 
                         ? 'bg-gray-400 cursor-not-allowed' 
                         : 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
                     } text-white`}
                   >
-                    <Lock className="w-5 h-5" />
+                    <Lock className="w-4 sm:w-5 h-4 sm:h-5" />
                     {isSubmitting || loading ? 'Processing...' : 'Place Order'}
                   </button>
                 </div>
@@ -1086,7 +1140,7 @@ const Checkout = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl shadow-lg p-8"
+                className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8"
               >
                 <div className="flex items-center gap-3 mb-6">
                   <Building2 className="w-6 h-6 text-blue-500" />
@@ -1150,12 +1204,12 @@ const Checkout = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <button
                     onClick={() => setStep(3)}
-                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-4 rounded-xl font-black uppercase transition-colors flex items-center justify-center gap-2"
+                    className="w-full sm:flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 sm:py-4 rounded-xl font-black uppercase transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                   >
-                    <ArrowLeft className="w-5 h-5" />
+                    <ArrowLeft className="w-4 sm:w-5 h-4 sm:h-5" />
                     Back to Review
                   </button>
                   <button
@@ -1226,13 +1280,13 @@ const Checkout = () => {
                       }
                     }}
                     disabled={isSubmitting || loading}
-                    className={`flex-1 py-4 rounded-xl font-black uppercase shadow-lg transition-all flex items-center justify-center gap-2 ${
+                    className={`w-full sm:flex-1 py-3 sm:py-4 rounded-xl font-black uppercase shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base ${
                       isSubmitting || loading 
                         ? 'bg-gray-400 cursor-not-allowed' 
                         : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
                     } text-white`}
                   >
-                    <Check className="w-5 h-5" />
+                    <Check className="w-4 sm:w-5 h-4 sm:h-5" />
                     {isSubmitting || loading ? 'Processing...' : 'Confirm Order'}
                   </button>
                 </div>
@@ -1242,7 +1296,7 @@ const Checkout = () => {
 
           {/* Right Column - Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 sticky top-24">
               <div className="flex items-center gap-2 mb-6">
                 <ShoppingBag className="w-6 h-6 text-red-500" />
                 <h2 className="text-xl font-black text-gray-900 uppercase">
