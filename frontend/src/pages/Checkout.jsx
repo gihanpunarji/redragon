@@ -1292,6 +1292,7 @@ const Checkout = () => {
                 </div>
               </motion.div>
             )}
+
           </div>
 
           {/* Right Column - Order Summary */}

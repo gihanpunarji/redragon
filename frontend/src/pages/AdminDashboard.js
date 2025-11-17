@@ -13,6 +13,7 @@ import DeliverySettings from "../components/features/admin/delivery/DeliverySett
 import SalesCharts from "../components/features/admin/sales/SalesCharts";
 import PromoList from "../components/features/admin/promotions/PromoList";
 import Settings from "../components/features/admin/Settings";
+import CarouselManagement from "./CarouselManagement";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -38,6 +39,8 @@ const AdminDashboard = () => {
     switch (activeTab) {
       case "dashboard":
         return <Dashboard setActiveTab={setActiveTab} />;
+      case "carousel":
+        return <CarouselManagement />;
       case "products":
         return (
           <div>

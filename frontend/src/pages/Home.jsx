@@ -141,6 +141,41 @@ const HomePage = () => {
       <WhatsAppButton />
       <FullScreenCarousel />
 
+      {/* Redragon Video Section - Full Width */}
+      <motion.div
+        className="w-full bg-black overflow-hidden"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, amount: 0.05 }}
+        transition={{ duration: 1.2, ease: "easeInOut" }}
+      >
+        <motion.div
+          className="relative w-full overflow-hidden"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: 1, ease: "easeOut", delay: 0.1 }}
+        >
+          {/* Video Container with Aspect Ratio */}
+          <div className="relative w-full bg-black" style={{ paddingBottom: "56.25%" }}>
+            <motion.video
+              className="absolute top-0 left-0 w-full h-full object-cover"
+              autoPlay
+              loop
+              muted
+              playsInline
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.05 }}
+              transition={{ duration: 1.5, ease: "easeInOut", delay: 0.2 }}
+            >
+              <source src="/redragon_video.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </motion.video>
+          </div>
+        </motion.div>
+      </motion.div>
+
       {/* Shop by Category Section - Auto Scrolling */}
       <div className="py-16 bg-black overflow-visible">
         <div className="container mx-auto px-4">
@@ -252,7 +287,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      <Footer />
+      <Footer isDarkMode={true} />
     </div>
   );
 };
