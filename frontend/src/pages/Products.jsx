@@ -16,6 +16,7 @@ import Footer from "../components/layout/Footer";
 import WhatsAppButton from "../components/common/WhatsAppButton";
 import ParticleEffect from "../components/common/ParticleEffect";
 import SEOHead from "../components/common/SEOHead";
+import ProductPromoSection from "../components/common/ProductPromoSection";
 import { productAPI, categoryAPI, brandAPI } from "../services/api";
 
 const Products = () => {
@@ -320,6 +321,11 @@ const Products = () => {
             </p>
           </motion.div>
         </div>
+      </div>
+
+      {/* Promotional Messages Section */}
+      <div className="container mx-auto px-4 py-8">
+        <ProductPromoSection />
       </div>
 
       {/* Main Content */}

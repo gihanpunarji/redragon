@@ -12,12 +12,14 @@ import RefundList from "../components/features/admin/refunds/RefundList";
 import DeliverySettings from "../components/features/admin/delivery/DeliverySettings";
 import SalesCharts from "../components/features/admin/sales/SalesCharts";
 import PromoList from "../components/features/admin/promotions/PromoList";
+import ProductPromoList from "../components/features/admin/promotions/ProductPromoList";
 import Settings from "../components/features/admin/Settings";
 import CarouselManagement from "./CarouselManagement";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [activeProductsSubTab, setActiveProductsSubTab] = useState("list");
+  const [activePromotionsSubTab, setActivePromotionsSubTab] = useState("promo-codes");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Open sidebar by default on desktop
@@ -113,7 +115,32 @@ const AdminDashboard = () => {
         return (
           <div>
             <h1 className="text-4xl font-bold mb-8">Promotion Management</h1>
-            <PromoList />
+            <div className="flex border-b border-blue-200 mb-8">
+              <button
+                className={`px-6 py-3 text-lg font-medium ${
+                  activePromotionsSubTab === "promo-codes"
+                    ? "text-red-500 border-b-2 border-red-500"
+                    : "text-gray-500"
+                }`}
+                onClick={() => setActivePromotionsSubTab("promo-codes")}
+              >
+                Promo Codes
+              </button>
+              <button
+                className={`px-6 py-3 text-lg font-medium ${
+                  activePromotionsSubTab === "product-messages"
+                    ? "text-red-500 border-b-2 border-red-500"
+                    : "text-gray-500"
+                }`}
+                onClick={() => setActivePromotionsSubTab("product-messages")}
+              >
+                Product Messages
+              </button>
+            </div>
+            <div className="py-4">
+              {activePromotionsSubTab === "promo-codes" && <PromoList />}
+              {activePromotionsSubTab === "product-messages" && <ProductPromoList />}
+            </div>
           </div>
         );
       case "refunds":

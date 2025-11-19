@@ -293,6 +293,29 @@ const publicCarouselAPI = axios.create({
   },
 });
 
+// Create public API instance for product promotional messages (public endpoint)
+const publicProductPromoAPI = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Product Promotional Messages API functions
+export const productPromoAPI = {
+  // Get active promotional messages (public endpoint)
+  getActivePromos: () => publicProductPromoAPI.get('/product-promo/active'),
+
+  // Admin functions (require admin auth)
+  getAllPromos: () => api.get('/product-promo/admin/all'),
+  getPromoById: (id) => api.get(`/product-promo/admin/${id}`),
+  createPromo: (data) => api.post('/product-promo/admin/create', data),
+  updatePromo: (id, data) => api.put(`/product-promo/admin/${id}`, data),
+  deletePromo: (id) => api.delete(`/product-promo/admin/${id}`),
+  togglePromoActive: (id, isActive) => api.patch(`/product-promo/admin/${id}/toggle`, { is_active: isActive }),
+  initializeTable: () => api.post('/product-promo/admin/initialize'),
+};
+
 // Carousel API functions
 export const carouselAPI = {
   // Get all carousel slides (public endpoint)
