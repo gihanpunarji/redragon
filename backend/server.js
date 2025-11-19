@@ -124,6 +124,15 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to Redragon Shop API" });
 });
 
+// Test endpoint for promotional messages
+app.get("/api/test-promo", (req, res) => {
+  res.json({ 
+    message: "Promotional messages route test", 
+    timestamp: new Date().toISOString(),
+    status: "working"
+  });
+});
+
 // Test route for static files
 app.get("/test-upload", (req, res) => {
   res.json({ message: "Upload test route working" });
