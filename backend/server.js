@@ -97,17 +97,16 @@ const promoRoutes = require("./routes/promo");
 const reviewRoutes = require("./routes/reviews");
 const carouselRoutes = require("./routes/carousel");
 
-// Product Promo routes - using inline implementation to avoid module loading issues
-const express = require("express");
-const productPromoRoutes = express.Router();
+// Create product promo router
+const productPromoRouter = express.Router();
 
 // Debug route
-productPromoRoutes.get('/debug', (req, res) => {
+productPromoRouter.get('/debug', (req, res) => {
   res.json({ message: "Hello World - ProductPromo route is working!" });
 });
 
 // Get active promotional messages (public endpoint)
-productPromoRoutes.get('/active', async (req, res) => {
+productPromoRouter.get('/active', async (req, res) => {
   try {
     const query = "SELECT * FROM product_promo_messages WHERE is_active = 1 ORDER BY created_at DESC";
     const [rows] = await db.executeWithRetry(query);
@@ -149,7 +148,7 @@ app.use("/api/sales", salesRoutes);
 app.use("/api/promo", promoRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/carousel", carouselRoutes);
-app.use("/api/product-promo", productPromoRoutes);
+app.use("/api/product-promo", productPromoRouter);
 
 
 app.get("/", (req, res) => {
