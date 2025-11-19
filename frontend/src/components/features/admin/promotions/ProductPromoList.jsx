@@ -10,6 +10,7 @@ import {
   X,
   MessageSquare
 } from 'lucide-react';
+import { productPromoAPI } from '../../../../services/api';
 
 const ProductPromoList = () => {
   const [promos, setPromos] = useState([]);
@@ -47,21 +48,8 @@ const ProductPromoList = () => {
   const fetchPromos = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('adminToken');
-      
-      // For development: use local backend
-      const response = await fetch('http://localhost:5001/api/product-promo/admin/all', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setPromos(data.data || []);
-      } else {
-        throw new Error('Failed to fetch promotional messages');
-      }
+      const response = await productPromoAPI.getAllPromos();
+      setPromos(response.data.data || []);
     } catch (error) {
       console.error('Fetch promos error:', error);
       setError('Failed to load promotional messages');
@@ -74,35 +62,21 @@ const ProductPromoList = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const token = localStorage.getItem('adminToken');
       
-      const url = editingPromo 
-        ? `http://localhost:5001/api/product-promo/admin/${editingPromo.id}`
-        : 'http://localhost:5001/api/product-promo/admin/create';
-      
-      const method = editingPromo ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        setSuccess(editingPromo ? 'Promotional message updated successfully!' : 'Promotional message created successfully!');
-        resetForm();
-        setIsModalOpen(false);
-        fetchPromos();
+      if (editingPromo) {
+        await productPromoAPI.updatePromo(editingPromo.id, formData);
+        setSuccess('Promotional message updated successfully!');
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to save promotional message');
+        await productPromoAPI.createPromo(formData);
+        setSuccess('Promotional message created successfully!');
       }
+      
+      resetForm();
+      setIsModalOpen(false);
+      fetchPromos();
     } catch (error) {
       console.error('Submit error:', error);
-      setError(error.message || 'Failed to save promotional message');
+      setError(error.response?.data?.message || 'Failed to save promotional message');
     } finally {
       setLoading(false);
     }
@@ -125,20 +99,9 @@ const ProductPromoList = () => {
     }
 
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5001/api/product-promo/admin/${promoId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        setSuccess('Promotional message deleted successfully!');
-        fetchPromos();
-      } else {
-        throw new Error('Failed to delete promotional message');
-      }
+      await productPromoAPI.deletePromo(promoId);
+      setSuccess('Promotional message deleted successfully!');
+      fetchPromos();
     } catch (error) {
       console.error('Delete error:', error);
       setError('Failed to delete promotional message');
@@ -147,22 +110,9 @@ const ProductPromoList = () => {
 
   const toggleActive = async (promoId, isActive) => {
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5001/api/product-promo/admin/${promoId}/toggle`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ is_active: isActive ? 1 : 0 })
-      });
-
-      if (response.ok) {
-        setSuccess(`Promotional message ${isActive ? 'activated' : 'deactivated'} successfully!`);
-        fetchPromos();
-      } else {
-        throw new Error('Failed to update promotional message status');
-      }
+      await productPromoAPI.togglePromoActive(promoId, isActive ? 1 : 0);
+      setSuccess(`Promotional message ${isActive ? 'activated' : 'deactivated'} successfully!`);
+      fetchPromos();
     } catch (error) {
       console.error('Toggle active error:', error);
       setError('Failed to update promotional message status');

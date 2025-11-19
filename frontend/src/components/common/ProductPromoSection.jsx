@@ -32,13 +32,10 @@ const ProductPromoSection = () => {
   const fetchActivePromos = async () => {
     try {
       setLoading(true);
+      const response = await productPromoAPI.getActivePromos();
       
-      // For testing: directly fetch from local backend
-      const response = await fetch('http://localhost:5001/api/product-promo/active');
-      const data = await response.json();
-      
-      if (data.success) {
-        setPromos(data.data || []);
+      if (response.data.success) {
+        setPromos(response.data.data || []);
       }
     } catch (error) {
       console.error('Failed to fetch promotional messages:', error);
