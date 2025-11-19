@@ -303,8 +303,8 @@ const publicProductPromoAPI = axios.create({
 
 // Product Promotional Messages API functions
 export const productPromoAPI = {
-  // Get active promotional messages (public endpoint)
-  getActivePromos: () => publicProductPromoAPI.get('/product-promo/active'),
+  // Get active promotional messages (public endpoint) - using fallback route for now
+  getActivePromos: () => publicProductPromoAPI.get('/product-promo-inline/active'),
 
   // Admin functions (require admin auth)
   getAllPromos: () => api.get('/product-promo/admin/all'),
