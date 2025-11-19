@@ -97,24 +97,32 @@ const promoRoutes = require("./routes/promo");
 const reviewRoutes = require("./routes/reviews");
 const carouselRoutes = require("./routes/carousel");
 
-// Try to load productPromo routes with error handling
-let productPromoRoutes;
-try {
-  productPromoRoutes = require("./routes/productPromo");
-  console.log("✅ ProductPromo routes loaded successfully");
-} catch (error) {
-  console.error("❌ Failed to load ProductPromo routes:", error.message);
-  // Create a dummy router as fallback
-  const express = require("express");
-  productPromoRoutes = express.Router();
-  productPromoRoutes.get('/active', (req, res) => {
-    res.status(500).json({ 
-      success: false, 
-      message: "ProductPromo routes not available",
-      error: "Module failed to load"
+// Product Promo routes - using inline implementation to avoid module loading issues
+const express = require("express");
+const productPromoRoutes = express.Router();
+
+// Get active promotional messages (public endpoint)
+productPromoRoutes.get('/active', async (req, res) => {
+  try {
+    const query = "SELECT * FROM product_promo_messages WHERE is_active = 1 ORDER BY created_at DESC";
+    const [rows] = await db.executeWithRetry(query);
+    
+    res.status(200).json({
+      success: true,
+      message: 'Active promotional messages retrieved successfully',
+      data: rows
     });
-  });
-}
+  } catch (error) {
+    console.error('Promo active error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve promotional messages',
+      error: error.message
+    });
+  }
+});
+
+console.log("✅ ProductPromo routes configured inline");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
