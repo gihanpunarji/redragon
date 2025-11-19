@@ -155,6 +155,11 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to Redragon Shop API" });
 });
 
+// Simple test route to confirm routing works
+app.get("/api/test-simple", (req, res) => {
+  res.json({ message: "Simple test route works!" });
+});
+
 // Test endpoint for promotional messages
 app.get("/api/test-promo", (req, res) => {
   res.json({ 
