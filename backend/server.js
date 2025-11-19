@@ -101,6 +101,11 @@ const carouselRoutes = require("./routes/carousel");
 const express = require("express");
 const productPromoRoutes = express.Router();
 
+// Debug route
+productPromoRoutes.get('/debug', (req, res) => {
+  res.json({ message: "Hello World - ProductPromo route is working!" });
+});
+
 // Get active promotional messages (public endpoint)
 productPromoRoutes.get('/active', async (req, res) => {
   try {
