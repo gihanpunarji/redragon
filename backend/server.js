@@ -97,36 +97,36 @@ const promoRoutes = require("./routes/promo");
 const reviewRoutes = require("./routes/reviews");
 const carouselRoutes = require("./routes/carousel");
 
-// Create product promo router
-const productPromoRouter = express.Router();
+// // Create product promo router
+// const productPromoRouter = express.Router();
 
-// Debug route
-productPromoRouter.get('/debug', (req, res) => {
-  res.json({ message: "Hello World - ProductPromo route is working!" });
-});
+// // Debug route
+// productPromoRouter.get('/debug', (req, res) => {
+//   res.json({ message: "Hello World - ProductPromo route is working!" });
+// });
 
-// Get active promotional messages (public endpoint)
-productPromoRouter.get('/active', async (req, res) => {
-  try {
-    const query = "SELECT * FROM product_promo_messages WHERE is_active = 1 ORDER BY created_at DESC";
-    const [rows] = await db.executeWithRetry(query);
+// // Get active promotional messages (public endpoint)
+// productPromoRouter.get('/active', async (req, res) => {
+//   try {
+//     const query = "SELECT * FROM product_promo_messages WHERE is_active = 1 ORDER BY created_at DESC";
+//     const [rows] = await db.executeWithRetry(query);
     
-    res.status(200).json({
-      success: true,
-      message: 'Active promotional messages retrieved successfully',
-      data: rows
-    });
-  } catch (error) {
-    console.error('Promo active error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to retrieve promotional messages',
-      error: error.message
-    });
-  }
-});
+//     res.status(200).json({
+//       success: true,
+//       message: 'Active promotional messages retrieved successfully',
+//       data: rows
+//     });
+//   } catch (error) {
+//     console.error('Promo active error:', error);
+//     res.status(500).json({
+//       success: false,
+//       message: 'Failed to retrieve promotional messages',
+//       error: error.message
+//     });
+//   }
+// });
 
-console.log("✅ ProductPromo routes configured inline");
+// console.log("✅ ProductPromo routes configured inline");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
@@ -148,7 +148,7 @@ app.use("/api/sales", salesRoutes);
 app.use("/api/promo", promoRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/carousel", carouselRoutes);
-app.use("/api/product-promo", productPromoRouter);
+// app.use("/api/product-promo", productPromoRouter);
 
 
 app.get("/", (req, res) => {
@@ -158,6 +158,11 @@ app.get("/", (req, res) => {
 // Simple test route to confirm routing works
 app.get("/api/test-simple", (req, res) => {
   res.json({ message: "Simple test route works!" });
+});
+
+// Test product-promo route directly
+app.get("/api/product-promo/active", (req, res) => {
+  res.json({ message: "Hello World - Direct product-promo route works!" });
 });
 
 // Test endpoint for promotional messages
