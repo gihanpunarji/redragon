@@ -12,11 +12,6 @@ const {
   initializeTable
 } = require('../controllers/productPromoController');
 
-// Test route
-router.get('/test', (req, res) => {
-  res.json({ message: 'Product promo routes are working', timestamp: new Date() });
-});
-
 // Public routes (for customers)  
 router.get('/active', getActivePromos);
 

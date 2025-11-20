@@ -96,38 +96,9 @@ const salesRoutes = require("./routes/sales");
 const promoRoutes = require("./routes/promo");
 const reviewRoutes = require("./routes/reviews");
 const carouselRoutes = require("./routes/carousel");
+const productPromoRouter = require("./routes/productPromo");
 
-// // Create product promo router
-// const productPromoRouter = express.Router();
-
-// // Debug route
-// productPromoRouter.get('/debug', (req, res) => {
-//   res.json({ message: "Hello World - ProductPromo route is working!" });
-// });
-
-// // Get active promotional messages (public endpoint)
-// productPromoRouter.get('/active', async (req, res) => {
-//   try {
-//     const query = "SELECT * FROM product_promo_messages WHERE is_active = 1 ORDER BY created_at DESC";
-//     const [rows] = await db.executeWithRetry(query);
-    
-//     res.status(200).json({
-//       success: true,
-//       message: 'Active promotional messages retrieved successfully',
-//       data: rows
-//     });
-//   } catch (error) {
-//     console.error('Promo active error:', error);
-//     res.status(500).json({
-//       success: false,
-//       message: 'Failed to retrieve promotional messages',
-//       error: error.message
-//     });
-//   }
-// });
-
-// console.log("✅ ProductPromo routes configured inline");
-
+app.use("/api/product-promo", productPromoRouter);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/images", imageRoutes);
@@ -148,44 +119,18 @@ app.use("/api/sales", salesRoutes);
 app.use("/api/promo", promoRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/carousel", carouselRoutes);
-// app.use("/api/product-promo", productPromoRouter);
 
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Redragon Shop API" });
 });
 
-// Simple test route to confirm routing works
-app.get("/api/test-simple", (req, res) => {
-  res.json({ message: "Simple test route works!" });
-});
 
-// Test product-promo route directly
-app.get("/api/product-promo/active", (req, res) => {
-  res.json({ message: "Hello World - Direct product-promo route works!" });
-});
-
-// Test endpoint for promotional messages
-app.get("/api/test-promo", (req, res) => {
-  res.json({ 
-    message: "Promotional messages route test", 
-    timestamp: new Date().toISOString(),
-    status: "working"
-  });
-});
-
-// Test route for static files
-app.get("/test-upload", (req, res) => {
-  res.json({ message: "Upload test route working" });
-});
-
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error("Server error:", err);
   res.status(500).json({ msg: "Internal server error" });
 });
 
-// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);

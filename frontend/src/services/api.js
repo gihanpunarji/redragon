@@ -293,18 +293,11 @@ const publicCarouselAPI = axios.create({
   },
 });
 
-// Create public API instance for product promotional messages (public endpoint)
-const publicProductPromoAPI = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
 
 // Product Promotional Messages API functions
 export const productPromoAPI = {
   // Get active promotional messages (public endpoint) - using main route
-  getActivePromos: () => publicProductPromoAPI.get('/product-promo/active'),
+  getActivePromos: () => api.get('/product-promo/active'),
 
   // Admin functions (require admin auth)
   getAllPromos: () => api.get('/product-promo/admin/all'),
