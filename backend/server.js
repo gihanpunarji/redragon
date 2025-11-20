@@ -96,9 +96,9 @@ const salesRoutes = require("./routes/sales");
 const promoRoutes = require("./routes/promo");
 const reviewRoutes = require("./routes/reviews");
 const carouselRoutes = require("./routes/carousel");
-const productPromoRouter = require("./routes/productPromo");
+const productPromoRoutes = require("./routes/productPromo");
 
-app.use("/api/product-promo", productPromoRouter);
+app.use("/api/product-promo", productPromoRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/images", imageRoutes);

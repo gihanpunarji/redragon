@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { adminAuth } = require('../middleware/auth');
+const { auth, adminAuth } = require('../middleware/auth');
 const {
   getActivePromos,
   getAllPromos,
@@ -9,21 +9,25 @@ const {
   updatePromo,
   deletePromo,
   togglePromoActive,
-  initializeTable
+  initializeTable,
+  testRoute
 } = require('../controllers/productPromoController');
+
+// Test route (for checking if API is working)
+router.get('/test', testRoute);
 
 // Public routes (for customers)  
 router.get('/active', getActivePromos);
 
 // Admin routes (protected)
-router.get('/admin/all', adminAuth, getAllPromos);
-router.get('/admin/:id', adminAuth, getPromoById);
-router.post('/admin/create', adminAuth, createPromo);
-router.put('/admin/:id', adminAuth, updatePromo);
-router.delete('/admin/:id', adminAuth, deletePromo);
-router.patch('/admin/:id/toggle', adminAuth, togglePromoActive);
+router.get('/admin/all', auth, adminAuth, getAllPromos);
+router.get('/admin/:id', auth, adminAuth, getPromoById);
+router.post('/admin/create', auth, adminAuth, createPromo);
+router.put('/admin/:id', auth, adminAuth, updatePromo);
+router.delete('/admin/:id', auth, adminAuth, deletePromo);
+router.patch('/admin/:id/toggle', auth, adminAuth, togglePromoActive);
 
 // Setup route (for initializing the table)
-router.post('/admin/initialize', adminAuth, initializeTable);
+router.post('/admin/initialize', auth, adminAuth, initializeTable);
 
 module.exports = router;

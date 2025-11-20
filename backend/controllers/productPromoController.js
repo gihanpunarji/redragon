@@ -223,3 +223,12 @@ exports.initializeTable = async (req, res) => {
     });
   }
 };
+
+// Test route for checking if routes are working
+exports.testRoute = (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Product promo routes are working',
+    timestamp: new Date()
+  });
+};
