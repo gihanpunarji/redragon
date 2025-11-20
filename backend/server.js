@@ -98,6 +98,7 @@ const reviewRoutes = require("./routes/reviews");
 const carouselRoutes = require("./routes/carousel");
 const productPromoRoutes = require("./routes/productPromo");
 
+console.log('📍 Mounting productPromo routes at /api/product-promo');
 app.use("/api/product-promo", productPromoRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);

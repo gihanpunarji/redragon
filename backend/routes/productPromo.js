@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+
+console.log('🚀 ProductPromo router loaded');
 const { auth, adminAuth } = require('../middleware/auth');
 const {
   getActivePromos,
