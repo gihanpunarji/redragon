@@ -239,7 +239,7 @@ const PaymentSuccess = () => {
               <ArrowRight className="w-5 h-5" />
             </button>
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/products')}
               className="px-8 py-4 bg-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-300 transition-colors"
             >
               Continue Shopping

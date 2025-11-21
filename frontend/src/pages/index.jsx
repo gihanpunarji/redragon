@@ -149,7 +149,7 @@ const Home = () => {
               {[
                 {
                   icon: Shield,
-                  title: "1 Year Warranty",
+                  title: "Genuine Warranty",
                   desc: "On all products",
                 },
                 {

@@ -97,6 +97,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: #0a0a0a;
   min-height: 100vh;
+  cursor: crosshair; /* Gaming vibe cursor */
+}
+
+/* Interactive elements should still have a pointer cursor */
+button, a, [role="button"], [type="submit"], [type="button"] {
+  cursor: pointer;
 }
 
 /* Hide scrollbar for specific elements */
@@ -254,4 +260,25 @@ body {
     #f3f4f6 36%
   );
   background-size: 1000px 100%;
+}
+
+/* Cursor Follower */
+.cursor-follower {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  border: 2px solid;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  animation: rgb-border 3s linear infinite;
+  transition: transform 0.1s ease-out;
+  transform: translate(-50%, -50%);
+}
+
+.cursor-follower-pointer {
+  transform: scale(1.5);
+  background-color: rgba(255, 255, 255, 0.2);
 }

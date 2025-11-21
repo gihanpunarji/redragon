@@ -68,7 +68,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <motion.div
-      className="relative h-80 rounded-2xl overflow-hidden shadow-lg cursor-pointer group bg-black border border-gray-800"
+      className="relative h-64 sm:h-80 rounded-2xl overflow-hidden shadow-lg cursor-pointer group bg-black border border-gray-800"
       whileHover={{ scale: 1.05 }}
       transition={{ type: "easeOut", duration: 0.25 }}
       onClick={(e) => handleProductClick(e)}

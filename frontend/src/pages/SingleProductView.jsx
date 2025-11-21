@@ -512,9 +512,7 @@ const SingleProductView = () => {
               <span className="text-xs sm:text-sm font-bold text-white bg-red-500 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full uppercase tracking-wider">
                 {product.brand_name || product.brand}
               </span>
-              <span className="text-xs sm:text-sm font-semibold text-gray-600 flex items-center gap-1">
-                <Shield className="w-3 h-3 sm:w-4 sm:h-4" />1 Year Warranty
-              </span>
+              
             </div>
 
             {/* Product Name */}

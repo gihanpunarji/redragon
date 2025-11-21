@@ -12,6 +12,7 @@ import PaymentRoute from "./components/common/PaymentRoute";
 import ForgotPasswordRoute from "./components/common/ForgotPasswordRoute";
 import CartSyncHandler from "./components/common/CartSyncHandler";
 import UnderDevelopment from "./components/common/UnderDevelopment";
+import CursorFollower from "./components/common/CursorFollower"; // Import the cursor follower
 
 // Lazy load components
 const Home = lazy(() => import("./pages/Home"));
@@ -55,44 +56,12 @@ const LoadingSpinner = () => (
 );
 
 function App() {
-  // const isUnderDevelopment = process.env.REACT_APP_UNDER_DEVELOPMENT === 'true';
-  
-  // // Function to check if current path should bypass under development
-  // const shouldBypassUnderDevelopment = () => {
-  //   const currentPath = window.location.pathname;
-    
-  //   // Admin routes always bypass
-  //   if (currentPath.startsWith('/admin')) {
-  //     return true;
-  //   }
-    
-  //   // Error pages always bypass
-  //   if (['/error', '/404', '/403', '/500'].includes(currentPath)) {
-  //     return true;
-  //   }
-    
-    // Custom user paths bypass under development
-    // These are paths that don't match standard routes
-    // const standardRoutes = [
-    //   '/', '/products', '/cart', '/checkout', '/login', '/register', 
-    //   '/forgot-password', '/about', '/wishlist', '/categories', '/account',
-    //   '/refund-policy', '/privacy-policy', '/terms-conditions'
-    // ];
-    
-    // Check if it's a product detail route
-    // const isProductRoute = /^\/products?\/\d+$/.test(currentPath);
-    
-    // If it's not a standard route and not a product route, it's a custom path
-  //   return !standardRoutes.includes(currentPath) && !isProductRoute;
-  // };
-
-  // const shouldShowUnderDevelopment = isUnderDevelopment && !shouldBypassUnderDevelopment();
-
   return (
     <AuthProvider>
       <CartProvider>
         <CartSyncHandler />
         <AdminAuthProvider>
+          <CursorFollower /> {/* Add the cursor follower here */}
           <Router>
             <Suspense fallback={<LoadingSpinner />}>
               <Routes>
