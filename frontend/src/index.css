@@ -262,23 +262,41 @@ button, a, [role="button"], [type="submit"], [type="button"] {
   background-size: 1000px 100%;
 }
 
+@keyframes rgb-background {
+  0% { background-color: #ff0040; }
+  16.67% { background-color: #ff006e; }
+  33.33% { background-color: #8b00ff; }
+  50% { background-color: #0080ff; }
+  66.67% { background-color: #00f0ff; }
+  83.33% { background-color: #00ff41; }
+  100% { background-color: #ff0040; }
+}
+
+@keyframes rgb-glow-stronger {
+  0% { box-shadow: 0 0 25px #ff0040, 0 0 50px #ff0040; }
+  16.67% { box-shadow: 0 0 25px #ff006e, 0 0 50px #ff006e; }
+  33.33% { box-shadow: 0 0 25px #8b00ff, 0 0 50px #8b00ff; }
+  50% { box-shadow: 0 0 25px #0080ff, 0 0 50px #0080ff; }
+  66.67% { box-shadow: 0 0 25px #00f0ff, 0 0 50px #00f0ff; }
+  83.33% { box-shadow: 0 0 25px #00ff41, 0 0 50px #00ff41; }
+  100% { box-shadow: 0 0 25px #ff0040, 0 0 50px #ff0040; }
+}
+
 /* Cursor Follower */
 .cursor-follower {
   position: fixed;
   top: 0;
   left: 0;
-  width: 30px;
-  height: 30px;
-  border: 2px solid;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
-  animation: rgb-border 3s linear infinite;
-  transition: transform 0.1s ease-out;
-  transform: translate(-50%, -50%);
+  animation: rgb-background 3s linear infinite, rgb-glow-stronger 3s linear infinite;
+  transition: transform 0.1s ease-out, opacity 0.1s ease-out;
 }
 
 .cursor-follower-pointer {
   transform: scale(1.5);
-  background-color: rgba(255, 255, 255, 0.2);
+  opacity: 0.8;
 }

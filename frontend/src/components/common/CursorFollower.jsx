@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 const CursorFollower = () => {
   const [position, setPosition] = useState({ x: -100, y: -100 });
   const [isPointer, setIsPointer] = useState(false);
+  const cursorSize = 40;
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -30,8 +31,8 @@ const CursorFollower = () => {
     <motion.div
       className={`cursor-follower ${isPointer ? 'cursor-follower-pointer' : ''}`}
       animate={{
-        x: position.x,
-        y: position.y,
+        x: position.x - cursorSize / 2,
+        y: position.y - cursorSize / 2,
       }}
       transition={{
         type: 'spring',
