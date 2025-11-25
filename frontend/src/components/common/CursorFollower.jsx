@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 const CursorFollower = () => {
   const [position, setPosition] = useState({ x: -100, y: -100 });
   const [isPointer, setIsPointer] = useState(false);
-  const cursorSize = 40;
+  const cursorSize = 28;
 
   useEffect(() => {
     const handleMouseMove = (e) => {

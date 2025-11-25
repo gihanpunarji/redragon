@@ -11,6 +11,7 @@ import WhatsAppButton from "../components/common/WhatsAppButton";
 import ParticleEffect from "../components/common/ParticleEffect";
 import ErrorPopup from "../components/common/ErrorPopup";
 import SuccessPopup from "../components/common/SuccessPopup";
+import KokoPaymentForm from "../components/common/KokoPaymentForm";
 import CartContext from "../context/CartContext";
 import api, { locationAPI, authAPI, addressAPI, payhereAPI, kokoPaymentAPI, orderAPI } from "../services/api";
 
@@ -30,6 +31,7 @@ const Checkout = () => {
   const [error, setError] = useState(null);
   const [paymentMethodError, setPaymentMethodError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [kokoFormData, setKokoFormData] = useState(null);
 
   // Location data
   const [provinces, setProvinces] = useState([]);
@@ -60,13 +62,13 @@ const Checkout = () => {
   });
 
   // Fetch delivery zones, payment methods, and location data on mount
-  // Redirect to cart if cart is empty
+  // Redirect to cart if cart is empty (but not if we're processing Koko payment)
   useEffect(() => {
-    if (cartItems.length === 0) {
+    if (cartItems.length === 0 && !kokoFormData) {
       navigate('/cart', { replace: true });
       return;
     }
-  }, [cartItems, navigate]);
+  }, [cartItems, navigate, kokoFormData]);
 
   useEffect(() => {
     fetchDeliveryZones();
@@ -463,35 +465,42 @@ const Checkout = () => {
           throw new Error('Failed to create order');
         }
 
-        // Then initialize Koko Payment
+        // Get backend URL for callbacks
+        const backendUrl = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5001';
+        const frontendUrl = window.location.origin;
+
+        // Prepare Koko payment data
         const kokoPaymentData = {
-          order_number: orderId,
-          amount: totalAmount,
-          currency: 'LKR',
-          customer_name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
-          customer_email: shippingInfo.email,
-          customer_phone: shippingInfo.phone,
-          shipping_info: processedShippingInfo,
-          items: cartItems.map(item => ({
-            product_id: item.id,
-            product_name: item.name,
-            product_image: item.primary_image,
-            price: item.sale_price || item.price,
-            quantity: item.quantity,
-            subtotal: (item.sale_price || item.price) * item.quantity
-          }))
+          orderId: orderId,
+          amount: cartSubtotal, // Send original amount, backend will add 14% fee
+          firstName: shippingInfo.firstName,
+          lastName: shippingInfo.lastName,
+          email: shippingInfo.email,
+          mobile: shippingInfo.phone,
+          productDescription: `Order ${orderId} - ${cartItems.length} items`,
+          returnUrl: `${backendUrl}/api/payment/koko/return`,
+          cancelUrl: `${backendUrl}/api/payment/koko/cancel`,
+          responseUrl: `${backendUrl}/api/payment/koko/response`
         };
 
-        const kokoResponse = await kokoPaymentAPI.initializePayment(kokoPaymentData);
+        // Call backend to create Koko payment order
+        const kokoResponse = await kokoPaymentAPI.createOrder(kokoPaymentData);
 
-        if (kokoResponse.data.success && kokoResponse.data.data.payment_url) {
-          // Store order and session details for verification on return
-          sessionStorage.setItem('koko_order_id', kokoResponse.data.data.order_id);
-          sessionStorage.setItem('koko_session_id', kokoResponse.data.data.session_id);
+        if (kokoResponse.data.success && kokoResponse.data.data) {
+          // Show fee information to user
+          const { originalAmount, kokoFee, totalAmount: kokoTotal } = kokoResponse.data.info;
+          console.log(`Koko Payment: Original LKR ${originalAmount} + Fee LKR ${kokoFee} = Total LKR ${kokoTotal}`);
 
-          // Redirect to Koko Payment
+          // Set form data to trigger auto-submit (don't clear cart yet)
+          setKokoFormData(kokoResponse.data.data);
           setLoading(false);
-          window.location.href = kokoResponse.data.data.payment_url;
+          setIsSubmitting(false);
+
+          // Clear cart after a short delay to allow form to render
+          setTimeout(async () => {
+            await clearCart();
+          }, 1000);
+
           return;
         } else {
           throw new Error('Failed to initialize Koko Payment');
@@ -1381,6 +1390,7 @@ const Checkout = () => {
       <WhatsAppButton />
       <ErrorPopup message={error} onClose={() => setError(null)} />
       <SuccessPopup message={success} onClose={() => setSuccess(null)} />
+      {kokoFormData && <KokoPaymentForm formData={kokoFormData} />}
     </div>
   );
 };

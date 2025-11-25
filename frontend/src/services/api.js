@@ -213,11 +213,11 @@ export const payhereAPI = {
 
 // Koko Payment API functions
 export const kokoPaymentAPI = {
-  // Initialize Koko Payment
-  initializePayment: (paymentData) => api.post('/koko-payment/initialize', paymentData),
+  // Create Koko payment order
+  createOrder: (paymentData) => api.post('/payment/koko/create', paymentData),
 
-  // Verify payment status
-  verifyPayment: (verifyData) => api.post('/koko-payment/verify', verifyData),
+  // Check payment status
+  checkStatus: (statusData) => api.post('/payment/koko/check-status', statusData),
 };
 
 // Order API functions

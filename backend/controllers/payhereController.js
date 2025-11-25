@@ -1,4 +1,6 @@
 const crypto = require('crypto');
+const Order = require('../models/Order');
+const { sendOrderInvoiceEmail } = require('../config/email');
 
 const payhereController = {
   // Generate PayHere payment hash
@@ -58,7 +60,7 @@ const payhereController = {
   },
 
   // Handle PayHere payment notification
-  handleNotification: (req, res) => {
+  handleNotification: async (req, res) => {
     try {
       const {
         merchant_id,
@@ -84,7 +86,35 @@ const payhereController = {
         if (status_code == 2) {
           // Payment success
           console.log(`Payment successful for order: ${order_id}`);
-          // TODO: Update order status in database
+
+          // Send order confirmation email after successful payment
+          try {
+            const orderDetails = await Order.getByOrderNumber(order_id);
+
+            if (orderDetails && orderDetails.customer_email) {
+              await sendOrderInvoiceEmail(orderDetails.customer_email, {
+                order_number: orderDetails.order_number,
+                customer_name: orderDetails.customer_name,
+                total: orderDetails.total,
+                subtotal: orderDetails.subtotal,
+                shipping_fee: orderDetails.shipping_fee,
+                payment_fee: orderDetails.discount,
+                created_at: orderDetails.created_at,
+                payment_method_name: orderDetails.payment_method_name,
+                items: orderDetails.items,
+                address: orderDetails.address,
+                city_name: orderDetails.city_name,
+                district_name: orderDetails.district_name,
+                province_name: orderDetails.province_name,
+                postal_code: orderDetails.postal_code,
+                shipping_phone: orderDetails.shipping_phone
+              });
+
+              console.log(`Order confirmation email sent to ${orderDetails.customer_email} for order ${order_id}`);
+            }
+          } catch (emailError) {
+            console.error('Failed to send order confirmation email:', emailError);
+          }
         } else {
           // Payment failed or cancelled
           console.log(`Payment failed for order: ${order_id}, status: ${status_code}`);

@@ -87,6 +87,56 @@ class Order {
     }
   }
 
+  // Get order by order number with all details including shipping address
+  static async getByOrderNumber(orderNumber) {
+    try {
+      const query = `
+        SELECT
+          o.*,
+          CONCAT(c.first_name, ' ', c.last_name) as customer_name,
+          c.email as customer_email,
+          c.phone as customer_phone,
+          pm.name as payment_method_name,
+          sa.address_line1,
+          sa.address_line2,
+          sa.city_name,
+          sa.district_name,
+          sa.province_name,
+          sa.postal_code,
+          sa.phone as shipping_phone,
+          CONCAT(sa.address_line1,
+                 CASE WHEN sa.address_line2 IS NOT NULL THEN CONCAT(', ', sa.address_line2) ELSE '' END,
+                 ', ', sa.city_name, ', ', sa.district_name, ', ', sa.province_name
+          ) as address
+        FROM orders o
+        LEFT JOIN customers c ON o.customer_id = c.customer_id
+        LEFT JOIN payment_methods pm ON o.payment_method_id = pm.id
+        LEFT JOIN shipping_addresses sa ON o.shipping_address_id = sa.id
+        WHERE o.order_number = ?
+      `;
+      const [rows] = await db.executeWithRetry(query, [orderNumber]);
+
+      if (rows.length === 0) {
+        return null;
+      }
+
+      const order = rows[0];
+
+      // Get order items
+      const itemsQuery = `
+        SELECT * FROM order_items
+        WHERE order_id = ?
+        ORDER BY id
+      `;
+      const [items] = await db.executeWithRetry(itemsQuery, [order.id]);
+      order.items = items;
+
+      return order;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Update order status
   static async updateStatus(orderId, orderStatus) {
     try {

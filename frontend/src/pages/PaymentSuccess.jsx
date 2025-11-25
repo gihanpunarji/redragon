@@ -23,35 +23,33 @@ const PaymentSuccess = () => {
     try {
       setVerifying(true);
 
-      // Get order details from URL parameters or session storage
-      const orderId = searchParams.get('order_id');
-      const sessionId = searchParams.get('session_id');
+      // Get Koko payment return parameters
+      const orderId = searchParams.get('orderId');
+      const trnId = searchParams.get('trnId');
+      const status = searchParams.get('status');
 
-      // Or retrieve from session storage if available
-      const storedOrderId = sessionId || sessionStorage.getItem('koko_order_id');
-      const storedSessionId = sessionId || sessionStorage.getItem('koko_session_id');
+      if (orderId && status) {
+        // Koko payment return
+        const isSuccess = status === 'SUCCESS';
+        setVerified(isSuccess);
 
-      if (storedOrderId && storedSessionId) {
-        // Verify payment with Koko
-        const response = await kokoPaymentAPI.verifyPayment({
-          order_id: storedOrderId,
-          session_id: storedSessionId
-        });
-
-        if (response.data.success) {
-          setVerified(response.data.data.is_paid);
-          setPaymentDetails(response.data.data);
-
-          if (!response.data.data.is_paid) {
-            setError('Payment verification pending. Please check your email for confirmation.');
-          }
+        if (isSuccess) {
+          setPaymentDetails({
+            order_id: orderId,
+            transaction_id: trnId,
+            payment_status: 'Completed',
+            payment_method: 'Koko Payment'
+          });
         } else {
-          setError('Unable to verify payment status. Please check your email or account.');
+          setError('Payment was not successful. Please check your email or contact support.');
+          setVerified(false);
         }
       } else {
-        // No order details found - payment may still be processing
-        setVerified(false);
-        setError('Payment is being processed. You will receive a confirmation email shortly.');
+        // General payment success (non-Koko)
+        setVerified(true);
+        setPaymentDetails({
+          payment_status: 'Completed'
+        });
       }
     } catch (err) {
       console.error('Payment verification error:', err);
@@ -214,9 +212,21 @@ const PaymentSuccess = () => {
             {/* Payment Details (if available) */}
             {paymentDetails && (
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <p className="text-sm text-gray-500 mb-2">
-                  <span className="font-semibold">Order ID:</span> {paymentDetails.order_id}
-                </p>
+                {paymentDetails.order_id && (
+                  <p className="text-sm text-gray-500 mb-2">
+                    <span className="font-semibold">Order ID:</span> {paymentDetails.order_id}
+                  </p>
+                )}
+                {paymentDetails.transaction_id && (
+                  <p className="text-sm text-gray-500 mb-2">
+                    <span className="font-semibold">Transaction ID:</span> {paymentDetails.transaction_id}
+                  </p>
+                )}
+                {paymentDetails.payment_method && (
+                  <p className="text-sm text-gray-500 mb-2">
+                    <span className="font-semibold">Payment Method:</span> {paymentDetails.payment_method}
+                  </p>
+                )}
                 <p className="text-sm text-gray-500">
                   <span className="font-semibold">Status:</span> {paymentDetails.payment_status}
                 </p>

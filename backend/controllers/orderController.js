@@ -98,38 +98,10 @@ const orderController = {
       }
       
       await connection.commit();
-      
-      // Send invoice email to customer
-      try {
-        // Get complete order details for email
-        const orderDetails = await Order.getById(order_id);
-        
-        if (orderDetails && orderDetails.customer_email) {
-          await sendOrderInvoiceEmail(orderDetails.customer_email, {
-            order_number: orderDetails.order_number,
-            customer_name: orderDetails.customer_name,
-            total: orderDetails.total,
-            subtotal: orderDetails.subtotal,
-            shipping_fee: orderDetails.shipping_fee,
-            payment_fee: orderDetails.discount, // Using discount field for payment_fee
-            created_at: orderDetails.created_at,
-            payment_method_name: orderDetails.payment_method_name,
-            items: orderDetails.items,
-            address: orderDetails.address,
-            city_name: orderDetails.city_name,
-            district_name: orderDetails.district_name,
-            province_name: orderDetails.province_name,
-            postal_code: orderDetails.postal_code,
-            shipping_phone: orderDetails.shipping_phone
-          });
-          
-          console.log(`Invoice email sent successfully to ${orderDetails.customer_email} for order ${order_number}`);
-        }
-      } catch (emailError) {
-        // Don't fail the order creation if email fails
-        console.error('Failed to send invoice email:', emailError);
-      }
-      
+
+      // Note: Invoice email will be sent after payment confirmation
+      // Email is triggered by payment gateway webhooks (KOKO/PayHere)
+
       res.json({
         success: true,
         message: 'Order created successfully',
@@ -160,13 +132,13 @@ const orderController = {
       console.log('Fetching orders for customer_id:', customer_id);
       
       const [orders] = await db.query(
-        `SELECT 
+        `SELECT
           o.id, o.order_number, o.subtotal, o.shipping_fee, o.discount,
           o.total, o.payment_status, o.order_status, o.created_at,
           pm.name as payment_method
         FROM orders o
         LEFT JOIN payment_methods pm ON o.payment_method_id = pm.id
-        WHERE o.customer_id = ?
+        WHERE o.customer_id = ? AND o.payment_status = 'paid'
         ORDER BY o.created_at DESC`,
         [customer_id]
       );
@@ -206,11 +178,11 @@ const orderController = {
       const customer_id = req.user.id;
       
       const [orders] = await db.query(
-        `SELECT 
+        `SELECT
           o.*, pm.name as payment_method
         FROM orders o
         LEFT JOIN payment_methods pm ON o.payment_method_id = pm.id
-        WHERE o.id = ? AND o.customer_id = ?`,
+        WHERE o.id = ? AND o.customer_id = ? AND o.payment_status = 'paid'`,
         [id, customer_id]
       );
       
