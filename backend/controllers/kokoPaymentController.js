@@ -170,9 +170,9 @@ const kokoPaymentController = {
         if (status === 'SUCCESS') {
           // Update payment status to paid
           await connection.query(
-            `UPDATE orders SET payment_status = 'paid', koko_transaction_id = ?, updated_at = NOW()
+            `UPDATE orders SET payment_status = 'paid', updated_at = NOW()
              WHERE order_number = ?`,
-            [trnId, orderId]
+            [orderId]
           );
           console.log(`Koko payment successful for order: ${orderId}, transaction: ${trnId}`);
 
@@ -207,9 +207,9 @@ const kokoPaymentController = {
         } else if (status === 'FAILURE') {
           // Update payment status to failed
           await connection.query(
-            `UPDATE orders SET payment_status = 'failed', koko_transaction_id = ?, updated_at = NOW()
+            `UPDATE orders SET payment_status = 'failed', updated_at = NOW()
              WHERE order_number = ?`,
-            [trnId, orderId]
+            [orderId]
           );
           console.log(`Koko payment failed for order: ${orderId}, transaction: ${trnId}`);
         }
