@@ -242,9 +242,28 @@ const kokoPaymentController = {
 
       console.log('📝 Koko return details:', { orderId, trnId, status });
 
-      // Redirect to frontend with status
+      // Redirect to frontend with status using HTML meta refresh
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-      res.redirect(`${frontendUrl}/payment/success?orderId=${orderId}&trnId=${trnId}&status=${status}`);
+      const redirectUrl = `${frontendUrl}/payment/success?orderId=${orderId}&trnId=${trnId}&status=${status}`;
+
+      console.log('🔄 Redirecting to:', redirectUrl);
+
+      // Use HTML redirect instead of server redirect
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Redirecting...</title>
+            <meta http-equiv="refresh" content="0;url=${redirectUrl}">
+          </head>
+          <body>
+            <p>Payment successful! Redirecting...</p>
+            <script>
+              window.location.href = "${redirectUrl}";
+            </script>
+          </body>
+        </html>
+      `);
 
     } catch (error) {
       console.error('Koko return URL error:', error);
@@ -259,9 +278,26 @@ const kokoPaymentController = {
 
       console.log('Koko cancel URL hit:', { orderId, trnId, status });
 
-      // Redirect to frontend cancel page
+      // Redirect to frontend cancel page using HTML
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-      res.redirect(`${frontendUrl}/payment/cancel?orderId=${orderId}&trnId=${trnId}&status=${status}`);
+      const redirectUrl = `${frontendUrl}/payment/cancel?orderId=${orderId}&trnId=${trnId}&status=${status}`;
+
+      // Use HTML redirect instead of server redirect
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Redirecting...</title>
+            <meta http-equiv="refresh" content="0;url=${redirectUrl}">
+          </head>
+          <body>
+            <p>Redirecting...</p>
+            <script>
+              window.location.href = "${redirectUrl}";
+            </script>
+          </body>
+        </html>
+      `);
 
     } catch (error) {
       console.error('Koko cancel URL error:', error);

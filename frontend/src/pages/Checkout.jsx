@@ -498,6 +498,9 @@ const Checkout = () => {
           const { originalAmount, kokoFee, totalAmount: kokoTotal } = kokoResponse.data.info;
           console.log(`Koko Payment: Original LKR ${originalAmount} + Fee LKR ${kokoFee} = Total LKR ${kokoTotal}`);
 
+          // Set payment session so user can return to payment pages
+          sessionStorage.setItem('payment_session', 'true');
+
           // Set form data to trigger auto-submit (don't clear cart yet)
           setKokoFormData(kokoResponse.data.data);
           setLoading(false);
