@@ -71,7 +71,7 @@ These entities may link to our homepage or publications as long as the link:
 • Does not falsely imply sponsorship or endorsement, and
 • Fits within the context of the linking party's site.
 
-To request link approval, please email us at support@redragoncolombo.lk, providing your details and the URLs you intend to link from and to.
+To request link approval, please email us at info@redragoncolombo.lk, providing your details and the URLs you intend to link from and to.
 
 Approved organizations may link to our website by using:
 • Our corporate name,

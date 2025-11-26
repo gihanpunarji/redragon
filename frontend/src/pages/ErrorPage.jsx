@@ -218,7 +218,7 @@ const ErrorPage = () => {
                   Our support team is here to help you resolve any issues you encounter. Feel free to reach out!
                 </p>
                 <a
-                  href="mailto:support@redragoncolombo.lk"
+                  href="mailto:info@redragoncolombo.lk"
                   className="inline-block bg-white text-red-600 px-8 py-3 rounded-lg font-bold uppercase tracking-wide hover:bg-gray-100 transition-all"
                 >
                   Contact Support

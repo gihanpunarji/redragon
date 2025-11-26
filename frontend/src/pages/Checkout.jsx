@@ -553,16 +553,6 @@ const Checkout = () => {
     return method ? method.display_name : methodName;
   };
 
-  const getPaymentMethodInfo = (methodName) => {
-    const method = paymentMethods.find(m => m.method_name === methodName);
-    if (!method) return null;
-
-    if (method.percentage && method.percentage > 0) {
-      return `+${method.percentage}% processing fee`;
-    }
-    return 'No additional fees';
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-100">
       <ParticleEffect />

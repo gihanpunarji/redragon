@@ -238,7 +238,7 @@ const kokoPaymentController = {
 
       // Redirect to frontend with status
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-      res.redirect(`${frontendUrl}/payment/koko/return?orderId=${orderId}&trnId=${trnId}&status=${status}`);
+      res.redirect(`${frontendUrl}/payment/success?orderId=${orderId}&trnId=${trnId}&status=${status}`);
 
     } catch (error) {
       console.error('Koko return URL error:', error);
@@ -255,7 +255,7 @@ const kokoPaymentController = {
 
       // Redirect to frontend cancel page
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-      res.redirect(`${frontendUrl}/payment/koko/cancel?orderId=${orderId}&trnId=${trnId}&status=${status}`);
+      res.redirect(`${frontendUrl}/payment/cancel?orderId=${orderId}&trnId=${trnId}&status=${status}`);
 
     } catch (error) {
       console.error('Koko cancel URL error:', error);
