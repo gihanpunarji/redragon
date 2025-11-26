@@ -312,10 +312,10 @@ By accessing or using our website, you agree to be bound by these Terms and Cond
                 📧 info@redragoncolombo.lk
               </a>
               <a
-                href="tel:+94112345678"
+                href="tel:+94777624028"
                 className="flex items-center gap-3 bg-white/10 hover:bg-white/20 p-4 rounded-xl border-2 border-white/30 transition-all font-bold uppercase"
               >
-                📞 +94 11 234 5678
+                📞 +94 77 76 24 028
               </a>
             </div>
 

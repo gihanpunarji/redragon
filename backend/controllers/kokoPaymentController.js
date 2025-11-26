@@ -10,6 +10,7 @@ const kokoPaymentController = {
       const {
         orderId,
         amount,
+        deliveryCharge = 0,
         firstName,
         lastName,
         email,
@@ -38,15 +39,22 @@ const kokoPaymentController = {
 
       // Validate credentials
       if (!merchantId || !apiKey || !privateKey) {
+        console.error('Missing KOKO credentials:', {
+          hasMerchantId: !!merchantId,
+          hasApiKey: !!apiKey,
+          hasPrivateKey: !!privateKey
+        });
         return res.status(400).json({
           success: false,
           message: 'Koko Payment credentials not configured'
         });
       }
 
-      // Calculate final amount with 14% fee
+      // Calculate final amount: Apply 14% fee to subtotal only, then add delivery
       const originalAmount = parseFloat(amount);
-      const finalAmount = (originalAmount * 1.14).toFixed(2);
+      const deliveryAmount = parseFloat(deliveryCharge);
+      const kokoFee = originalAmount * 0.14;
+      const finalAmount = (originalAmount + kokoFee + deliveryAmount).toFixed(2);
 
       // Generate reference: merchantId + random(111-999) + '-' + orderId
       const randomNum = Math.floor(Math.random() * (999 - 111 + 1)) + 111;
@@ -105,17 +113,20 @@ const kokoPaymentController = {
         data: formData,
         info: {
           originalAmount: originalAmount.toFixed(2),
-          kokoFee: (originalAmount * 0.14).toFixed(2),
+          deliveryCharge: deliveryAmount.toFixed(2),
+          kokoFee: kokoFee.toFixed(2),
           totalAmount: finalAmount
         }
       });
 
     } catch (error) {
       console.error('Koko order creation error:', error);
+      console.error('Error stack:', error.stack);
       res.status(500).json({
         success: false,
         message: 'Failed to create Koko payment order',
-        error: error.message
+        error: error.message,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
       });
     }
   },

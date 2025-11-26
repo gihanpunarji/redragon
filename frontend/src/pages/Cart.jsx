@@ -155,7 +155,7 @@ const Cart = () => {
               Add some awesome gaming gear to get started!
             </p>
             <motion.a
-              href="/"
+              href="/products"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-4 rounded-xl font-black uppercase shadow-xl"
@@ -318,7 +318,7 @@ const Cart = () => {
                 </h2>
 
                 {/* Free Shipping Progress */}
-                {!isFreeShippingEligible && amountForFreeShipping > 0 && (
+                {/* {!isFreeShippingEligible && amountForFreeShipping > 0 && (
                   <div className="mb-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-2 border-green-200">
                     <div className="flex items-center gap-2 mb-2">
                       <Truck className="w-4 h-4 text-green-600" />
@@ -333,7 +333,7 @@ const Cart = () => {
                       />
                     </div>
                   </div>
-                )}
+                )} */}
 
                 {/* Summary Details */}
                 <div className="space-y-4 mb-6">

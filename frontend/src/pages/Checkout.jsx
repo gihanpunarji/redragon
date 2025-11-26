@@ -472,7 +472,8 @@ const Checkout = () => {
         // Prepare Koko payment data
         const kokoPaymentData = {
           orderId: orderId,
-          amount: cartSubtotal, // Send original amount, backend will add 14% fee
+          amount: cartSubtotal, // Send subtotal only, backend will add 14% processing fee
+          deliveryCharge: deliveryCharge, // Send delivery separately (no fee applied)
           firstName: shippingInfo.firstName,
           lastName: shippingInfo.lastName,
           email: shippingInfo.email,
@@ -885,7 +886,7 @@ const Checkout = () => {
                       <option value="">Select delivery zone</option>
                       {deliveryZones.map((zone) => (
                         <option key={zone.id} value={zone.id}>
-                          {zone.zone_name} - Rs. {zone.base_charge} (base) + Rs. {zone.extra_charge}/kg
+                          {zone.zone_name}
                         </option>
                       ))}
                     </select>
@@ -952,9 +953,9 @@ const Checkout = () => {
                             <span className="font-bold text-gray-900">{method.display_name}</span>
                           </div>
                           <p className="text-xs text-gray-600 mt-1">{method.description}</p>
-                          <p className="text-xs font-semibold text-red-600 mt-1">
+                          {/* <p className="text-xs font-semibold text-red-600 mt-1">
                             {getPaymentMethodInfo(method.method_name)}
-                          </p>
+                          </p> */}
                         </div>
                       </label>
                     ))}
@@ -1351,7 +1352,7 @@ const Checkout = () => {
               <div className="space-y-3">
                 <div className="flex justify-between text-gray-700">
                   <span>Subtotal:</span>
-                  <span className="font-semibold">Rs. {subtotal.toLocaleString()}</span>
+                  <span className="font-semibold">Rs. {(subtotal + paymentFee).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-gray-700">
                   <div className="flex items-center gap-1">
@@ -1360,12 +1361,6 @@ const Checkout = () => {
                   </div>
                   <span className="font-semibold">Rs. {deliveryCharge.toLocaleString()}</span>
                 </div>
-                {paymentFee > 0 && (
-                  <div className="flex justify-between text-gray-700">
-                    <span>Payment Processing:</span>
-                    <span className="font-semibold">Rs. {paymentFee.toLocaleString()}</span>
-                  </div>
-                )}
                 <div className="pt-3 border-t-2 border-gray-200 flex justify-between">
                   <span className="text-xl font-black text-gray-900">Total:</span>
                   <span className="text-xl font-black text-red-500">

@@ -274,10 +274,10 @@ Warranty will not cover displays or monitors with fewer than seven (7) dead pixe
                 📧 info@redragoncolombo.lk
               </a>
               <a
-                href="tel:+94112345678"
+                href="tel:++94777624028"
                 className="flex items-center gap-3 bg-white hover:bg-gray-50 p-4 rounded-xl border-2 border-red-300 transition-all font-bold text-red-600 uppercase"
               >
-                📞 +94 11 234 5678
+                📞 +94 77 76 24 028
               </a>
             </div>
           </div>
