@@ -134,9 +134,12 @@ const kokoPaymentController = {
   // Handle Koko payment response callback
   handleResponse: async (req, res) => {
     try {
+      console.log('🔔 Koko webhook received!');
+      console.log('Request body:', req.body);
+
       const { orderId, trnId, status, desc, signature } = req.body;
 
-      console.log('Koko payment response received:', { orderId, trnId, status, desc });
+      console.log('📝 Koko payment response received:', { orderId, trnId, status, desc, hasSignature: !!signature });
 
       const publicKey = process.env.KOKO_PUBLIC_KEY;
 
@@ -232,9 +235,12 @@ const kokoPaymentController = {
   // Handle return URL
   handleReturn: async (req, res) => {
     try {
+      console.log('🔙 Koko return URL hit!');
+      console.log('Query params:', req.query);
+
       const { orderId, trnId, status } = req.query;
 
-      console.log('Koko return URL hit:', { orderId, trnId, status });
+      console.log('📝 Koko return details:', { orderId, trnId, status });
 
       // Redirect to frontend with status
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';

@@ -484,6 +484,12 @@ const Checkout = () => {
           responseUrl: `${backendUrl}/api/payment/koko/response`
         };
 
+        console.log('🔍 Koko Payment URLs:', {
+          returnUrl: kokoPaymentData.returnUrl,
+          cancelUrl: kokoPaymentData.cancelUrl,
+          responseUrl: kokoPaymentData.responseUrl
+        });
+
         // Call backend to create Koko payment order
         const kokoResponse = await kokoPaymentAPI.createOrder(kokoPaymentData);
 
