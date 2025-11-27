@@ -613,7 +613,44 @@ const SingleProductView = () => {
                   </span>
                 )}
               </div>
+
             </div>
+
+            {/* Koko Payment Option - Buy Now Pay Later */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-white p-4 sm:p-5 rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all"
+            >
+              <div className="flex items-center justify-between gap-4">
+                {/* Left Section - Koko Branding */}
+                <div className="flex items-center gap-3">
+                  <img
+                    src="/images/payment_methods/koko.png"
+                    alt="Koko Payment"
+                    className="h-8 w-auto object-contain"
+                  />
+                  <div>
+                    <p className="text-xs sm:text-sm text-gray-600 font-semibold">
+                      3x Installment with koko
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right Section - Installment Price */}
+                <div className="text-right">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl sm:text-3xl font-black text-gray-900">
+                      Rs.{" "}
+                      {Math.ceil(
+                        (parseFloat(product.sale_price || product.price) * 1.14) / 3
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
 
             {/* Action Buttons */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-4">

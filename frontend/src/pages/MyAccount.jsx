@@ -20,14 +20,16 @@ import {
   ChevronDown,
   ChevronUp,
   FileText,
-  AlertCircle
+  AlertCircle,
+  Star,
+  MessageSquare
 } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import ParticleEffect from '../components/common/ParticleEffect';
 import RefundRequestModal from '../components/common/RefundRequestModal';
 import EditProfileModal from '../components/common/EditProfileModal';
-import { authAPI, userUtils, orderAPI, addressAPI } from '../services/api';
+import { authAPI, userUtils, orderAPI, addressAPI, reviewAPI } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -226,79 +228,6 @@ const MyAccount = () => {
     }
   };
 
-  // Mock orders data (fallback)
-  const mockOrders = [
-    {
-      id: '#1248',
-      date: '2024-01-15',
-      items: 3,
-      total: 45000,
-      deliveryCharge: 628,
-      paymentFee: 318.84,
-      deliveryZone: 'Inside Colombo',
-      paymentMethod: 'Card Payment',
-      status: 'Delivered',
-      trackingNumber: 'RD123456789',
-      estimatedDelivery: '2024-01-18',
-      deliveredDate: '2024-01-17',
-      deliveryAddress: 'No. 45/2, Dutugemunu Street, Colombo 06',
-      products: [
-        { name: 'Redragon K552 Keyboard', qty: 1, price: 15000, weight: 0.8 },
-        { name: 'Logitech G502 Mouse', qty: 1, price: 7550, weight: 0.5 },
-        { name: 'Gaming Headset', qty: 1, price: 22450, weight: 0.3 }
-      ],
-      deliveryUpdates: [
-        { date: '2024-01-17 14:30', status: 'Delivered', message: 'Package delivered successfully to recipient' },
-        { date: '2024-01-17 09:15', status: 'Out for Delivery', message: 'Package is out for delivery' },
-        { date: '2024-01-16 16:20', status: 'In Transit', message: 'Package arrived at Colombo sorting facility' },
-        { date: '2024-01-15 11:00', status: 'Confirmed', message: 'Order confirmed and packaged' }
-      ]
-    },
-    {
-      id: '#1247',
-      date: '2024-01-10',
-      items: 1,
-      total: 30000,
-      deliveryCharge: 500,
-      paymentFee: 0,
-      deliveryZone: 'Outside Colombo',
-      paymentMethod: 'Cash on Delivery',
-      status: 'Shipped',
-      trackingNumber: 'RD987654321',
-      estimatedDelivery: '2024-01-14',
-      deliveryAddress: 'No. 125, Galle Road, Panadura',
-      products: [
-        { name: 'SteelSeries Arctis 7 Headset', qty: 1, price: 30000, weight: 0.3 }
-      ],
-      deliveryUpdates: [
-        { date: '2024-01-12 10:45', status: 'In Transit', message: 'Package in transit to Panadura' },
-        { date: '2024-01-11 14:30', status: 'Shipped', message: 'Package shipped from warehouse' },
-        { date: '2024-01-10 11:00', status: 'Confirmed', message: 'Order confirmed and ready for shipping' }
-      ]
-    },
-    {
-      id: '#1246',
-      date: '2024-01-05',
-      items: 2,
-      total: 42500,
-      deliveryCharge: 400,
-      paymentFee: 5572.50,
-      deliveryZone: 'Suburbs (Gampaha)',
-      paymentMethod: 'Koko Payment',
-      status: 'Processing',
-      estimatedDelivery: '2024-01-09',
-      deliveryAddress: 'No. 78/A, Kandy Road, Gampaha',
-      products: [
-        { name: 'Corsair K70 RGB Keyboard', qty: 1, price: 22500, weight: 0.8 },
-        { name: 'Razer Mouse Pad', qty: 1, price: 20000, weight: 0.2 }
-      ],
-      deliveryUpdates: [
-        { date: '2024-01-06 09:00', status: 'Processing', message: 'Order is being prepared for shipment' },
-        { date: '2024-01-05 15:30', status: 'Confirmed', message: 'Payment received and order confirmed' }
-      ]
-    }
-  ];
-
   const tabs = [
     { id: 'overview', label: 'Overview', icon: User, mobileLabel: 'Home' },
     { id: 'orders', label: 'My Orders', icon: Package, mobileLabel: 'Orders' },
@@ -495,6 +424,13 @@ const MyAccount = () => {
     const [showRefundModal, setShowRefundModal] = useState(false);
     const [selectedOrderForRefund, setSelectedOrderForRefund] = useState(null);
 
+    // Review states - moved here to prevent main component re-render
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [selectedProductForReview, setSelectedProductForReview] = useState(null);
+    const [reviewRating, setReviewRating] = useState(5);
+    const [reviewText, setReviewText] = useState('');
+    const [reviewSubmitting, setReviewSubmitting] = useState(false);
+
     const toggleOrderExpansion = (orderId) => {
       setExpandedOrder(expandedOrder === orderId ? null : orderId);
     };
@@ -502,6 +438,44 @@ const MyAccount = () => {
     const handleRefundRequest = (order) => {
       setSelectedOrderForRefund(order);
       setShowRefundModal(true);
+    };
+
+    const handleWriteReview = (product) => {
+      setSelectedProductForReview(product);
+      setReviewRating(5);
+      setReviewText('');
+      setShowReviewModal(true);
+    };
+
+    const handleCloseReviewModal = () => {
+      setShowReviewModal(false);
+      setSelectedProductForReview(null);
+      setReviewRating(5);
+      setReviewText('');
+    };
+
+    const handleSubmitReview = async () => {
+      if (!selectedProductForReview || reviewText.trim().length < 10) {
+        alert('Please write a review with at least 10 characters');
+        return;
+      }
+
+      try {
+        setReviewSubmitting(true);
+        await reviewAPI.createReview({
+          product_id: selectedProductForReview.product_id,
+          rating: reviewRating,
+          review_text: reviewText.trim()
+        });
+
+        alert('Review submitted successfully!');
+        handleCloseReviewModal();
+      } catch (error) {
+        console.error('Error submitting review:', error);
+        alert(error.response?.data?.message || 'Failed to submit review. Please try again.');
+      } finally {
+        setReviewSubmitting(false);
+      }
     };
 
     return (
@@ -612,12 +586,23 @@ const MyAccount = () => {
               <h4 className="text-sm sm:text-base font-semibold text-gray-700 mb-2 sm:mb-3">Order Items:</h4>
               <div className="space-y-2">
                 {order.items?.map((item, idx) => (
-                  <div key={idx} className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-2 px-2.5 sm:px-3 bg-gray-50 rounded-lg gap-1 sm:gap-2">
+                  <div key={idx} className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-2 px-2.5 sm:px-3 bg-gray-50 rounded-lg gap-2">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       <span className="text-xs sm:text-sm text-gray-900 font-medium break-words">{item.product_name}</span>
                       <span className="text-gray-400 text-xs sm:text-sm whitespace-nowrap">×{item.quantity}</span>
                     </div>
-                    <span className="text-sm sm:text-base font-semibold text-gray-900 self-start sm:self-auto">Rs. {parseFloat(item.price).toLocaleString()}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm sm:text-base font-semibold text-gray-900">Rs. {parseFloat(item.price).toLocaleString()}</span>
+                      {order.order_status === 'delivered' && (
+                        <button
+                          onClick={() => handleWriteReview(item)}
+                          className="flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors"
+                        >
+                          <Star className="w-3 h-3" />
+                          Review
+                        </button>
+                      )}
+                    </div>
                   </div>
                 )) || []}
               </div>
@@ -758,6 +743,108 @@ const MyAccount = () => {
               setSelectedOrderForRefund(null);
             }}
           />
+        )}
+
+        {/* Write Review Modal */}
+        {showReviewModal && selectedProductForReview && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-gray-900">Write a Review</h3>
+                <button
+                  onClick={handleCloseReviewModal}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Product Info */}
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <p className="font-semibold text-gray-900">{selectedProductForReview.product_name}</p>
+              </div>
+
+              {/* Rating */}
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-3">Rating *</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewRating(star)}
+                      className="transition-transform hover:scale-110"
+                    >
+                      <Star
+                        className={`w-8 h-8 ${
+                          star <= reviewRating
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-gray-300'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                  <span className="ml-2 text-lg font-semibold text-gray-700">
+                    {reviewRating} / 5
+                  </span>
+                </div>
+              </div>
+
+              {/* Review Text */}
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Your Review *
+                </label>
+                <textarea
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  placeholder="Share your experience with this product... (minimum 10 characters)"
+                  rows={5}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none resize-none"
+                  maxLength={1000}
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  {reviewText.length} / 1000 characters {reviewText.length >= 10 ? '✓' : '(minimum 10)'}
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={handleCloseReviewModal}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmitReview}
+                  disabled={reviewSubmitting || reviewText.trim().length < 10}
+                  className={`flex-1 px-6 py-3 rounded-xl font-bold text-white transition-colors flex items-center justify-center gap-2 ${
+                    reviewSubmitting || reviewText.trim().length < 10
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-blue-500 hover:bg-blue-600'
+                  }`}
+                >
+                  {reviewSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <MessageSquare className="w-5 h-5" />
+                      Submit Review
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </div>
     );
