@@ -1,6 +1,32 @@
 const crypto = require('crypto');
 const Order = require('../models/Order');
 const { sendOrderInvoiceEmail } = require('../config/email');
+const db = require('../config/db');
+
+// Helper function to reduce product stock
+const reduceProductStock = async (orderId) => {
+  try {
+    // Get order items
+    const [items] = await db.query(
+      'SELECT product_id, quantity FROM order_items WHERE order_id = ?',
+      [orderId]
+    );
+
+    // Reduce stock for each product
+    for (const item of items) {
+      await db.query(
+        'UPDATE products SET stock_quantity = GREATEST(0, stock_quantity - ?) WHERE id = ?',
+        [item.quantity, item.product_id]
+      );
+      console.log(`📦 Reduced stock for product ${item.product_id} by ${item.quantity}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error reducing product stock:', error);
+    throw error;
+  }
+};
 
 const payhereController = {
     // Generate PayHere payment hash
@@ -97,13 +123,22 @@ const payhereController = {
           // Payment success
           console.log(`✅ PayHere payment successful for order: ${order_id}`);
 
-          // Update payment status to 'paid'
+          // Update payment status to 'paid' and reduce stock
           try {
             const orderDetails = await Order.getByOrderNumber(order_id);
 
             if (orderDetails) {
-              await Order.updatePaymentStatus(orderDetails.id, 'paid');
-              console.log(`💳 Payment status updated to 'paid' for order ${order_id}`);
+              // Check if payment was already processed
+              if (orderDetails.payment_status !== 'paid') {
+                await Order.updatePaymentStatus(orderDetails.id, 'paid');
+                console.log(`💳 Payment status updated to 'paid' for order ${order_id}`);
+
+                // Reduce product stock
+                await reduceProductStock(orderDetails.id);
+                console.log(`✅ Stock reduced for order ${order_id}`);
+              } else {
+                console.log(`⚠️  Payment already processed for order ${order_id}`);
+              }
             }
           } catch (updateError) {
             console.error('Failed to update payment status:', updateError);

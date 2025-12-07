@@ -39,4 +39,9 @@ router.put('/admin/:id/status', adminAuth, orderController.updateOrderStatus);
 // @access  Admin
 router.put('/admin/:id/payment', adminAuth, orderController.updatePaymentStatus);
 
+// @route   POST /api/orders/admin/cleanup-pending
+// @desc    Cleanup old pending orders
+// @access  Admin
+router.post('/admin/cleanup-pending', adminAuth, orderController.cleanupPendingOrders);
+
 module.exports = router;

@@ -136,4 +136,47 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+
+  // Start automatic cleanup of old pending orders (runs every 6 hours)
+  console.log('🧹 Setting up automatic cleanup for old pending orders...');
+  setInterval(async () => {
+    try {
+      console.log('🧹 Running automatic cleanup of old pending orders...');
+      const connection = await db.getConnection();
+
+      try {
+        await connection.beginTransaction();
+
+        // Delete order items for old pending orders
+        await connection.query(`
+          DELETE oi FROM order_items oi
+          INNER JOIN orders o ON oi.order_id = o.id
+          WHERE o.payment_status = 'pending'
+          AND o.created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)
+        `);
+
+        // Delete old pending orders
+        const [result] = await connection.query(`
+          DELETE FROM orders
+          WHERE payment_status = 'pending'
+          AND created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)
+        `);
+
+        await connection.commit();
+
+        if (result.affectedRows > 0) {
+          console.log(`🧹 Cleaned up ${result.affectedRows} old pending orders`);
+        } else {
+          console.log('🧹 No old pending orders to clean up');
+        }
+      } catch (error) {
+        await connection.rollback();
+        throw error;
+      } finally {
+        connection.release();
+      }
+    } catch (error) {
+      console.error('❌ Cleanup task error:', error);
+    }
+  }, 6 * 60 * 60 * 1000); // Every 6 hours
 });
