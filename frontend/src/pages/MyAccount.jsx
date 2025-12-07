@@ -531,9 +531,16 @@ const MyAccount = () => {
                   <div>
                     <p className="text-lg sm:text-xl md:text-2xl font-bold text-red-600">Rs. {parseFloat(order.total).toLocaleString()}</p>
                     {order.tracking_number && (
-                      <p className="text-xs text-blue-600 mt-1 font-medium">
-                        Track: {order.tracking_number}
-                      </p>
+                      <div className="mt-2 space-y-1">
+                        {order.courier_name && (
+                          <p className="text-xs text-gray-600 font-medium">
+                            Courier: {order.courier_name}
+                          </p>
+                        )}
+                        <p className="text-xs text-blue-600 font-medium">
+                          Tracking: {order.tracking_number}
+                        </p>
+                      </div>
                     )}
                   </div>
                   <button
@@ -579,6 +586,26 @@ const MyAccount = () => {
                   </p>
                 </div>
               </div>
+
+              {order.courier_name && (
+                <div className="flex items-start gap-2 sm:gap-3 p-2.5 sm:p-3 bg-purple-50 rounded-lg">
+                  <TruckIcon className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-500">Courier</p>
+                    <p className="text-xs sm:text-sm font-semibold text-gray-900 mt-1 break-words">{order.courier_name}</p>
+                  </div>
+                </div>
+              )}
+
+              {order.tracking_number && (
+                <div className="flex items-start gap-2 sm:gap-3 p-2.5 sm:p-3 bg-orange-50 rounded-lg">
+                  <Package className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-500">Tracking Number</p>
+                    <p className="text-xs sm:text-sm font-semibold text-gray-900 mt-1 break-words font-mono">{order.tracking_number}</p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Order Items */}
@@ -698,10 +725,6 @@ const MyAccount = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 mt-3 sm:mt-4">
-              <button className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 py-2.5 sm:py-2 px-4 rounded-lg font-semibold transition-colors text-sm sm:text-base">
-                <FileText className="w-4 h-4" />
-                View Invoice
-              </button>
               {order.status === 'Delivered' && (
                 <button
                   onClick={(e) => {

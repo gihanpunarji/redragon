@@ -94,7 +94,7 @@ const Checkout = () => {
     fetchDeliveryZones();
     fetchPaymentMethods();
     loadInitialData();
-    // setupPayHereCallbacks(); // Commented out for now
+    setupPayHereCallbacks();
   }, []);
 
   // Load provinces first, then user data
@@ -117,36 +117,38 @@ const Checkout = () => {
     }
   }, [paymentMethod, cartSubtotal, deliveryCharge]);
 
-  // Setup PayHere payment callbacks (commented out for now)
-  /*
+  // Setup PayHere payment callbacks
   const setupPayHereCallbacks = () => {
     const setupCallbacks = () => {
       if (window.payhere) {
         window.payhere.onCompleted = function onCompleted(orderId) {
-          setSuccess("Payment successful! Your order has been placed.");
+          console.log("PayHere payment completed for order:", orderId);
           // Clear cart after successful payment
           clearCart();
-          setTimeout(() => {
-            navigate('/account');
-          }, 3000);
+          // Redirect to payment success page with order details
+          navigate(`/payment/success?orderId=${orderId}&status=SUCCESS&paymentMethod=PayHere`);
         };
 
         window.payhere.onDismissed = function onDismissed() {
           setError("Payment was cancelled. Your order was not placed.");
+          setLoading(false);
+          setIsSubmitting(false);
         };
 
         window.payhere.onError = function onError(error) {
+          console.error("PayHere payment error:", error);
           setError("Payment failed. Please try again or use a different payment method.");
+          setLoading(false);
+          setIsSubmitting(false);
         };
       } else {
         // Retry after 1 second if PayHere not loaded yet
         setTimeout(setupCallbacks, 1000);
       }
     };
-    
+
     setupCallbacks();
   };
-  */
 
   const fetchDeliveryZones = async () => {
     try {
@@ -501,11 +503,7 @@ const Checkout = () => {
         }
 
         // Get backend URL for callbacks
-        const backendUrl =
-          process.env.REACT_APP_API_URL?.replace("/api", "") ||
-          "http://localhost:5001";
-        const frontendUrl = window.location.origin;
-
+        const backendUrl = process.env.REACT_APP_API_URL
         // Prepare Koko payment data
         const kokoPaymentData = {
           orderId: orderId,
@@ -560,23 +558,85 @@ const Checkout = () => {
         }
       }
 
-      const getPaymentMethodIcon = (methodName) => {
-        console.log("Getting icon for payment method:", methodName);
-        switch (methodName) {
-          case "card":
-          case "credit_card":
-          case "debit_card":
-            return <CreditCard className="w-5 h-5 text-red-500" />;
-          case "koko":
-            return <Wallet className="w-5 h-5 text-purple-500" />;
-          case "cod":
-            return <Building2 className="w-5 h-5 text-green-500" />;
-          case "bank_transfer":
-            return <Building2 className="w-5 h-5 text-blue-500" />;
-          default:
-            return <CreditCard className="w-5 h-5 text-gray-500" />;
+      // Handle PayHere Payment (Debit/Credit Card)
+      if (paymentMethod === "debit_card") {
+        // First create the order
+        const orderData = {
+          order_number: orderId,
+          subtotal: cartSubtotal,
+          shipping_fee: deliveryCharge,
+          payment_fee: paymentFee,
+          total: totalAmount,
+          payment_method: paymentMethod,
+          shipping_info: processedShippingInfo,
+          items: cartItems.map((item) => ({
+            product_id: item.id,
+            product_name: item.name,
+            product_image: item.primary_image,
+            price: item.sale_price || item.price,
+            quantity: item.quantity,
+            subtotal: (item.sale_price || item.price) * item.quantity,
+          })),
+        };
+
+        const orderResponse = await orderAPI.createOrder(orderData);
+
+        if (!orderResponse.data.success) {
+          throw new Error("Failed to create order");
         }
-      };
+
+        // Prepare PayHere payment data
+        const payhereData = {
+          order_id: orderId,
+          amount: totalAmount,
+          currency: "LKR",
+          first_name: shippingInfo.firstName,
+          last_name: shippingInfo.lastName,
+          email: shippingInfo.email,
+          phone: shippingInfo.phone,
+          address: shippingInfo.addressLine1,
+          city: processedShippingInfo.city,
+          country: "Sri Lanka",
+        };
+
+        // Get payment hash from backend
+        const hashResponse = await payhereAPI.generateHash(payhereData);
+
+        if (hashResponse.data.success) {
+          const payment = hashResponse.data.data;
+          console.log("payment", payment);
+
+          // Set payment session so user can access payment success page
+          sessionStorage.setItem("payment_session", "true");
+
+          // Start PayHere payment
+          window.payhere.startPayment({
+            sandbox: false,
+            merchant_id: payment.merchant_id,
+            return_url: payment.return_url,
+            cancel_url: payment.cancel_url,
+            notify_url: payment.notify_url,
+            order_id: payment.order_id,
+            items: `Order ${orderId}`,
+            amount: payment.amount,
+            currency: payment.currency,
+            hash: payment.hash,
+            first_name: payment.first_name,
+            last_name: payment.last_name,
+            email: payment.email,
+            phone: payment.phone,
+            address: payment.address,
+            city: payment.city,
+            country: payment.country,
+          });
+
+          // Don't reset isSubmitting here - wait for PayHere callbacks
+          // This prevents duplicate orders if user dismisses modal and clicks again
+          return;
+        } else {
+          throw new Error("Failed to initialize PayHere payment");
+        }
+      }
 
       // Handle other payment methods (future extensions)
       const orderData = {

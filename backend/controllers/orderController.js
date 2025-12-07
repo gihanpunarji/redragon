@@ -23,13 +23,32 @@ const orderController = {
       } = req.body;
       
       const customer_id = req.user.id;
-      
+
+      // Check if order already exists (prevent duplicates)
+      const [existingOrder] = await connection.query(
+        'SELECT id FROM orders WHERE order_number = ?',
+        [order_number]
+      );
+
+      if (existingOrder.length > 0) {
+        console.log(`Order ${order_number} already exists, skipping duplicate creation`);
+        await connection.commit();
+        return res.json({
+          success: true,
+          message: 'Order already exists',
+          data: {
+            order_id: existingOrder[0].id,
+            order_number
+          }
+        });
+      }
+
       // Get payment method ID
       const [paymentMethods] = await connection.query(
         'SELECT id FROM payment_methods WHERE slug = ?',
         [payment_method]
       );
-      
+
       if (paymentMethods.length === 0) {
         throw new Error('Invalid payment method');
       }
@@ -135,10 +154,11 @@ const orderController = {
         `SELECT
           o.id, o.order_number, o.subtotal, o.shipping_fee, o.discount,
           o.total, o.payment_status, o.order_status, o.created_at,
+          o.tracking_number, o.courier_name,
           pm.name as payment_method
         FROM orders o
         LEFT JOIN payment_methods pm ON o.payment_method_id = pm.id
-        WHERE o.customer_id = ? AND o.payment_status = 'paid'
+        WHERE o.customer_id = ?
         ORDER BY o.created_at DESC`,
         [customer_id]
       );
@@ -182,7 +202,7 @@ const orderController = {
           o.*, pm.name as payment_method
         FROM orders o
         LEFT JOIN payment_methods pm ON o.payment_method_id = pm.id
-        WHERE o.id = ? AND o.customer_id = ? AND o.payment_status = 'paid'`,
+        WHERE o.id = ? AND o.customer_id = ?`,
         [id, customer_id]
       );
       
@@ -289,7 +309,7 @@ const orderController = {
   updateOrderStatus: async (req, res) => {
     try {
       const { id } = req.params;
-      const { order_status } = req.body;
+      const { order_status, tracking_number, courier_name } = req.body;
 
       // Validate order status
       const validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
@@ -310,7 +330,7 @@ const orderController = {
       }
 
       // Update order status
-      const updated = await Order.updateStatus(id, order_status);
+      const updated = await Order.updateStatus(id, order_status, tracking_number, courier_name);
 
       if (!updated) {
         return res.status(400).json({

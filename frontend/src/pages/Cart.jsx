@@ -25,16 +25,11 @@ const Cart = () => {
   const {
     cartItems,
     loading,
-    error,
     cartSubtotal,
     shippingCost,
     cartTotal,
-    cartItemCount,
-    isFreeShippingEligible,
-    amountForFreeShipping,
     updateQuantity,
     removeFromCart,
-    clearCart
   } = useContext(CartContext);
   
   const [promoCode, setPromoCode] = useState("");
@@ -341,6 +336,12 @@ const Cart = () => {
                     <span className="text-gray-600 font-semibold">Subtotal</span>
                     <span className="font-black text-gray-900">
                       Rs. {cartSubtotal.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 font-semibold">Shipping</span>
+                    <span className="font-black text-gray-900">
+                      Rs. {shippingCost.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">                   

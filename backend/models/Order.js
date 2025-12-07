@@ -5,7 +5,7 @@ class Order {
   static async getAll(limit = 50, offset = 0) {
     try {
       const query = `
-        SELECT 
+        SELECT
           o.*,
           CONCAT(c.first_name, ' ', c.last_name) as customer_name,
           c.email as customer_email,
@@ -18,9 +18,11 @@ class Order {
           sa.province_name,
           sa.postal_code,
           sa.phone as shipping_phone,
-          CONCAT(sa.address_line1, 
+          o.tracking_number,
+          o.courier_name,
+          CONCAT(sa.address_line1,
                  CASE WHEN sa.address_line2 IS NOT NULL THEN CONCAT(', ', sa.address_line2) ELSE '' END,
-                 ', ', sa.city_name, ', ', sa.district_name, ', ', sa.province_name, 
+                 ', ', sa.city_name, ', ', sa.district_name, ', ', sa.province_name,
                  CASE WHEN sa.postal_code IS NOT NULL THEN CONCAT(' ', sa.postal_code) ELSE '' END
           ) as address
         FROM orders o
@@ -138,14 +140,17 @@ class Order {
   }
 
   // Update order status
-  static async updateStatus(orderId, orderStatus) {
+  static async updateStatus(orderId, orderStatus, trackingNumber = null, courierName = null) {
     try {
       const query = `
-        UPDATE orders 
-        SET order_status = ?, updated_at = CURRENT_TIMESTAMP 
+        UPDATE orders
+        SET order_status = ?,
+            tracking_number = COALESCE(?, tracking_number),
+            courier_name = COALESCE(?, courier_name),
+            updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
       `;
-      const [result] = await db.executeWithRetry(query, [orderStatus, orderId]);
+      const [result] = await db.executeWithRetry(query, [orderStatus, trackingNumber, courierName, orderId]);
       return result.affectedRows > 0;
     } catch (error) {
       throw error;

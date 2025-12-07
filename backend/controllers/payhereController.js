@@ -3,7 +3,7 @@ const Order = require('../models/Order');
 const { sendOrderInvoiceEmail } = require('../config/email');
 
 const payhereController = {
-  // Generate PayHere payment hash
+    // Generate PayHere payment hash
   generateHash: (req, res) => {
     try {
       const {
@@ -22,14 +22,24 @@ const payhereController = {
       const merchant_id = process.env.PAYHERE_MERCHANT_ID;
       const merchant_secret = process.env.PAYHERE_SECRET;
 
+      console.log('🔐 PayHere Hash Generation:');
+      console.log('Merchant ID:', merchant_id);
+      console.log('Order ID:', order_id);
+      console.log('Amount:', amount);
+      console.log('Currency:', currency);
+
       // PayHere hash generation format (updated 2023-01-16)
       const formatted_amount = parseFloat(amount).toFixed(2);
-      const merchant_secret_hash = crypto.createHash('md5').update(merchant_secret).digest('hex');
+      const merchant_secret_hash = crypto.createHash('md5').update(merchant_secret).digest('hex').toUpperCase();
       const hash_string = merchant_id + order_id + formatted_amount + currency + merchant_secret_hash;
-      
+
+      console.log('Formatted Amount:', formatted_amount);
+      console.log('Hash String:', hash_string);
+
       // Generate MD5 hash
       const hash = crypto.createHash('md5').update(hash_string).digest('hex').toUpperCase();
 
+      console.log('Generated Hash:', hash);
       res.json({
         success: true,
         data: {
@@ -85,7 +95,19 @@ const payhereController = {
         // Signature is valid
         if (status_code == 2) {
           // Payment success
-          console.log(`Payment successful for order: ${order_id}`);
+          console.log(`✅ PayHere payment successful for order: ${order_id}`);
+
+          // Update payment status to 'paid'
+          try {
+            const orderDetails = await Order.getByOrderNumber(order_id);
+
+            if (orderDetails) {
+              await Order.updatePaymentStatus(orderDetails.id, 'paid');
+              console.log(`💳 Payment status updated to 'paid' for order ${order_id}`);
+            }
+          } catch (updateError) {
+            console.error('Failed to update payment status:', updateError);
+          }
 
           // Send order confirmation email after successful payment
           try {

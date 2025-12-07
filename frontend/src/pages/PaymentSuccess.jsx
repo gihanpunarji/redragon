@@ -23,29 +23,30 @@ const PaymentSuccess = () => {
     try {
       setVerifying(true);
 
-      // Get Koko payment return parameters
+      // Get payment return parameters
       const orderId = searchParams.get('orderId');
       const trnId = searchParams.get('trnId');
       const status = searchParams.get('status');
+      const paymentMethod = searchParams.get('paymentMethod');
 
       if (orderId && status) {
-        // Koko payment return
+        // Payment return with order details
         const isSuccess = status === 'SUCCESS';
         setVerified(isSuccess);
 
         if (isSuccess) {
           setPaymentDetails({
             order_id: orderId,
-            transaction_id: trnId,
+            transaction_id: trnId || 'N/A',
             payment_status: 'Completed',
-            payment_method: 'Koko Payment'
+            payment_method: paymentMethod || 'Koko Payment'
           });
         } else {
           setError('Payment was not successful. Please check your email or contact support.');
           setVerified(false);
         }
       } else {
-        // General payment success (non-Koko)
+        // General payment success (no parameters)
         setVerified(true);
         setPaymentDetails({
           payment_status: 'Completed'
@@ -120,7 +121,7 @@ const PaymentSuccess = () => {
               transition={{ delay: 0.6 }}
               className="text-xl text-gray-600"
             >
-              Please wait while we confirm your payment with Koko Payment gateway.
+              Please wait while we confirm your payment.
             </motion.p>
           </motion.div>
         </div>
