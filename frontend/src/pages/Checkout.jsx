@@ -611,7 +611,7 @@ const Checkout = () => {
 
           // Start PayHere payment
           window.payhere.startPayment({
-            sandbox: true,
+            sandbox: false, // Live mode - set to true only for sandbox testing
             merchant_id: payment.merchant_id,
             return_url: payment.return_url,
             cancel_url: payment.cancel_url,

@@ -160,14 +160,29 @@ class Order {
   // Update payment status
   static async updatePaymentStatus(orderId, paymentStatus) {
     try {
-      const query = `
-        UPDATE orders 
-        SET payment_status = ?, 
-            paid_at = CASE WHEN ? = 'paid' THEN CURRENT_TIMESTAMP ELSE NULL END,
-            updated_at = CURRENT_TIMESTAMP 
-        WHERE id = ?
-      `;
-      const [result] = await db.executeWithRetry(query, [paymentStatus, paymentStatus, orderId]);
+      let query;
+      let params;
+
+      if (paymentStatus === 'paid') {
+        query = `
+          UPDATE orders
+          SET payment_status = ?,
+              paid_at = CURRENT_TIMESTAMP,
+              updated_at = CURRENT_TIMESTAMP
+          WHERE id = ?
+        `;
+        params = [paymentStatus, orderId];
+      } else {
+        query = `
+          UPDATE orders
+          SET payment_status = ?,
+              updated_at = CURRENT_TIMESTAMP
+          WHERE id = ?
+        `;
+        params = [paymentStatus, orderId];
+      }
+
+      const [result] = await db.executeWithRetry(query, params);
       return result.affectedRows > 0;
     } catch (error) {
       throw error;
