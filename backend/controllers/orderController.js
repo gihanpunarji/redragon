@@ -390,6 +390,52 @@ const orderController = {
         message: 'Server error. Please try again later.'
       });
     }
+  },
+
+  // Cleanup old pending orders (older than 24 hours)
+  cleanupPendingOrders: async (req, res) => {
+    try {
+      const connection = await db.getConnection();
+
+      try {
+        await connection.beginTransaction();
+
+        // Delete order items for old pending orders
+        await connection.query(`
+          DELETE oi FROM order_items oi
+          INNER JOIN orders o ON oi.order_id = o.id
+          WHERE o.payment_status = 'pending'
+          AND o.created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)
+        `);
+
+        // Delete old pending orders
+        const [result] = await connection.query(`
+          DELETE FROM orders
+          WHERE payment_status = 'pending'
+          AND created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)
+        `);
+
+        await connection.commit();
+
+        console.log(`🧹 Cleaned up ${result.affectedRows} old pending orders`);
+
+        res.json({
+          success: true,
+          message: `Cleaned up ${result.affectedRows} old pending orders`
+        });
+      } catch (error) {
+        await connection.rollback();
+        throw error;
+      } finally {
+        connection.release();
+      }
+    } catch (error) {
+      console.error('Cleanup pending orders error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to cleanup pending orders'
+      });
+    }
   }
 };
 

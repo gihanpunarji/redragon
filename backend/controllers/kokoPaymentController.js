@@ -3,6 +3,31 @@ const db = require('../config/db');
 const Order = require('../models/Order');
 const { sendOrderInvoiceEmail } = require('../config/email');
 
+// Helper function to reduce product stock
+const reduceProductStock = async (orderId) => {
+  try {
+    // Get order items
+    const [items] = await db.query(
+      'SELECT product_id, quantity FROM order_items WHERE order_id = ?',
+      [orderId]
+    );
+
+    // Reduce stock for each product
+    for (const item of items) {
+      await db.query(
+        'UPDATE products SET stock_quantity = GREATEST(0, stock_quantity - ?) WHERE id = ?',
+        [item.quantity, item.product_id]
+      );
+      console.log(`📦 Reduced stock for product ${item.product_id} by ${item.quantity}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error reducing product stock:', error);
+    throw error;
+  }
+};
+
 const kokoPaymentController = {
   // Create Koko payment order
   createOrder: async (req, res) => {
@@ -168,13 +193,27 @@ const kokoPaymentController = {
 
       try {
         if (status === 'SUCCESS') {
-          // Update payment status to paid
-          await connection.query(
-            `UPDATE orders SET payment_status = 'paid', updated_at = NOW()
-             WHERE order_number = ?`,
+          // Check if payment was already processed
+          const [existingOrder] = await connection.query(
+            'SELECT id, payment_status FROM orders WHERE order_number = ?',
             [orderId]
           );
-          console.log(`Koko payment successful for order: ${orderId}, transaction: ${trnId}`);
+
+          if (existingOrder.length > 0 && existingOrder[0].payment_status !== 'paid') {
+            // Update payment status to paid
+            await connection.query(
+              `UPDATE orders SET payment_status = 'paid', updated_at = NOW()
+               WHERE order_number = ?`,
+              [orderId]
+            );
+            console.log(`Koko payment successful for order: ${orderId}, transaction: ${trnId}`);
+
+            // Reduce product stock
+            await reduceProductStock(existingOrder[0].id);
+            console.log(`✅ Stock reduced for order ${orderId}`);
+          } else if (existingOrder.length > 0) {
+            console.log(`⚠️  Payment already processed for order ${orderId}`);
+          }
 
           // Send order confirmation email after successful payment
           try {
