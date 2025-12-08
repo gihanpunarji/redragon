@@ -98,6 +98,10 @@ const payhereController = {
   // Handle PayHere payment notification
   handleNotification: async (req, res) => {
     try {
+      console.log('🔔 PayHere notification received');
+      console.log('📥 Request body:', JSON.stringify(req.body, null, 2));
+      console.log('📥 Request headers:', JSON.stringify(req.headers, null, 2));
+
       const {
         merchant_id,
         order_id,
@@ -108,6 +112,14 @@ const payhereController = {
       } = req.body;
 
       const merchant_secret = process.env.PAYHERE_SECRET;
+
+      console.log('🔐 Verifying PayHere notification:');
+      console.log('Merchant ID from PayHere:', merchant_id);
+      console.log('Merchant ID in env:', process.env.PAYHERE_MERCHANT_ID);
+      console.log('Order ID:', order_id);
+      console.log('Amount:', payhere_amount);
+      console.log('Currency:', payhere_currency);
+      console.log('Status Code:', status_code);
       
       // Verify the signature (updated format)
       const merchant_secret_hash = crypto.createHash('md5').update(merchant_secret).digest('hex');

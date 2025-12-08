@@ -38,6 +38,21 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
+// Allow PayHere webhooks without CORS restrictions
+app.use((req, res, next) => {
+  if (req.path === '/api/payhere/notify') {
+    // PayHere webhooks should bypass CORS
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') {
+      return res.sendStatus(200);
+    }
+    return next();
+  }
+  next();
+});
+
 app.use(cors(corsOptions));
 
 app.use(
