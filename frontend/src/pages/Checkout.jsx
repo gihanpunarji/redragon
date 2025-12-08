@@ -514,9 +514,9 @@ const Checkout = () => {
           email: shippingInfo.email,
           mobile: shippingInfo.phone,
           productDescription: `Order ${orderId} - ${cartItems.length} items`,
-          returnUrl: `${backendUrl}/api/payment/koko/return`,
-          cancelUrl: `${backendUrl}/api/payment/koko/cancel`,
-          responseUrl: `${backendUrl}/api/payment/koko/response`,
+          returnUrl: `${backendUrl}/payment/koko/return`,
+          cancelUrl: `${backendUrl}/payment/koko/cancel`,
+          responseUrl: `${backendUrl}/payment/koko/response`,
         };
 
         console.log("🔍 Koko Payment URLs:", {
