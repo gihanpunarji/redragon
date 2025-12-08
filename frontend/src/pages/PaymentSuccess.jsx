@@ -5,7 +5,8 @@ import { CheckCircle, Package, ArrowRight, Loader, AlertCircle } from "lucide-re
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ParticleEffect from "../components/common/ParticleEffect";
-import { kokoPaymentAPI } from "../services/api";
+import { kokoPaymentAPI, orderAPI } from "../services/api";
+import CartContext from "../context/CartContext";
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
@@ -19,6 +20,9 @@ const PaymentSuccess = () => {
     verifyPayment();
   }, []);
 
+  // Get clearCart from context
+  const { clearCart } = React.useContext(CartContext);
+
   const verifyPayment = async () => {
     try {
       setVerifying(true);
@@ -29,34 +33,67 @@ const PaymentSuccess = () => {
       const status = searchParams.get('status');
       const paymentMethod = searchParams.get('paymentMethod');
 
-      if (orderId && status) {
-        // Payment return with order details
-        const isSuccess = status === 'SUCCESS';
+      if (orderId) {
+        // Poll for order status to confirm payment (webhook might have slight delay)
+        let attempts = 0;
+        const maxAttempts = 5;
+        let isPaid = false;
+        let orderDetails = null;
+
+        while (attempts < maxAttempts && !isPaid) {
+          try {
+            const response = await orderAPI.getOrderById(orderId);
+            if (response.data && response.data.success) {
+              orderDetails = response.data.data || response.data.order;
+              // Check if payment_status is 'paid'
+              if (orderDetails.payment_status === 'paid') {
+                isPaid = true;
+                break;
+              }
+            }
+          } catch (e) {
+            console.warn('Error fetching order status:', e);
+          }
+          
+          attempts++;
+          if (!isPaid) {
+             // Wait 2 seconds before next attempt
+             await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+        }
+
+        // Determine success based on Backend DB status (preferred) or URL params (fallback)
+        const isSuccess = isPaid || status === 'SUCCESS';
         setVerified(isSuccess);
 
         if (isSuccess) {
           setPaymentDetails({
             order_id: orderId,
-            transaction_id: trnId || 'N/A',
+            transaction_id: trnId || orderDetails?.transaction_id || 'N/A',
             payment_status: 'Completed',
-            payment_method: paymentMethod || 'Koko Payment'
+            payment_method: paymentMethod || orderDetails?.payment_method || 'Koko Payment'
           });
+          
+          // Clear cart only on confirmed success
+           clearCart();
         } else {
-          setError('Payment was not successful. Please check your email or contact support.');
+          setError('Payment verification pending or failed. Please check your email for confirmation.');
+          // Don't mark as failed immediately if status says success but DB doesn't update yet
+          // But here we failed both checks
           setVerified(false);
         }
       } else {
-        // General payment success (no parameters)
+        // General payment success (no parameters) - fallback
         setVerified(true);
         setPaymentDetails({
           payment_status: 'Completed'
         });
+        clearCart();
       }
     } catch (err) {
       console.error('Payment verification error:', err);
       setError('Unable to verify payment. Please check your email for confirmation.');
-      // Don't fail the page - payment may have succeeded even if verification fails
-      setVerified(true);
+      setVerified(true); // Fallback to success view to not panic user
     } finally {
       setVerifying(false);
     }

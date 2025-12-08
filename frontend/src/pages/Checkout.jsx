@@ -547,11 +547,7 @@ const Checkout = () => {
           setLoading(false);
           setIsSubmitting(false);
 
-          // Clear cart after a short delay to allow form to render
-          setTimeout(async () => {
-            await clearCart();
-          }, 1000);
-
+          
           return;
         } else {
           throw new Error("Failed to initialize Koko Payment");
