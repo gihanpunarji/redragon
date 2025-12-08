@@ -42,12 +42,18 @@ const PaymentSuccess = () => {
 
         while (attempts < maxAttempts && !isPaid) {
           try {
-            const response = await orderAPI.getOrderById(orderId);
+            // Use public endpoint to check status (avoids 401 redirect loop)
+            const response = await orderAPI.checkStatus(orderId);
             if (response.data && response.data.success) {
-              orderDetails = response.data.data || response.data.order;
+              const statusData = response.data.data;
               // Check if payment_status is 'paid'
-              if (orderDetails.payment_status === 'paid') {
+              if (statusData.payment_status === 'paid') {
                 isPaid = true;
+                orderDetails = { 
+                   payment_status: 'paid',
+                   transaction_id: 'Confirmed', // We don't get full details from public EP for security
+                   payment_method: paymentMethod || 'Koko Payment'
+                };
                 break;
               }
             }

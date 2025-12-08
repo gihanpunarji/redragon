@@ -6,6 +6,7 @@ const { auth, adminAuth } = require('../middleware/auth');
 router.post('/', auth, orderController.createOrder);
 router.get('/', auth, orderController.getUserOrders);
 router.get('/:id', auth, orderController.getOrderById);
+router.get('/public/status/:orderId', orderController.checkOrderStatus);
 router.get('/admin/all', adminAuth, orderController.getAllOrdersForAdmin);
 router.get('/admin/:id', adminAuth, orderController.getOrderByIdForAdmin);
 router.put('/admin/:id/status', adminAuth, orderController.updateOrderStatus);

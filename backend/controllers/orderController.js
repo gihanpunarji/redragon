@@ -436,7 +436,40 @@ const orderController = {
         message: 'Failed to cleanup pending orders'
       });
     }
-  }
+  },
+
+  // Check order status (public endpoint for payment success page)
+  checkOrderStatus: async (req, res) => {
+    try {
+      const { orderId } = req.params;
+      
+      const [orde] = await db.query(
+        'SELECT payment_status, order_status FROM orders WHERE order_number = ?',
+        [orderId]
+      );
+
+      if (orde.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'Order not found'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: {
+          payment_status: orde[0].payment_status,
+          order_status: orde[0].order_status
+        }
+      });
+    } catch (error) {
+      console.error('Error checking order status:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to check status'
+      });
+    }
+  },
 };
 
 module.exports = orderController;

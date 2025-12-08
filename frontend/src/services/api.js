@@ -230,6 +230,9 @@ export const orderAPI = {
   
   // Get order by ID
   getOrderById: (id) => api.get(`/orders/${id}`),
+
+  // Check order status (public)
+  checkStatus: (orderId) => api.get(`/orders/public/status/${orderId}`),
 };
 
 // Wishlist API functions
