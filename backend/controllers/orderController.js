@@ -31,7 +31,6 @@ const orderController = {
       );
 
       if (existingOrder.length > 0) {
-        console.log(`Order ${order_number} already exists, skipping duplicate creation`);
         await connection.commit();
         return res.json({
           success: true,
@@ -147,8 +146,6 @@ const orderController = {
   getUserOrders: async (req, res) => {
     try {
       const customer_id = req.user.id;
-      console.log('req.user object:', req.user);
-      console.log('Fetching orders for customer_id:', customer_id);
       
       const [orders] = await db.query(
         `SELECT
@@ -163,9 +160,6 @@ const orderController = {
         [customer_id]
       );
       
-      console.log('Found orders:', orders.length);
-      console.log('Orders data:', orders);
-      
       // Get order items for each order
       for (let order of orders) {
         const [items] = await db.query(
@@ -174,7 +168,6 @@ const orderController = {
           [order.id]
         );
         order.items = items;
-        console.log(`Order ${order.id} has ${items.length} items`);
       }
       
       res.json({

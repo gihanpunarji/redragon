@@ -97,13 +97,34 @@ const payhereController = {
           // Payment success
           console.log(`✅ PayHere payment successful for order: ${order_id}`);
 
-          // Update payment status to 'paid'
+          // Update payment status to 'paid' and reduce stock
           try {
             const orderDetails = await Order.getByOrderNumber(order_id);
 
             if (orderDetails) {
-              await Order.updatePaymentStatus(orderDetails.id, 'paid');
-              console.log(`💳 Payment status updated to 'paid' for order ${order_id}`);
+              // Check if already processed
+              if (orderDetails.payment_status !== 'paid') {
+                // Update payment status to 'paid'
+                await Order.updatePaymentStatus(orderDetails.id, 'paid');
+                console.log(`💳 Payment status updated to 'paid' for order ${order_id}`);
+
+                // Reduce stock for each product
+                const [items] = await db.query(
+                  'SELECT product_id, quantity FROM order_items WHERE order_id = ?',
+                  [orderDetails.id]
+                );
+
+                for (const item of items) {
+                  await db.query(
+                    'UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?',
+                    [item.quantity, item.product_id]
+                  );
+                  console.log(`📦 Reduced stock for product ${item.product_id} by ${item.quantity}`);
+                }
+                console.log(`✅ Stock reduced for order ${order_id}`);
+              } else {
+                console.log(`⚠️  Payment already processed for order ${order_id}`);
+              }
             }
           } catch (updateError) {
             console.error('Failed to update payment status:', updateError);
