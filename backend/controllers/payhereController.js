@@ -83,7 +83,7 @@ const payhereController = {
           country,
           return_url: `${process.env.FRONTEND_URL}/payment/success`,
           cancel_url: `${process.env.FRONTEND_URL}/payment/cancel`,
-          notify_url: `${req.protocol}://${req.get('host')}/api/payhere/notify`
+          notify_url: `${process.env.BACKEND_URL}/api/payhere/notify`
         }
       });
     } catch (error) {
