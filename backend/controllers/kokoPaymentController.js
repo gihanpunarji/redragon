@@ -410,7 +410,14 @@ function generateSignature(dataString, privateKey) {
     const sign = crypto.createSign('RSA-SHA256');
     sign.update(dataString);
     sign.end();
-    const signature = sign.sign(cleanPrivateKey);
+
+    // Use the key with format specification to ensure compatibility
+    const signature = sign.sign({
+      key: cleanPrivateKey,
+      format: 'pem',
+      type: 'pkcs1'
+    });
+
     return signature.toString('base64');
   } catch (error) {
     console.error('Signature generation error:', error);
