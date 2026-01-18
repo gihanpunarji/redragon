@@ -203,7 +203,6 @@ const OrderList = () => {
               <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700 whitespace-nowrap">Customer</th>
               <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700 whitespace-nowrap">Date</th>
               <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700 whitespace-nowrap">Total (Rs.)</th>
-              <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700 whitespace-nowrap">Pay Status</th>
               <th className="p-3 md:p-4 text-xs md:text-sm font-semibold text-gray-700 whitespace-nowrap">Status</th>
             </tr>
           </thead>
@@ -228,15 +227,6 @@ const OrderList = () => {
                   <td className="p-3 md:p-4 text-xs md:text-sm whitespace-nowrap">{order.customer}</td>
                   <td className="p-3 md:p-4 text-xs md:text-sm whitespace-nowrap">{order.date}</td>
                   <td className="p-3 md:p-4 text-xs md:text-sm font-medium whitespace-nowrap">Rs. {order.total.toLocaleString()}</td>
-                  <td className="p-3 md:p-4 text-xs md:text-sm whitespace-nowrap">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      order.payment_status === 'paid' ? 'bg-green-100 text-green-800' : 
-                      order.payment_status === 'refunded' ? 'bg-gray-100 text-gray-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {order.payment_status ? (order.payment_status.charAt(0).toUpperCase() + order.payment_status.slice(1)) : 'Pending'}
-                    </span>
-                  </td>
                   <td className="p-3 md:p-4 text-xs md:text-sm">
                     <span className={`px-2 md:px-3 py-1 rounded-full font-semibold whitespace-nowrap inline-block ${
                       order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :

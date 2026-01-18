@@ -559,28 +559,7 @@ const SingleProductView = () => {
                     </span>
                   )}
               </div>
-              <p className="text-xs sm:text-sm text-gray-600 font-semibold">
-                Inclusive of all taxes • Free Shipping
-              </p>
-            </div>
-
-            {/* Stock Information */}
-            <div className="bg-green-50 p-4 rounded-xl border border-green-200">
-              <div className="flex items-center gap-2">
-                {product.stock_quantity > 0 ? (
-                  <>
-                    <Check className="w-5 h-5 text-green-600" />
-                    <span className="text-green-800 font-bold">
-                      In Stock ({product.stock_quantity} available)
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <X className="w-5 h-5 text-red-600" />
-                    <span className="text-red-800 font-bold">Out of Stock</span>
-                  </>
-                )}
-              </div>
+              
             </div>
 
             {/* Quantity Selector */}

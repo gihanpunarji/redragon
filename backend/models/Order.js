@@ -193,7 +193,7 @@ class Order {
   static async getByStatus(status, limit = 50, offset = 0) {
     try {
       const query = `
-        SELECT 
+        SELECT
           o.*,
           CONCAT(c.first_name, ' ', c.last_name) as customer_name,
           c.email as customer_email,
@@ -206,9 +206,9 @@ class Order {
           sa.province_name,
           sa.postal_code,
           sa.phone as shipping_phone,
-          CONCAT(sa.address_line1, 
+          CONCAT(sa.address_line1,
                  CASE WHEN sa.address_line2 IS NOT NULL THEN CONCAT(', ', sa.address_line2) ELSE '' END,
-                 ', ', sa.city_name, ', ', sa.district_name, ', ', sa.province_name, 
+                 ', ', sa.city_name, ', ', sa.district_name, ', ', sa.province_name,
                  CASE WHEN sa.postal_code IS NOT NULL THEN CONCAT(' ', sa.postal_code) ELSE '' END
           ) as address
         FROM orders o
@@ -230,7 +230,7 @@ class Order {
   static async search(searchTerm, limit = 50, offset = 0) {
     try {
       const query = `
-        SELECT 
+        SELECT
           o.*,
           CONCAT(c.first_name, ' ', c.last_name) as customer_name,
           c.email as customer_email,
@@ -243,16 +243,16 @@ class Order {
           sa.province_name,
           sa.postal_code,
           sa.phone as shipping_phone,
-          CONCAT(sa.address_line1, 
+          CONCAT(sa.address_line1,
                  CASE WHEN sa.address_line2 IS NOT NULL THEN CONCAT(', ', sa.address_line2) ELSE '' END,
-                 ', ', sa.city_name, ', ', sa.district_name, ', ', sa.province_name, 
+                 ', ', sa.city_name, ', ', sa.district_name, ', ', sa.province_name,
                  CASE WHEN sa.postal_code IS NOT NULL THEN CONCAT(' ', sa.postal_code) ELSE '' END
           ) as address
         FROM orders o
         LEFT JOIN customers c ON o.customer_id = c.customer_id
         LEFT JOIN payment_methods pm ON o.payment_method_id = pm.id
         LEFT JOIN shipping_addresses sa ON o.shipping_address_id = sa.id
-        WHERE o.order_number LIKE ? 
+        WHERE o.order_number LIKE ?
            OR CONCAT(c.first_name, ' ', c.last_name) LIKE ?
            OR c.email LIKE ?
         ORDER BY o.created_at DESC

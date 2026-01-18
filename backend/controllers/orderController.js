@@ -76,10 +76,10 @@ const orderController = {
         shipping_address_id = addressResult.insertId;
       }
       
-      // Insert order with shipping_address_id
+      // Insert order with shipping_address_id (pending status until payment succeeds)
       const [orderResult] = await connection.query(
         `INSERT INTO orders (
-          order_number, customer_id, subtotal, shipping_fee, discount, total, 
+          order_number, customer_id, subtotal, shipping_fee, discount, total,
           payment_method_id, payment_status, order_status, shipping_address_id, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, NOW(), NOW())`,
         [
