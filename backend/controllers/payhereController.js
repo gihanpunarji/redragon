@@ -29,7 +29,7 @@ const reduceProductStock = async (orderId) => {
 };
 
 const payhereController = {
-    // Generate PayHere payment hash
+  // Generate PayHere payment hash
   generateHash: (req, res) => {
     try {
       const {
@@ -120,9 +120,9 @@ const payhereController = {
       console.log('Amount:', payhere_amount);
       console.log('Currency:', payhere_currency);
       console.log('Status Code:', status_code);
-      
+
       // Verify the signature (updated format)
-      const merchant_secret_hash = crypto.createHash('md5').update(merchant_secret).digest('hex');
+      const merchant_secret_hash = crypto.createHash('md5').update(merchant_secret).digest('hex').toUpperCase();
       const local_md5sig = crypto
         .createHash('md5')
         .update(merchant_id + order_id + payhere_amount + payhere_currency + status_code + merchant_secret_hash)
@@ -201,7 +201,7 @@ const payhereController = {
           // Payment failed or cancelled
           console.log(`Payment failed for order: ${order_id}, status: ${status_code}`);
         }
-        
+
         res.status(200).send('OK');
       } else {
         console.log('Invalid signature in PayHere notification');
