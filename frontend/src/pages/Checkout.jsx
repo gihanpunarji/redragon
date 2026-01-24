@@ -1179,11 +1179,11 @@ const Checkout = () => {
                           <p className="text-xs text-gray-600 mt-1">
                             {method.description}
                           </p>
-                          {method.method_name === "koko_payment" && (
+                          {/* {method.method_name === "koko_payment" && (
                             <p className="text-xs font-semibold text-amber-600 mt-2 bg-amber-50 px-2 py-1 rounded">
                               ⚠️ Koko payment is currently under development
                             </p>
-                          )}
+                          )} */}
                           {/* <p className="text-xs font-semibold text-red-600 mt-1">
                             {getPaymentMethodInfo(method.method_name)}
                           </p> */}

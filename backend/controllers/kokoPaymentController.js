@@ -60,7 +60,17 @@ const kokoPaymentController = {
       const privateKey = process.env.KOKO_PRIVATE_KEY;
       const pluginName = process.env.KOKO_PLUGIN_NAME || 'customapi';
       const pluginVersion = process.env.KOKO_PLUGIN_VERSION || '1.0.1';
-      const kokoApiUrl = process.env.KOKO_QA_API_URL || 'https://qaapi.paykoko.com';
+      const kokoApiUrl = process.env.KOKO_API_URL || (process.env.NODE_ENV === 'production'
+        ? (process.env.KOKO_PROD_API_URL || 'https://prodapi.paykoko.com')
+        : (process.env.KOKO_QA_API_URL || 'https://qaapi.paykoko.com'));
+
+      console.log('🔌 Koko Payment Config:', {
+        merchantId,
+        pluginName,
+        pluginVersion,
+        kokoApiUrl,
+        mode: process.env.NODE_ENV
+      });
 
       // Validate credentials
       if (!merchantId || !apiKey || !privateKey) {
@@ -104,6 +114,8 @@ const kokoPaymentController = {
         productDescription +
         apiKey +
         responseUrl;
+
+      console.log('🔐 Generated Signature Data String:', JSON.stringify(dataString));
 
       // Generate signature using RSA-SHA256
       const signature = generateSignature(dataString, privateKey);
