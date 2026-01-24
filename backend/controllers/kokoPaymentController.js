@@ -55,33 +55,39 @@ const kokoPaymentController = {
       }
 
       // Get Koko credentials from environment
-      const merchantId = process.env.KOKO_MERCHANT_ID;
-      const apiKey = process.env.KOKO_API_KEY;
+      const merchantId = (process.env.KOKO_MERCHANT_ID || '').trim();
+      const apiKey = (process.env.KOKO_API_KEY || '').trim();
       const privateKey = process.env.KOKO_PRIVATE_KEY;
-      const pluginName = process.env.KOKO_PLUGIN_NAME || 'customapi';
-      const pluginVersion = process.env.KOKO_PLUGIN_VERSION || '1.0.1';
-      const kokoApiUrl = process.env.KOKO_API_URL || (process.env.NODE_ENV === 'production'
+      const pluginName = (process.env.KOKO_PLUGIN_NAME || 'customapi').trim();
+      const pluginVersion = (process.env.KOKO_PLUGIN_VERSION || '1.0.1').trim();
+
+      // Clean API URL - remove potential leading colons/spaces from bad copy-paste
+      let kokoApiUrlRaw = process.env.KOKO_API_URL || (process.env.NODE_ENV === 'production'
         ? (process.env.KOKO_PROD_API_URL || 'https://prodapi.paykoko.com')
         : (process.env.KOKO_QA_API_URL || 'https://qaapi.paykoko.com'));
 
-      console.log('🔌 Koko Payment Config:', {
-        merchantId,
-        pluginName,
-        pluginVersion,
-        kokoApiUrl,
+      const kokoApiUrl = kokoApiUrlRaw.replace(/^[:\s]+/, '').trim();
+
+      console.log('🔌 Koko Payment Config Loaded:', {
+        merchantIdMasked: merchantId ? `${merchantId.substring(0, 4)}...${merchantId.substring(merchantId.length - 4)}` : 'MISSING',
+        url: kokoApiUrl,
         mode: process.env.NODE_ENV
       });
 
       // Validate credentials
-      if (!merchantId || !apiKey || !privateKey) {
-        console.error('Missing KOKO credentials:', {
-          hasMerchantId: !!merchantId,
-          hasApiKey: !!apiKey,
-          hasPrivateKey: !!privateKey
-        });
-        return res.status(400).json({
+      if (!merchantId) {
+        console.error('CRITICAL: KOKO_MERCHANT_ID is missing in environment variables.');
+        return res.status(500).json({
           success: false,
-          message: 'Koko Payment credentials not configured'
+          message: 'Server Configuration Error: KOKO_MERCHANT_ID is missing. Please check Vercel Environment Variables.'
+        });
+      }
+
+      if (!apiKey || !privateKey) {
+        console.error('Missing KOKO API Key or Private Key');
+        return res.status(500).json({
+          success: false,
+          message: 'Server Configuration Error: Koko API Key or Private Key is missing.'
         });
       }
 
