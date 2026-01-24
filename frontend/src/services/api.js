@@ -213,11 +213,11 @@ export const payhereAPI = {
 
 // Koko Payment API functions
 export const kokoPaymentAPI = {
-  // Initialize Koko Payment
-  initializePayment: (paymentData) => api.post('/koko-payment/initialize', paymentData),
+  // Create Koko payment order
+  createOrder: (paymentData) => api.post('/payment/koko/create', paymentData),
 
-  // Verify payment status
-  verifyPayment: (verifyData) => api.post('/koko-payment/verify', verifyData),
+  // Check payment status
+  checkStatus: (statusData) => api.post('/payment/koko/check-status', statusData),
 };
 
 // Order API functions
@@ -230,6 +230,9 @@ export const orderAPI = {
   
   // Get order by ID
   getOrderById: (id) => api.get(`/orders/${id}`),
+
+  // Check order status (public)
+  checkStatus: (orderId) => api.get(`/orders/public/status/${orderId}`),
 };
 
 // Wishlist API functions
@@ -292,6 +295,22 @@ const publicCarouselAPI = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+
+// Product Promotional Messages API functions
+export const productPromoAPI = {
+  // Get active promotional messages (public endpoint) - using main route
+  getActivePromos: () => api.get('/product-promo/active'),
+
+  // Admin functions (require admin auth)
+  getAllPromos: () => api.get('/product-promo/admin/all'),
+  getPromoById: (id) => api.get(`/product-promo/admin/${id}`),
+  createPromo: (data) => api.post('/product-promo/admin/create', data),
+  updatePromo: (id, data) => api.put(`/product-promo/admin/${id}`, data),
+  deletePromo: (id) => api.delete(`/product-promo/admin/${id}`),
+  togglePromoActive: (id, isActive) => api.patch(`/product-promo/admin/${id}/toggle`, { is_active: isActive }),
+  initializeTable: () => api.post('/product-promo/admin/initialize'),
+};
 
 // Carousel API functions
 export const carouselAPI = {

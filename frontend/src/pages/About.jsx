@@ -299,13 +299,13 @@ const About = () => {
             {
               icon: MapPin,
               title: "Visit Us",
-              info: "123 Gaming Street, Colombo 07, Sri Lanka",
+              info: "3F18, 3rd Floor, Unity, Plaza, Bambalapitiya, Colombo 04",
               color: "from-red-500 to-red-600",
             },
             {
               icon: Phone,
               title: "Call Us",
-              info: "+94 11 234 5678",
+              info: "+94 77 76 24 028",
               color: "from-blue-500 to-blue-600",
             },
             {

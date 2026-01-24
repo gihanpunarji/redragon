@@ -5,22 +5,37 @@ import { adminApi } from '../../../../utils/adminApi';
 
 const OrderDetailsModal = ({ order, onClose, setOrders }) => {
   const [trackingNumber, setTrackingNumber] = useState(order.trackingNumber || '');
+  const [courierName, setCourierName] = useState(order.curierName || '');
   const [updating, setUpdating] = useState(false);
 
   const updateStatus = async (newStatus) => {
     try {
       setUpdating(true);
-      
-      // Call backend API to update order status
-      const response = await adminApi.put(`/orders/admin/${order.id}/status`, {
+
+      // Prepare request body
+      const requestBody = {
         order_status: newStatus.toLowerCase()
-      });
-      
+      };
+
+      // Add tracking info if status is shipped
+      if (newStatus.toLowerCase() === 'shipped') {
+        requestBody.tracking_number = trackingNumber || null;
+        requestBody.courier_name = courierName || null;
+      }
+
+      // Call backend API to update order status
+      const response = await adminApi.put(`/orders/admin/${order.id}/status`, requestBody);
+
       if (response.success) {
         // Update local state only if API call succeeds
-        setOrders(prevOrders => prevOrders.map(o => 
-          o.id === order.id 
-            ? { ...o, status: newStatus, trackingNumber: newStatus === 'Shipped' ? trackingNumber : o.trackingNumber } 
+        setOrders(prevOrders => prevOrders.map(o =>
+          o.id === order.id
+            ? {
+                ...o,
+                status: newStatus,
+                trackingNumber: newStatus === 'Shipped' ? trackingNumber : o.trackingNumber,
+                courierName: newStatus === 'Shipped' ? courierName : o.courierName
+              }
             : o
         ));
         onClose();
@@ -69,6 +84,7 @@ const OrderDetailsModal = ({ order, onClose, setOrders }) => {
               <p><strong>Date:</strong> {order.date}</p>
               <p><strong>Total:</strong> Rs. {order.total.toLocaleString()}</p>
               <p><strong>Status:</strong> {order.status}</p>
+              <p><strong>Payment Method:</strong> {order.payment_method_name || order.payment_method || 'N/A'}</p>
             </div>
           </div>
           <div className="mt-8">
@@ -115,6 +131,16 @@ const OrderDetailsModal = ({ order, onClose, setOrders }) => {
             )}
             {order.status === 'Processing' && (
               <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-500">Curier</label>
+                  <input 
+                    type="text" 
+                    value={courierName} 
+                    onChange={(e) => setCourierName(e.target.value)} 
+                    disabled={updating}
+                    className="w-full mt-1 px-4 py-2 text-gray-800 bg-blue-100 border-2 border-blue-200 rounded-lg disabled:opacity-50" 
+                  />
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-500">Tracking Number</label>
                   <input 

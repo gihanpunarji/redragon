@@ -230,7 +230,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               className="text-blue-500 font-bold"
             >
-              ZipZipy
+              ZipZipy (pvt) ltd
             </a>
           </p>
         </div>

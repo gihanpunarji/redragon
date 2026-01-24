@@ -148,7 +148,7 @@ const Wishlist = () => {
               </motion.button>
 
               <motion.a
-                href="/"
+                href="/products"
                 whileHover={{ scale: 1.05, x: -5 }}
                 className="hidden md:flex items-center gap-2 bg-white text-red-600 px-6 py-3 rounded-xl font-black uppercase text-sm shadow-xl hover:shadow-2xl transition-all"
               >

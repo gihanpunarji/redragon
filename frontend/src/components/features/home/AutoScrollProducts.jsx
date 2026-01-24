@@ -14,7 +14,7 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
   const { width } = useWindowDimensions();
 
   const { cardWidth, gap } = useMemo(() => ({
-    cardWidth: width < 768 ? 250 : 300,
+    cardWidth: width < 768 ? 160 : 300,
     gap: width < 768 ? 16 : 24
   }), [width]);
 
@@ -72,6 +72,7 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
         if (nextIndex >= products.length) {
           setTimeout(() => {
             if (scrollContainer) {
+            
               scrollContainer.style.scrollBehavior = 'auto';
               scrollContainer.scrollLeft = 0;
               setTimeout(() => {
@@ -149,7 +150,7 @@ const AutoScrollProducts = memo(({ products, bg_color }) => {
         {products.map((product, index) => (
           <motion.div
             key={product.id}
-            className={`flex-shrink-0 ${width < 768 ? 'w-64' : 'w-72'} cursor-pointer`}
+            className={`flex-shrink-0 ${width < 768 ? 'w-40' : 'w-72'} cursor-pointer`}
             whileHover={{ y: -12, scale: 1.08 }}
             transition={{ type: "easeOut", duration: 0.25 }}
           >

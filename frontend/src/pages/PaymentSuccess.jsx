@@ -5,7 +5,8 @@ import { CheckCircle, Package, ArrowRight, Loader, AlertCircle } from "lucide-re
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ParticleEffect from "../components/common/ParticleEffect";
-import { kokoPaymentAPI } from "../services/api";
+import { kokoPaymentAPI, orderAPI } from "../services/api";
+import CartContext from "../context/CartContext";
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
@@ -19,45 +20,86 @@ const PaymentSuccess = () => {
     verifyPayment();
   }, []);
 
+  // Get clearCart from context
+  const { clearCart } = React.useContext(CartContext);
+
   const verifyPayment = async () => {
     try {
       setVerifying(true);
 
-      // Get order details from URL parameters or session storage
-      const orderId = searchParams.get('order_id');
-      const sessionId = searchParams.get('session_id');
+      // Get payment return parameters
+      const orderId = searchParams.get('orderId');
+      const trnId = searchParams.get('trnId');
+      const status = searchParams.get('status');
+      const paymentMethod = searchParams.get('paymentMethod');
 
-      // Or retrieve from session storage if available
-      const storedOrderId = sessionId || sessionStorage.getItem('koko_order_id');
-      const storedSessionId = sessionId || sessionStorage.getItem('koko_session_id');
+      if (orderId) {
+        // Poll for order status to confirm payment (webhook might have slight delay)
+        let attempts = 0;
+        const maxAttempts = 5;
+        let isPaid = false;
+        let orderDetails = null;
 
-      if (storedOrderId && storedSessionId) {
-        // Verify payment with Koko
-        const response = await kokoPaymentAPI.verifyPayment({
-          order_id: storedOrderId,
-          session_id: storedSessionId
-        });
-
-        if (response.data.success) {
-          setVerified(response.data.data.is_paid);
-          setPaymentDetails(response.data.data);
-
-          if (!response.data.data.is_paid) {
-            setError('Payment verification pending. Please check your email for confirmation.');
+        while (attempts < maxAttempts && !isPaid) {
+          try {
+            // Use public endpoint to check status (avoids 401 redirect loop)
+            const response = await orderAPI.checkStatus(orderId);
+            if (response.data && response.data.success) {
+              const statusData = response.data.data;
+              // Check if payment_status is 'paid'
+              if (statusData.payment_status === 'paid') {
+                isPaid = true;
+                orderDetails = { 
+                   payment_status: 'paid',
+                   transaction_id: 'Confirmed', // We don't get full details from public EP for security
+                   payment_method: paymentMethod || 'Koko Payment'
+                };
+                break;
+              }
+            }
+          } catch (e) {
+            console.warn('Error fetching order status:', e);
           }
+          
+          attempts++;
+          if (!isPaid) {
+             // Wait 2 seconds before next attempt
+             await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+        }
+
+        // Determine success based on Backend DB status (preferred) or URL params (fallback)
+        const isSuccess = isPaid || status === 'SUCCESS';
+        setVerified(isSuccess);
+
+        if (isSuccess) {
+          setPaymentDetails({
+            order_id: orderId,
+            transaction_id: trnId || orderDetails?.transaction_id || 'N/A',
+            payment_status: 'Completed',
+            payment_method: paymentMethod || orderDetails?.payment_method || 'Koko Payment'
+          });
+          
+          // Clear cart only on confirmed success
+           clearCart();
         } else {
-          setError('Unable to verify payment status. Please check your email or account.');
+          setError('Payment verification pending or failed. Please check your email for confirmation.');
+          // Don't mark as failed immediately if status says success but DB doesn't update yet
+          // But here we failed both checks
+          setVerified(false);
         }
       } else {
-        // No order details found - payment may still be processing
-        setVerified(false);
-        setError('Payment is being processed. You will receive a confirmation email shortly.');
+        // General payment success (no parameters) - fallback
+        setVerified(true);
+        setPaymentDetails({
+          payment_status: 'Completed'
+        });
+        clearCart();
       }
     } catch (err) {
       console.error('Payment verification error:', err);
       setError('Unable to verify payment. Please check your email for confirmation.');
-      // Don't fail the page - payment may have succeeded even if verification fails
-      setVerified(true);
+      setVerified(true); // Fallback to success view to not panic user
     } finally {
       setVerifying(false);
     }
@@ -122,7 +164,7 @@ const PaymentSuccess = () => {
               transition={{ delay: 0.6 }}
               className="text-xl text-gray-600"
             >
-              Please wait while we confirm your payment with Koko Payment gateway.
+              Please wait while we confirm your payment.
             </motion.p>
           </motion.div>
         </div>
@@ -214,9 +256,21 @@ const PaymentSuccess = () => {
             {/* Payment Details (if available) */}
             {paymentDetails && (
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <p className="text-sm text-gray-500 mb-2">
-                  <span className="font-semibold">Order ID:</span> {paymentDetails.order_id}
-                </p>
+                {paymentDetails.order_id && (
+                  <p className="text-sm text-gray-500 mb-2">
+                    <span className="font-semibold">Order ID:</span> {paymentDetails.order_id}
+                  </p>
+                )}
+                {paymentDetails.transaction_id && (
+                  <p className="text-sm text-gray-500 mb-2">
+                    <span className="font-semibold">Transaction ID:</span> {paymentDetails.transaction_id}
+                  </p>
+                )}
+                {paymentDetails.payment_method && (
+                  <p className="text-sm text-gray-500 mb-2">
+                    <span className="font-semibold">Payment Method:</span> {paymentDetails.payment_method}
+                  </p>
+                )}
                 <p className="text-sm text-gray-500">
                   <span className="font-semibold">Status:</span> {paymentDetails.payment_status}
                 </p>
@@ -239,7 +293,7 @@ const PaymentSuccess = () => {
               <ArrowRight className="w-5 h-5" />
             </button>
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/products')}
               className="px-8 py-4 bg-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-300 transition-colors"
             >
               Continue Shopping

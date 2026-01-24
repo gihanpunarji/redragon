@@ -15,13 +15,13 @@ const PaymentRoute = ({ children }) => {
     const referrer = document.referrer;
     const hasValidSession = sessionStorage.getItem('payment_session');
     const hasValidState = location.state?.fromCheckout;
-    
+
     // Allow access if:
     // 1. User has a valid payment session
     // 2. User came from checkout (state)
     // 3. User navigated from checkout/cart page
-    const hasValidAccess = hasValidSession || 
-                          hasValidState || 
+    const hasValidAccess = hasValidSession ||
+                          hasValidState ||
                           validSources.some(source => referrer.includes(source));
 
     if (!hasValidAccess) {

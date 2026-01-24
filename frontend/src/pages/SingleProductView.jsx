@@ -512,9 +512,7 @@ const SingleProductView = () => {
               <span className="text-xs sm:text-sm font-bold text-white bg-red-500 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full uppercase tracking-wider">
                 {product.brand_name || product.brand}
               </span>
-              <span className="text-xs sm:text-sm font-semibold text-gray-600 flex items-center gap-1">
-                <Shield className="w-3 h-3 sm:w-4 sm:h-4" />1 Year Warranty
-              </span>
+              
             </div>
 
             {/* Product Name */}
@@ -561,28 +559,7 @@ const SingleProductView = () => {
                     </span>
                   )}
               </div>
-              <p className="text-xs sm:text-sm text-gray-600 font-semibold">
-                Inclusive of all taxes • Free Shipping
-              </p>
-            </div>
-
-            {/* Stock Information */}
-            <div className="bg-green-50 p-4 rounded-xl border border-green-200">
-              <div className="flex items-center gap-2">
-                {product.stock_quantity > 0 ? (
-                  <>
-                    <Check className="w-5 h-5 text-green-600" />
-                    <span className="text-green-800 font-bold">
-                      In Stock ({product.stock_quantity} available)
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <X className="w-5 h-5 text-red-600" />
-                    <span className="text-red-800 font-bold">Out of Stock</span>
-                  </>
-                )}
-              </div>
+              
             </div>
 
             {/* Quantity Selector */}
@@ -615,7 +592,44 @@ const SingleProductView = () => {
                   </span>
                 )}
               </div>
+
             </div>
+
+            {/* Koko Payment Option - Buy Now Pay Later */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-white p-4 sm:p-5 rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all"
+            >
+              <div className="flex items-center justify-between gap-4">
+                {/* Left Section - Koko Branding */}
+                <div className="flex items-center gap-3">
+                  <img
+                    src="/images/payment_methods/koko.png"
+                    alt="Koko Payment"
+                    className="h-8 w-auto object-contain"
+                  />
+                  <div>
+                    <p className="text-xs sm:text-sm text-gray-600 font-semibold">
+                      3x Installment with koko
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right Section - Installment Price */}
+                <div className="text-right">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl sm:text-3xl font-black text-gray-900">
+                      Rs.{" "}
+                      {Math.ceil(
+                        (parseFloat(product.sale_price || product.price) * 1.14) / 3
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
 
             {/* Action Buttons */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-4">

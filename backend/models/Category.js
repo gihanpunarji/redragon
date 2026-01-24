@@ -32,7 +32,8 @@ class Category {
         LEFT JOIN main_categories mc ON sc.main_category_id = mc.id
         ORDER BY mc.name ASC, sc.name ASC
       `;
-      const [rows] = await db.executeWithRetry(query);
+      // Use queryWithRetry instead of executeWithRetry to avoid potential parameter issues with empty arrays
+      const [rows] = await db.queryWithRetry(query);
       return rows || [];
       
     } catch (error) {

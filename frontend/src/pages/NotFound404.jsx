@@ -140,7 +140,7 @@ const NotFound404 = () => {
               href="mailto:info@redragoncolombo.lk"
               className="text-red-600 hover:text-red-700 font-bold uppercase tracking-wide transition-colors"
             >
-              📧 Support@redragoncolombo.lk
+              📧 info@redragoncolombo.lk
             </a>
           </motion.div>
         </motion.div>

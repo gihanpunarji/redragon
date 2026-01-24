@@ -23,13 +23,31 @@ const orderController = {
       } = req.body;
       
       const customer_id = req.user.id;
-      
+
+      // Check if order already exists (prevent duplicates)
+      const [existingOrder] = await connection.query(
+        'SELECT id FROM orders WHERE order_number = ?',
+        [order_number]
+      );
+
+      if (existingOrder.length > 0) {
+        await connection.commit();
+        return res.json({
+          success: true,
+          message: 'Order already exists',
+          data: {
+            order_id: existingOrder[0].id,
+            order_number
+          }
+        });
+      }
+
       // Get payment method ID
       const [paymentMethods] = await connection.query(
         'SELECT id FROM payment_methods WHERE slug = ?',
         [payment_method]
       );
-      
+
       if (paymentMethods.length === 0) {
         throw new Error('Invalid payment method');
       }
@@ -58,10 +76,10 @@ const orderController = {
         shipping_address_id = addressResult.insertId;
       }
       
-      // Insert order with shipping_address_id
+      // Insert order with shipping_address_id (pending status until payment succeeds)
       const [orderResult] = await connection.query(
         `INSERT INTO orders (
-          order_number, customer_id, subtotal, shipping_fee, discount, total, 
+          order_number, customer_id, subtotal, shipping_fee, discount, total,
           payment_method_id, payment_status, order_status, shipping_address_id, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, NOW(), NOW())`,
         [
@@ -98,38 +116,10 @@ const orderController = {
       }
       
       await connection.commit();
-      
-      // Send invoice email to customer
-      try {
-        // Get complete order details for email
-        const orderDetails = await Order.getById(order_id);
-        
-        if (orderDetails && orderDetails.customer_email) {
-          await sendOrderInvoiceEmail(orderDetails.customer_email, {
-            order_number: orderDetails.order_number,
-            customer_name: orderDetails.customer_name,
-            total: orderDetails.total,
-            subtotal: orderDetails.subtotal,
-            shipping_fee: orderDetails.shipping_fee,
-            payment_fee: orderDetails.discount, // Using discount field for payment_fee
-            created_at: orderDetails.created_at,
-            payment_method_name: orderDetails.payment_method_name,
-            items: orderDetails.items,
-            address: orderDetails.address,
-            city_name: orderDetails.city_name,
-            district_name: orderDetails.district_name,
-            province_name: orderDetails.province_name,
-            postal_code: orderDetails.postal_code,
-            shipping_phone: orderDetails.shipping_phone
-          });
-          
-          console.log(`Invoice email sent successfully to ${orderDetails.customer_email} for order ${order_number}`);
-        }
-      } catch (emailError) {
-        // Don't fail the order creation if email fails
-        console.error('Failed to send invoice email:', emailError);
-      }
-      
+
+      // Note: Invoice email will be sent after payment confirmation
+      // Email is triggered by payment gateway webhooks (KOKO/PayHere)
+
       res.json({
         success: true,
         message: 'Order created successfully',
@@ -156,13 +146,12 @@ const orderController = {
   getUserOrders: async (req, res) => {
     try {
       const customer_id = req.user.id;
-      console.log('req.user object:', req.user);
-      console.log('Fetching orders for customer_id:', customer_id);
       
       const [orders] = await db.query(
-        `SELECT 
+        `SELECT
           o.id, o.order_number, o.subtotal, o.shipping_fee, o.discount,
           o.total, o.payment_status, o.order_status, o.created_at,
+          o.tracking_number, o.courier_name,
           pm.name as payment_method
         FROM orders o
         LEFT JOIN payment_methods pm ON o.payment_method_id = pm.id
@@ -170,9 +159,6 @@ const orderController = {
         ORDER BY o.created_at DESC`,
         [customer_id]
       );
-      
-      console.log('Found orders:', orders.length);
-      console.log('Orders data:', orders);
       
       // Get order items for each order
       for (let order of orders) {
@@ -182,7 +168,6 @@ const orderController = {
           [order.id]
         );
         order.items = items;
-        console.log(`Order ${order.id} has ${items.length} items`);
       }
       
       res.json({
@@ -206,7 +191,7 @@ const orderController = {
       const customer_id = req.user.id;
       
       const [orders] = await db.query(
-        `SELECT 
+        `SELECT
           o.*, pm.name as payment_method
         FROM orders o
         LEFT JOIN payment_methods pm ON o.payment_method_id = pm.id
@@ -317,7 +302,7 @@ const orderController = {
   updateOrderStatus: async (req, res) => {
     try {
       const { id } = req.params;
-      const { order_status } = req.body;
+      const { order_status, tracking_number, courier_name } = req.body;
 
       // Validate order status
       const validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
@@ -338,7 +323,7 @@ const orderController = {
       }
 
       // Update order status
-      const updated = await Order.updateStatus(id, order_status);
+      const updated = await Order.updateStatus(id, order_status, tracking_number, courier_name);
 
       if (!updated) {
         return res.status(400).json({
@@ -405,7 +390,86 @@ const orderController = {
         message: 'Server error. Please try again later.'
       });
     }
-  }
+  },
+
+  // Cleanup old pending orders (older than 24 hours)
+  cleanupPendingOrders: async (req, res) => {
+    try {
+      const connection = await db.getConnection();
+
+      try {
+        await connection.beginTransaction();
+
+        // Delete order items for old pending orders
+        await connection.query(`
+          DELETE oi FROM order_items oi
+          INNER JOIN orders o ON oi.order_id = o.id
+          WHERE o.payment_status = 'pending'
+          AND o.created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)
+        `);
+
+        // Delete old pending orders
+        const [result] = await connection.query(`
+          DELETE FROM orders
+          WHERE payment_status = 'pending'
+          AND created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)
+        `);
+
+        await connection.commit();
+
+        console.log(`🧹 Cleaned up ${result.affectedRows} old pending orders`);
+
+        res.json({
+          success: true,
+          message: `Cleaned up ${result.affectedRows} old pending orders`
+        });
+      } catch (error) {
+        await connection.rollback();
+        throw error;
+      } finally {
+        connection.release();
+      }
+    } catch (error) {
+      console.error('Cleanup pending orders error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to cleanup pending orders'
+      });
+    }
+  },
+
+  // Check order status (public endpoint for payment success page)
+  checkOrderStatus: async (req, res) => {
+    try {
+      const { orderId } = req.params;
+      
+      const [orde] = await db.query(
+        'SELECT payment_status, order_status FROM orders WHERE order_number = ?',
+        [orderId]
+      );
+
+      if (orde.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'Order not found'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: {
+          payment_status: orde[0].payment_status,
+          order_status: orde[0].order_status
+        }
+      });
+    } catch (error) {
+      console.error('Error checking order status:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to check status'
+      });
+    }
+  },
 };
 
 module.exports = orderController;

@@ -1,4 +1,32 @@
 const crypto = require('crypto');
+const Order = require('../models/Order');
+const { sendOrderInvoiceEmail } = require('../config/email');
+const db = require('../config/db');
+
+// Helper function to reduce product stock
+const reduceProductStock = async (orderId) => {
+  try {
+    // Get order items
+    const [items] = await db.query(
+      'SELECT product_id, quantity FROM order_items WHERE order_id = ?',
+      [orderId]
+    );
+
+    // Reduce stock for each product
+    for (const item of items) {
+      await db.query(
+        'UPDATE products SET stock_quantity = GREATEST(0, stock_quantity - ?) WHERE id = ?',
+        [item.quantity, item.product_id]
+      );
+      console.log(`📦 Reduced stock for product ${item.product_id} by ${item.quantity}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error reducing product stock:', error);
+    throw error;
+  }
+};
 
 const payhereController = {
   // Generate PayHere payment hash
@@ -20,14 +48,24 @@ const payhereController = {
       const merchant_id = process.env.PAYHERE_MERCHANT_ID;
       const merchant_secret = process.env.PAYHERE_SECRET;
 
+      console.log('🔐 PayHere Hash Generation:');
+      console.log('Merchant ID:', merchant_id);
+      console.log('Order ID:', order_id);
+      console.log('Amount:', amount);
+      console.log('Currency:', currency);
+
       // PayHere hash generation format (updated 2023-01-16)
       const formatted_amount = parseFloat(amount).toFixed(2);
-      const merchant_secret_hash = crypto.createHash('md5').update(merchant_secret).digest('hex');
+      const merchant_secret_hash = crypto.createHash('md5').update(merchant_secret).digest('hex').toUpperCase();
       const hash_string = merchant_id + order_id + formatted_amount + currency + merchant_secret_hash;
-      
+
+      console.log('Formatted Amount:', formatted_amount);
+      console.log('Hash String:', hash_string);
+
       // Generate MD5 hash
       const hash = crypto.createHash('md5').update(hash_string).digest('hex').toUpperCase();
 
+      console.log('Generated Hash:', hash);
       res.json({
         success: true,
         data: {
@@ -45,7 +83,7 @@ const payhereController = {
           country,
           return_url: `${process.env.FRONTEND_URL}/payment/success`,
           cancel_url: `${process.env.FRONTEND_URL}/payment/cancel`,
-          notify_url: `${req.protocol}://${req.get('host')}/api/payhere/notify`
+          notify_url: `${process.env.BACKEND_URL}/api/payhere/notify`
         }
       });
     } catch (error) {
@@ -58,8 +96,12 @@ const payhereController = {
   },
 
   // Handle PayHere payment notification
-  handleNotification: (req, res) => {
+  handleNotification: async (req, res) => {
     try {
+      console.log('🔔 PayHere notification received');
+      console.log('📥 Request body:', JSON.stringify(req.body, null, 2));
+      console.log('📥 Request headers:', JSON.stringify(req.headers, null, 2));
+
       const {
         merchant_id,
         order_id,
@@ -70,9 +112,17 @@ const payhereController = {
       } = req.body;
 
       const merchant_secret = process.env.PAYHERE_SECRET;
-      
+
+      console.log('🔐 Verifying PayHere notification:');
+      console.log('Merchant ID from PayHere:', merchant_id);
+      console.log('Merchant ID in env:', process.env.PAYHERE_MERCHANT_ID);
+      console.log('Order ID:', order_id);
+      console.log('Amount:', payhere_amount);
+      console.log('Currency:', payhere_currency);
+      console.log('Status Code:', status_code);
+
       // Verify the signature (updated format)
-      const merchant_secret_hash = crypto.createHash('md5').update(merchant_secret).digest('hex');
+      const merchant_secret_hash = crypto.createHash('md5').update(merchant_secret).digest('hex').toUpperCase();
       const local_md5sig = crypto
         .createHash('md5')
         .update(merchant_id + order_id + payhere_amount + payhere_currency + status_code + merchant_secret_hash)
@@ -83,13 +133,75 @@ const payhereController = {
         // Signature is valid
         if (status_code == 2) {
           // Payment success
-          console.log(`Payment successful for order: ${order_id}`);
-          // TODO: Update order status in database
+          console.log(`✅ PayHere payment successful for order: ${order_id}`);
+
+          // Update payment status to 'paid' and reduce stock
+          // Update payment status to 'paid' and reduce stock
+          try {
+            const orderDetails = await Order.getByOrderNumber(order_id);
+
+            if (orderDetails) {
+              // Check if already processed
+              if (orderDetails.payment_status !== 'paid') {
+                // Update payment status to 'paid'
+                await Order.updatePaymentStatus(orderDetails.id, 'paid');
+                console.log(`💳 Payment status updated to 'paid' for order ${order_id}`);
+
+                // Reduce stock for each product
+                const [items] = await db.query(
+                  'SELECT product_id, quantity FROM order_items WHERE order_id = ?',
+                  [orderDetails.id]
+                );
+
+                for (const item of items) {
+                  await db.query(
+                    'UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?',
+                    [item.quantity, item.product_id]
+                  );
+                  console.log(`📦 Reduced stock for product ${item.product_id} by ${item.quantity}`);
+                }
+                console.log(`✅ Stock reduced for order ${order_id}`);
+              } else {
+                console.log(`⚠️  Payment already processed for order ${order_id}`);
+              }
+            }
+          } catch (updateError) {
+            console.error('Failed to update payment status:', updateError);
+          }
+
+          // Send order confirmation email after successful payment
+          try {
+            const orderDetails = await Order.getByOrderNumber(order_id);
+
+            if (orderDetails && orderDetails.customer_email) {
+              await sendOrderInvoiceEmail(orderDetails.customer_email, {
+                order_number: orderDetails.order_number,
+                customer_name: orderDetails.customer_name,
+                total: orderDetails.total,
+                subtotal: orderDetails.subtotal,
+                shipping_fee: orderDetails.shipping_fee,
+                payment_fee: orderDetails.discount,
+                created_at: orderDetails.created_at,
+                payment_method_name: orderDetails.payment_method_name,
+                items: orderDetails.items,
+                address: orderDetails.address,
+                city_name: orderDetails.city_name,
+                district_name: orderDetails.district_name,
+                province_name: orderDetails.province_name,
+                postal_code: orderDetails.postal_code,
+                shipping_phone: orderDetails.shipping_phone
+              });
+
+              console.log(`Order confirmation email sent to ${orderDetails.customer_email} for order ${order_id}`);
+            }
+          } catch (emailError) {
+            console.error('Failed to send order confirmation email:', emailError);
+          }
         } else {
           // Payment failed or cancelled
           console.log(`Payment failed for order: ${order_id}, status: ${status_code}`);
         }
-        
+
         res.status(200).send('OK');
       } else {
         console.log('Invalid signature in PayHere notification');

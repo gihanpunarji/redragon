@@ -2,8 +2,20 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  CreditCard, Wallet, Building2, Check, ShoppingBag,
-  MapPin, Phone, Mail, User, Home, ArrowLeft, Lock, Package, TruckIcon
+  CreditCard,
+  Wallet,
+  Building2,
+  Check,
+  ShoppingBag,
+  MapPin,
+  Phone,
+  Mail,
+  User,
+  Home,
+  ArrowLeft,
+  Lock,
+  Package,
+  TruckIcon,
 } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
@@ -11,13 +23,23 @@ import WhatsAppButton from "../components/common/WhatsAppButton";
 import ParticleEffect from "../components/common/ParticleEffect";
 import ErrorPopup from "../components/common/ErrorPopup";
 import SuccessPopup from "../components/common/SuccessPopup";
+import KokoPaymentForm from "../components/common/KokoPaymentForm";
 import CartContext from "../context/CartContext";
-import api, { locationAPI, authAPI, addressAPI, payhereAPI, kokoPaymentAPI, orderAPI } from "../services/api";
+import api, {
+  locationAPI,
+  authAPI,
+  addressAPI,
+  payhereAPI,
+  kokoPaymentAPI,
+  orderAPI,
+} from "../services/api";
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { cartItems, cartSubtotal, totalWeight, clearCart } = useContext(CartContext);
-  
+  const { cartItems, cartSubtotal, totalWeight, clearCart } = useContext(
+    CartContext
+  );
+
   const [step, setStep] = useState(1); // 1: Shipping, 2: Payment, 3: Review
   const [paymentMethod, setPaymentMethod] = useState("");
   const [deliveryZones, setDeliveryZones] = useState([]);
@@ -30,6 +52,7 @@ const Checkout = () => {
   const [error, setError] = useState(null);
   const [paymentMethodError, setPaymentMethodError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [kokoFormData, setKokoFormData] = useState(null);
 
   // Location data
   const [provinces, setProvinces] = useState([]);
@@ -51,7 +74,6 @@ const Checkout = () => {
     country: "Sri Lanka",
   });
 
-
   const [cardInfo, setCardInfo] = useState({
     cardNumber: "",
     cardName: "",
@@ -60,19 +82,19 @@ const Checkout = () => {
   });
 
   // Fetch delivery zones, payment methods, and location data on mount
-  // Redirect to cart if cart is empty
+  // Redirect to cart if cart is empty (but not if we're processing Koko payment)
   useEffect(() => {
-    if (cartItems.length === 0) {
-      navigate('/cart', { replace: true });
+    if (cartItems.length === 0 && !kokoFormData) {
+      navigate("/cart", { replace: true });
       return;
     }
-  }, [cartItems, navigate]);
+  }, [cartItems, navigate, kokoFormData]);
 
   useEffect(() => {
     fetchDeliveryZones();
     fetchPaymentMethods();
     loadInitialData();
-    // setupPayHereCallbacks(); // Commented out for now
+    setupPayHereCallbacks();
   }, []);
 
   // Load provinces first, then user data
@@ -95,55 +117,57 @@ const Checkout = () => {
     }
   }, [paymentMethod, cartSubtotal, deliveryCharge]);
 
-  // Setup PayHere payment callbacks (commented out for now)
-  /*
+  // Setup PayHere payment callbacks
   const setupPayHereCallbacks = () => {
     const setupCallbacks = () => {
       if (window.payhere) {
         window.payhere.onCompleted = function onCompleted(orderId) {
-          setSuccess("Payment successful! Your order has been placed.");
+          console.log("PayHere payment completed for order:", orderId);
           // Clear cart after successful payment
           clearCart();
-          setTimeout(() => {
-            navigate('/account');
-          }, 3000);
+          // Redirect to payment success page with order details
+          navigate(`/payment/success?orderId=${orderId}&status=SUCCESS&paymentMethod=PayHere`);
         };
 
         window.payhere.onDismissed = function onDismissed() {
           setError("Payment was cancelled. Your order was not placed.");
+          setLoading(false);
+          setIsSubmitting(false);
         };
 
         window.payhere.onError = function onError(error) {
+          console.error("PayHere payment error:", error);
           setError("Payment failed. Please try again or use a different payment method.");
+          setLoading(false);
+          setIsSubmitting(false);
         };
       } else {
         // Retry after 1 second if PayHere not loaded yet
         setTimeout(setupCallbacks, 1000);
       }
     };
-    
+
     setupCallbacks();
   };
-  */
 
   const fetchDeliveryZones = async () => {
     try {
-      const response = await api.get('/delivery/zones');
+      const response = await api.get("/delivery/zones");
       setDeliveryZones(response.data);
       if (response.data.length > 0) {
         setSelectedZone(response.data[0].id);
       }
     } catch (error) {
-      console.error('Error fetching delivery zones:', error);
+      console.error("Error fetching delivery zones:", error);
     }
   };
 
   const fetchPaymentMethods = async () => {
     try {
-      const response = await api.get('/delivery/payment-methods');
+      const response = await api.get("/delivery/payment-methods");
       setPaymentMethods(response.data);
     } catch (error) {
-      console.error('Error fetching payment methods:', error);
+      console.error("Error fetching payment methods:", error);
     }
   };
 
@@ -155,7 +179,7 @@ const Checkout = () => {
       const provincesData = response.data.data || response.data;
       setProvinces(Array.isArray(provincesData) ? provincesData : []);
     } catch (error) {
-      console.error('Error fetching provinces:', error);
+      console.error("Error fetching provinces:", error);
       setProvinces([]);
     }
   };
@@ -167,9 +191,9 @@ const Checkout = () => {
       const districtsData = response.data.data || response.data;
       setDistricts(Array.isArray(districtsData) ? districtsData : []);
       setCities([]); // Clear cities when province changes
-      setShippingInfo(prev => ({ ...prev, district: '', city: '' }));
+      setShippingInfo((prev) => ({ ...prev, district: "", city: "" }));
     } catch (error) {
-      console.error('Error fetching districts:', error);
+      console.error("Error fetching districts:", error);
       setDistricts([]);
     }
   };
@@ -180,9 +204,9 @@ const Checkout = () => {
       // Handle the response structure {success: true, data: [...]}
       const citiesData = response.data.data || response.data;
       setCities(Array.isArray(citiesData) ? citiesData : []);
-      setShippingInfo(prev => ({ ...prev, city: '' }));
+      setShippingInfo((prev) => ({ ...prev, city: "" }));
     } catch (error) {
-      console.error('Error fetching cities:', error);
+      console.error("Error fetching cities:", error);
       setCities([]);
     }
   };
@@ -191,7 +215,7 @@ const Checkout = () => {
   const fetchUserDataAndAddress = async () => {
     try {
       // Check if user is authenticated
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
         return; // Guest checkout, no data to fetch
       }
@@ -205,21 +229,20 @@ const Checkout = () => {
       try {
         const addressResponse = await addressAPI.getDefaultAddress();
         addressData = addressResponse.data.data || addressResponse.data;
-      } catch (addressError) {
-      }
+      } catch (addressError) {}
 
       // Populate shipping info with user data
       const shippingData = {
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.email || '',
-        phone: addressData?.phone || user.phone || '',
-        addressLine1: addressData?.address_line1 || '',
-        addressLine2: addressData?.address_line2 || '',
-        province: '',
-        district: '',
-        city: '',
-        postalCode: addressData?.postal_code || '',
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        phone: addressData?.phone || user.phone || "",
+        addressLine1: addressData?.address_line1 || "",
+        addressLine2: addressData?.address_line2 || "",
+        province: "",
+        district: "",
+        city: "",
+        postalCode: addressData?.postal_code || "",
         country: "Sri Lanka",
       };
 
@@ -229,16 +252,14 @@ const Checkout = () => {
       if (addressData && addressData.province_name) {
         await populateLocationDropdowns(addressData);
       }
-
     } catch (error) {
-      console.error('Error fetching user data and address:', error);
+      console.error("Error fetching user data and address:", error);
     }
   };
 
   // Helper function to populate location dropdowns with proper sequencing
   const populateLocationDropdowns = async (addressData) => {
     try {
-      
       // Ensure provinces are loaded
       let provincesData = provinces;
       if (provincesData.length === 0) {
@@ -247,94 +268,104 @@ const Checkout = () => {
         setProvinces(provincesData);
       }
 
-
       // Find and set province
-      const foundProvince = provincesData.find(p => p.name === addressData.province_name);
-      
+      const foundProvince = provincesData.find(
+        (p) => p.name === addressData.province_name
+      );
+
       if (foundProvince) {
         // Fetch and set districts
-        const districtsResponse = await locationAPI.getDistrictsByProvince(foundProvince.id);
-        const districtsData = districtsResponse.data.data || districtsResponse.data;
+        const districtsResponse = await locationAPI.getDistrictsByProvince(
+          foundProvince.id
+        );
+        const districtsData =
+          districtsResponse.data.data || districtsResponse.data;
         setDistricts(districtsData);
 
         // Find and set district
         if (addressData.district_name) {
-          const foundDistrict = districtsData.find(d => d.name === addressData.district_name);
-          
+          const foundDistrict = districtsData.find(
+            (d) => d.name === addressData.district_name
+          );
+
           if (foundDistrict) {
             // Fetch and set cities
-            const citiesResponse = await locationAPI.getCitiesByDistrict(foundDistrict.id);
+            const citiesResponse = await locationAPI.getCitiesByDistrict(
+              foundDistrict.id
+            );
             const citiesData = citiesResponse.data.data || citiesResponse.data;
             setCities(citiesData);
 
             // Find and set city
             if (addressData.city_name) {
-              const foundCity = citiesData.find(c => c.city_name === addressData.city_name);
-              
+              const foundCity = citiesData.find(
+                (c) => c.city_name === addressData.city_name
+              );
+
               if (foundCity) {
                 // Update all location selections at once
-                setShippingInfo(prev => ({
+                setShippingInfo((prev) => ({
                   ...prev,
                   province: foundProvince.id,
                   district: foundDistrict.id,
-                  city: foundCity.city_id
+                  city: foundCity.city_id,
                 }));
               }
             } else {
               // Set province and district only
-              setShippingInfo(prev => ({
+              setShippingInfo((prev) => ({
                 ...prev,
                 province: foundProvince.id,
-                district: foundDistrict.id
+                district: foundDistrict.id,
               }));
             }
           }
         } else {
           // Set province only
-          setShippingInfo(prev => ({
+          setShippingInfo((prev) => ({
             ...prev,
-            province: foundProvince.id
+            province: foundProvince.id,
           }));
         }
       }
     } catch (error) {
-      console.error('Error populating location dropdowns:', error);
+      console.error("Error populating location dropdowns:", error);
     }
   };
 
   // Location change handlers
   const handleProvinceChange = (e) => {
     const provinceId = e.target.value;
-    setShippingInfo(prev => ({ ...prev, province: provinceId }));
+    setShippingInfo((prev) => ({ ...prev, province: provinceId }));
     if (provinceId) {
       fetchDistricts(provinceId);
     } else {
       setDistricts([]);
       setCities([]);
-      setShippingInfo(prev => ({ ...prev, district: '', city: '' }));
+      setShippingInfo((prev) => ({ ...prev, district: "", city: "" }));
     }
   };
 
   const handleDistrictChange = (e) => {
     const districtId = e.target.value;
-    setShippingInfo(prev => ({ ...prev, district: districtId }));
+    setShippingInfo((prev) => ({ ...prev, district: districtId }));
     if (districtId) {
       fetchCities(districtId);
     } else {
       setCities([]);
-      setShippingInfo(prev => ({ ...prev, city: '' }));
+      setShippingInfo((prev) => ({ ...prev, city: "" }));
     }
   };
 
   const calculateDeliveryCharge = async () => {
     try {
-      const response = await api.post('/delivery/calculate-delivery', {
+      const response = await api.post("/delivery/calculate-delivery", {
         zone_id: selectedZone,
-        total_weight: totalWeight
+        total_weight: totalWeight,
       });
       setDeliveryCharge(response.data.delivery_charge);
     } catch (error) {
-      console.error('Error calculating delivery charge:', error);
+      console.error("Error calculating delivery charge:", error);
       setDeliveryCharge(0);
     }
   };
@@ -342,13 +373,13 @@ const Checkout = () => {
   const calculatePaymentFee = async () => {
     try {
       // Send only the product subtotal (before shipping) for payment fee calculation
-      const response = await api.post('/delivery/calculate-payment-fee', {
+      const response = await api.post("/delivery/calculate-payment-fee", {
         method_name: paymentMethod,
-        subtotal: cartSubtotal
+        subtotal: cartSubtotal,
       });
       setPaymentFee(response.data.payment_fee);
     } catch (error) {
-      console.error('Error calculating payment fee:', error);
+      console.error("Error calculating payment fee:", error);
       setPaymentFee(0);
     }
   };
@@ -359,25 +390,28 @@ const Checkout = () => {
 
   const handleShippingSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       // Check if user is authenticated
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
         // Save address to shipping_addresses table
         const addressData = {
           phone: shippingInfo.phone,
           addressLine1: shippingInfo.addressLine1,
           addressLine2: shippingInfo.addressLine2,
-          cityName: cities.find(c => c.city_id == shippingInfo.city)?.city_name || '',
-          districtName: districts.find(d => d.id == shippingInfo.district)?.name || '',
-          provinceName: provinces.find(p => p.id == shippingInfo.province)?.name || '',
-          postalCode: shippingInfo.postalCode
+          cityName:
+            cities.find((c) => c.city_id == shippingInfo.city)?.city_name || "",
+          districtName:
+            districts.find((d) => d.id == shippingInfo.district)?.name || "",
+          provinceName:
+            provinces.find((p) => p.id == shippingInfo.province)?.name || "",
+          postalCode: shippingInfo.postalCode,
         };
 
         await addressAPI.updateDefaultAddress(addressData);
       }
-      
+
       setStep(2);
     } catch (error) {
       // Continue to next step even if address save fails
@@ -387,13 +421,13 @@ const Checkout = () => {
 
   const handlePaymentSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!paymentMethod) {
       setError("Please select a payment method to continue.");
       setPaymentMethodError(true);
       return;
     }
-    
+
     setPaymentMethodError(false);
     setStep(3);
   };
@@ -410,7 +444,9 @@ const Checkout = () => {
 
       // Generate unique order ID
       const orderId = `ORD${Date.now()}`;
-      const totalAmount = (cartSubtotal + deliveryCharge + paymentFee).toFixed(2);
+      const totalAmount = (cartSubtotal + deliveryCharge + paymentFee).toFixed(
+        2
+      );
 
       // Convert shipping info to correct format with names instead of IDs
       const processedShippingInfo = {
@@ -420,15 +456,18 @@ const Checkout = () => {
         phone: shippingInfo.phone,
         addressLine1: shippingInfo.addressLine1,
         addressLine2: shippingInfo.addressLine2,
-        city: cities.find(c => c.city_id == shippingInfo.city)?.city_name || '',
-        district: districts.find(d => d.id == shippingInfo.district)?.name || '',
-        province: provinces.find(p => p.id == shippingInfo.province)?.name || '',
+        city:
+          cities.find((c) => c.city_id == shippingInfo.city)?.city_name || "",
+        district:
+          districts.find((d) => d.id == shippingInfo.district)?.name || "",
+        province:
+          provinces.find((p) => p.id == shippingInfo.province)?.name || "",
         postalCode: shippingInfo.postalCode,
-        country: shippingInfo.country
+        country: shippingInfo.country,
       };
 
       // Check payment method type
-      if (paymentMethod === 'bank_transfer') {
+      if (paymentMethod === "bank_transfer") {
         // For bank transfer, just show bank details (order created on confirm)
         setLoading(false);
         setIsSubmitting(false);
@@ -437,7 +476,7 @@ const Checkout = () => {
       }
 
       // Handle Koko Payment
-      if (paymentMethod === 'koko_payment') {
+      if (paymentMethod === "koko_payment") {
         // First create the order
         const orderData = {
           order_number: orderId,
@@ -447,54 +486,151 @@ const Checkout = () => {
           total: totalAmount,
           payment_method: paymentMethod,
           shipping_info: processedShippingInfo,
-          items: cartItems.map(item => ({
+          items: cartItems.map((item) => ({
             product_id: item.id,
             product_name: item.name,
             product_image: item.primary_image,
             price: item.sale_price || item.price,
             quantity: item.quantity,
-            subtotal: (item.sale_price || item.price) * item.quantity
-          }))
+            subtotal: (item.sale_price || item.price) * item.quantity,
+          })),
         };
 
         const orderResponse = await orderAPI.createOrder(orderData);
 
         if (!orderResponse.data.success) {
-          throw new Error('Failed to create order');
+          throw new Error("Failed to create order");
         }
 
-        // Then initialize Koko Payment
+        // Get backend URL for callbacks
+        const backendUrl = process.env.REACT_APP_API_URL
+        // Prepare Koko payment data
         const kokoPaymentData = {
+          orderId: orderId,
+          amount: cartSubtotal, // Send subtotal only, backend will add 14% processing fee
+          deliveryCharge: deliveryCharge, // Send delivery separately (no fee applied)
+          firstName: shippingInfo.firstName,
+          lastName: shippingInfo.lastName,
+          email: shippingInfo.email,
+          mobile: shippingInfo.phone,
+          productDescription: `Order ${orderId} - ${cartItems.length} items`,
+          returnUrl: `${backendUrl}/payment/koko/return`,
+          cancelUrl: `${backendUrl}/payment/koko/cancel`,
+          responseUrl: `${backendUrl}/payment/koko/response`,
+        };
+
+        console.log("🔍 Koko Payment URLs:", {
+          returnUrl: kokoPaymentData.returnUrl,
+          cancelUrl: kokoPaymentData.cancelUrl,
+          responseUrl: kokoPaymentData.responseUrl,
+        });
+
+        // Call backend to create Koko payment order
+        const kokoResponse = await kokoPaymentAPI.createOrder(kokoPaymentData);
+
+        if (kokoResponse.data.success && kokoResponse.data.data) {
+          // Show fee information to user
+          const {
+            originalAmount,
+            kokoFee,
+            totalAmount: kokoTotal,
+          } = kokoResponse.data.info;
+          console.log(
+            `Koko Payment: Original LKR ${originalAmount} + Fee LKR ${kokoFee} = Total LKR ${kokoTotal}`
+          );
+
+          // Set payment session so user can return to payment pages
+          sessionStorage.setItem("payment_session", "true");
+
+          // Set form data to trigger auto-submit (don't clear cart yet)
+          setKokoFormData(kokoResponse.data.data);
+          setLoading(false);
+          setIsSubmitting(false);
+
+          
+          return;
+        } else {
+          throw new Error("Failed to initialize Koko Payment");
+        }
+      }
+
+      // Handle PayHere Payment (Debit/Credit Card)
+      if (paymentMethod === "debit_card") {
+        // First create the order
+        const orderData = {
           order_number: orderId,
-          amount: totalAmount,
-          currency: 'LKR',
-          customer_name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
-          customer_email: shippingInfo.email,
-          customer_phone: shippingInfo.phone,
+          subtotal: cartSubtotal,
+          shipping_fee: deliveryCharge,
+          payment_fee: paymentFee,
+          total: totalAmount,
+          payment_method: paymentMethod,
           shipping_info: processedShippingInfo,
-          items: cartItems.map(item => ({
+          items: cartItems.map((item) => ({
             product_id: item.id,
             product_name: item.name,
             product_image: item.primary_image,
             price: item.sale_price || item.price,
             quantity: item.quantity,
-            subtotal: (item.sale_price || item.price) * item.quantity
-          }))
+            subtotal: (item.sale_price || item.price) * item.quantity,
+          })),
         };
 
-        const kokoResponse = await kokoPaymentAPI.initializePayment(kokoPaymentData);
+        const orderResponse = await orderAPI.createOrder(orderData);
 
-        if (kokoResponse.data.success && kokoResponse.data.data.payment_url) {
-          // Store order and session details for verification on return
-          sessionStorage.setItem('koko_order_id', kokoResponse.data.data.order_id);
-          sessionStorage.setItem('koko_session_id', kokoResponse.data.data.session_id);
+        if (!orderResponse.data.success) {
+          throw new Error("Failed to create order");
+        }
 
-          // Redirect to Koko Payment
-          setLoading(false);
-          window.location.href = kokoResponse.data.data.payment_url;
+        // Prepare PayHere payment data
+        const payhereData = {
+          order_id: orderId,
+          amount: totalAmount,
+          currency: "LKR",
+          first_name: shippingInfo.firstName,
+          last_name: shippingInfo.lastName,
+          email: shippingInfo.email,
+          phone: shippingInfo.phone,
+          address: shippingInfo.addressLine1,
+          city: processedShippingInfo.city,
+          country: "Sri Lanka",
+        };
+
+        // Get payment hash from backend
+        const hashResponse = await payhereAPI.generateHash(payhereData);
+
+        if (hashResponse.data.success) {
+          const payment = hashResponse.data.data;
+          console.log("payment", payment);
+
+          // Set payment session so user can access payment success page
+          sessionStorage.setItem("payment_session", "true");
+
+          // Start PayHere payment
+          window.payhere.startPayment({
+            sandbox: false, // Live mode - set to true only for sandbox testing
+            merchant_id: payment.merchant_id,
+            return_url: payment.return_url,
+            cancel_url: payment.cancel_url,
+            notify_url: payment.notify_url,
+            order_id: payment.order_id,
+            items: `Order ${orderId}`,
+            amount: payment.amount,
+            currency: payment.currency,
+            hash: payment.hash,
+            first_name: payment.first_name,
+            last_name: payment.last_name,
+            email: payment.email,
+            phone: payment.phone,
+            address: payment.address,
+            city: payment.city,
+            country: payment.country,
+          });
+
+          // Don't reset isSubmitting here - wait for PayHere callbacks
+          // This prevents duplicate orders if user dismisses modal and clicks again
           return;
         } else {
-          throw new Error('Failed to initialize Koko Payment');
+          throw new Error("Failed to initialize PayHere payment");
         }
       }
 
@@ -507,14 +643,14 @@ const Checkout = () => {
         total: totalAmount,
         payment_method: paymentMethod,
         shipping_info: processedShippingInfo,
-        items: cartItems.map(item => ({
+        items: cartItems.map((item) => ({
           product_id: item.id,
           product_name: item.name,
           product_image: item.primary_image,
           price: item.sale_price || item.price,
           quantity: item.quantity,
-          subtotal: (item.sale_price || item.price) * item.quantity
-        }))
+          subtotal: (item.sale_price || item.price) * item.quantity,
+        })),
       };
 
       const orderResponse = await orderAPI.createOrder(orderData);
@@ -524,14 +660,17 @@ const Checkout = () => {
         // Clear cart after successful order
         await clearCart();
         setTimeout(() => {
-          navigate('/account');
+          navigate("/account");
         }, 3000);
       } else {
-        throw new Error('Failed to create order');
+        throw new Error("Failed to create order");
       }
     } catch (error) {
-      console.error('Payment initialization error:', error);
-      setError(error.response?.data?.message || 'Failed to process payment. Please try again.');
+      console.error("Payment initialization error:", error);
+      setError(
+        error.response?.data?.message ||
+          "Failed to process payment. Please try again."
+      );
     } finally {
       setLoading(false);
       setIsSubmitting(false);
@@ -539,18 +678,8 @@ const Checkout = () => {
   };
 
   const getPaymentMethodDisplay = (methodName) => {
-    const method = paymentMethods.find(m => m.method_name === methodName);
+    const method = paymentMethods.find((m) => m.method_name === methodName);
     return method ? method.display_name : methodName;
-  };
-
-  const getPaymentMethodInfo = (methodName) => {
-    const method = paymentMethods.find(m => m.method_name === methodName);
-    if (!method) return null;
-
-    if (method.percentage && method.percentage > 0) {
-      return `+${method.percentage}% processing fee`;
-    }
-    return 'No additional fees';
   };
 
   return (
@@ -590,7 +719,14 @@ const Checkout = () => {
         <div className="max-w-4xl mx-auto mb-12">
           {/* Desktop Step Indicator */}
           <div className="hidden md:flex items-center justify-between">
-            {["Shipping", "Payment", "Review", ...(paymentMethod === 'bank_transfer' && step === 4 ? ["Bank Transfer"] : [])].map((stepName, index) => (
+            {[
+              "Shipping",
+              "Payment",
+              "Review",
+              ...(paymentMethod === "bank_transfer" && step === 4
+                ? ["Bank Transfer"]
+                : []),
+            ].map((stepName, index) => (
               <div key={stepName} className="flex items-center">
                 <div className="flex flex-col items-center">
                   <div
@@ -602,13 +738,21 @@ const Checkout = () => {
                         : "bg-gray-200 text-gray-500"
                     }`}
                   >
-                    {step > index + 1 ? <Check className="w-6 h-6" /> : index + 1}
+                    {step > index + 1 ? (
+                      <Check className="w-6 h-6" />
+                    ) : (
+                      index + 1
+                    )}
                   </div>
                   <span className="mt-2 text-sm font-bold text-gray-700">
                     {stepName}
                   </span>
                 </div>
-                {index < 2 + (paymentMethod === 'bank_transfer' && step === 4 ? 1 : 0) && (
+                {index <
+                  2 +
+                    (paymentMethod === "bank_transfer" && step === 4
+                      ? 1
+                      : 0) && (
                   <div
                     className={`h-1 flex-1 max-w-24 mx-4 ${
                       step > index + 1 ? "bg-green-500" : "bg-gray-200"
@@ -625,33 +769,59 @@ const Checkout = () => {
               <div className="flex items-center space-x-2">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                    step === 1 ? "bg-red-500 text-white" : step > 1 ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"
+                    step === 1
+                      ? "bg-red-500 text-white"
+                      : step > 1
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-200 text-gray-500"
                   }`}
                 >
                   {step > 1 ? <Check className="w-4 h-4" /> : 1}
                 </div>
-                <div className={`h-0.5 w-8 ${step > 1 ? "bg-green-500" : "bg-gray-200"}`} />
+                <div
+                  className={`h-0.5 w-8 ${
+                    step > 1 ? "bg-green-500" : "bg-gray-200"
+                  }`}
+                />
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                    step === 2 ? "bg-red-500 text-white" : step > 2 ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"
+                    step === 2
+                      ? "bg-red-500 text-white"
+                      : step > 2
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-200 text-gray-500"
                   }`}
                 >
                   {step > 2 ? <Check className="w-4 h-4" /> : 2}
                 </div>
-                <div className={`h-0.5 w-8 ${step > 2 ? "bg-green-500" : "bg-gray-200"}`} />
+                <div
+                  className={`h-0.5 w-8 ${
+                    step > 2 ? "bg-green-500" : "bg-gray-200"
+                  }`}
+                />
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                    step === 3 ? "bg-red-500 text-white" : step > 3 ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"
+                    step === 3
+                      ? "bg-red-500 text-white"
+                      : step > 3
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-200 text-gray-500"
                   }`}
                 >
                   {step > 3 ? <Check className="w-4 h-4" /> : 3}
                 </div>
-                {paymentMethod === 'bank_transfer' && step === 4 && (
+                {paymentMethod === "bank_transfer" && step === 4 && (
                   <>
-                    <div className={`h-0.5 w-8 ${step > 3 ? "bg-green-500" : "bg-gray-200"}`} />
+                    <div
+                      className={`h-0.5 w-8 ${
+                        step > 3 ? "bg-green-500" : "bg-gray-200"
+                      }`}
+                    />
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                        step === 4 ? "bg-red-500 text-white" : "bg-gray-200 text-gray-500"
+                        step === 4
+                          ? "bg-red-500 text-white"
+                          : "bg-gray-200 text-gray-500"
                       }`}
                     >
                       4
@@ -662,12 +832,17 @@ const Checkout = () => {
             </div>
             <div className="text-center">
               <span className="text-sm font-bold text-gray-900">
-                Step {step} of {paymentMethod === 'bank_transfer' && step === 4 ? 4 : 3}: {
-                  step === 1 ? "Shipping Info" :
-                  step === 2 ? "Payment Method" :
-                  step === 3 ? "Review Order" :
-                  step === 4 ? "Bank Transfer" : "Unknown"
-                }
+                Step {step} of{" "}
+                {paymentMethod === "bank_transfer" && step === 4 ? 4 : 3}:{" "}
+                {step === 1
+                  ? "Shipping Info"
+                  : step === 2
+                  ? "Payment Method"
+                  : step === 3
+                  ? "Review Order"
+                  : step === 4
+                  ? "Bank Transfer"
+                  : "Unknown"}
               </span>
             </div>
           </div>
@@ -690,7 +865,10 @@ const Checkout = () => {
                   </h2>
                 </div>
 
-                <form onSubmit={handleShippingSubmit} className="space-y-4 sm:space-y-6">
+                <form
+                  onSubmit={handleShippingSubmit}
+                  className="space-y-4 sm:space-y-6"
+                >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-2">
@@ -701,7 +879,10 @@ const Checkout = () => {
                         required
                         value={shippingInfo.firstName}
                         onChange={(e) =>
-                          setShippingInfo({ ...shippingInfo, firstName: e.target.value })
+                          setShippingInfo({
+                            ...shippingInfo,
+                            firstName: e.target.value,
+                          })
                         }
                         className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                       />
@@ -715,7 +896,10 @@ const Checkout = () => {
                         required
                         value={shippingInfo.lastName}
                         onChange={(e) =>
-                          setShippingInfo({ ...shippingInfo, lastName: e.target.value })
+                          setShippingInfo({
+                            ...shippingInfo,
+                            lastName: e.target.value,
+                          })
                         }
                         className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                       />
@@ -731,7 +915,10 @@ const Checkout = () => {
                       required
                       value={shippingInfo.email}
                       onChange={(e) =>
-                        setShippingInfo({ ...shippingInfo, email: e.target.value })
+                        setShippingInfo({
+                          ...shippingInfo,
+                          email: e.target.value,
+                        })
                       }
                       className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                     />
@@ -746,7 +933,10 @@ const Checkout = () => {
                       required
                       value={shippingInfo.phone}
                       onChange={(e) =>
-                        setShippingInfo({ ...shippingInfo, phone: e.target.value })
+                        setShippingInfo({
+                          ...shippingInfo,
+                          phone: e.target.value,
+                        })
                       }
                       placeholder="+94 77 123 4567"
                       className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
@@ -762,7 +952,10 @@ const Checkout = () => {
                       required
                       value={shippingInfo.addressLine1}
                       onChange={(e) =>
-                        setShippingInfo({ ...shippingInfo, addressLine1: e.target.value })
+                        setShippingInfo({
+                          ...shippingInfo,
+                          addressLine1: e.target.value,
+                        })
                       }
                       placeholder="Street address, building number"
                       className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
@@ -777,7 +970,10 @@ const Checkout = () => {
                       type="text"
                       value={shippingInfo.addressLine2}
                       onChange={(e) =>
-                        setShippingInfo({ ...shippingInfo, addressLine2: e.target.value })
+                        setShippingInfo({
+                          ...shippingInfo,
+                          addressLine2: e.target.value,
+                        })
                       }
                       placeholder="Apartment, suite, unit, etc. (optional)"
                       className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
@@ -796,11 +992,12 @@ const Checkout = () => {
                         className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                       >
                         <option value="">Select Province</option>
-                        {Array.isArray(provinces) && provinces.map((province) => (
-                          <option key={province.id} value={province.id}>
-                            {province.name}
-                          </option>
-                        ))}
+                        {Array.isArray(provinces) &&
+                          provinces.map((province) => (
+                            <option key={province.id} value={province.id}>
+                              {province.name}
+                            </option>
+                          ))}
                       </select>
                     </div>
                     <div>
@@ -815,11 +1012,12 @@ const Checkout = () => {
                         className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm sm:text-base"
                       >
                         <option value="">Select District</option>
-                        {Array.isArray(districts) && districts.map((district) => (
-                          <option key={district.id} value={district.id}>
-                            {district.name}
-                          </option>
-                        ))}
+                        {Array.isArray(districts) &&
+                          districts.map((district) => (
+                            <option key={district.id} value={district.id}>
+                              {district.name}
+                            </option>
+                          ))}
                       </select>
                     </div>
                   </div>
@@ -833,17 +1031,21 @@ const Checkout = () => {
                         required
                         value={shippingInfo.city}
                         onChange={(e) =>
-                          setShippingInfo({ ...shippingInfo, city: e.target.value })
+                          setShippingInfo({
+                            ...shippingInfo,
+                            city: e.target.value,
+                          })
                         }
                         disabled={!shippingInfo.district}
                         className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm sm:text-base"
                       >
                         <option value="">Select City</option>
-                        {Array.isArray(cities) && cities.map((city) => (
-                          <option key={city.city_id} value={city.city_id}>
-                            {city.city_name}
-                          </option>
-                        ))}
+                        {Array.isArray(cities) &&
+                          cities.map((city) => (
+                            <option key={city.city_id} value={city.city_id}>
+                              {city.city_name}
+                            </option>
+                          ))}
                       </select>
                     </div>
                     <div>
@@ -855,7 +1057,10 @@ const Checkout = () => {
                         required
                         value={shippingInfo.postalCode}
                         onChange={(e) =>
-                          setShippingInfo({ ...shippingInfo, postalCode: e.target.value })
+                          setShippingInfo({
+                            ...shippingInfo,
+                            postalCode: e.target.value,
+                          })
                         }
                         className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                       />
@@ -869,14 +1074,16 @@ const Checkout = () => {
                     </label>
                     <select
                       required
-                      value={selectedZone || ''}
-                      onChange={(e) => setSelectedZone(parseInt(e.target.value))}
+                      value={selectedZone || ""}
+                      onChange={(e) =>
+                        setSelectedZone(parseInt(e.target.value))
+                      }
                       className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 text-sm sm:text-base"
                     >
                       <option value="">Select delivery zone</option>
                       {deliveryZones.map((zone) => (
                         <option key={zone.id} value={zone.id}>
-                          {zone.zone_name} - Rs. {zone.base_charge} (base) + Rs. {zone.extra_charge}/kg
+                          {zone.zone_name}
                         </option>
                       ))}
                     </select>
@@ -903,10 +1110,14 @@ const Checkout = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-6"
               >
-          
-
                 {/* Payment Method Selection */}
-                <div className={`bg-white rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 ${paymentMethodError ? 'border-2 border-red-500' : 'border-2 border-transparent'}`}>
+                <div
+                  className={`bg-white rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 ${
+                    paymentMethodError
+                      ? "border-2 border-red-500"
+                      : "border-2 border-transparent"
+                  }`}
+                >
                   <div className="flex items-center gap-3 mb-6">
                     <CreditCard className="w-6 h-6 text-red-500" />
                     <h2 className="text-2xl font-black text-gray-900 uppercase">
@@ -937,15 +1148,45 @@ const Checkout = () => {
                         />
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            {method.method_name === 'card' && <CreditCard className="w-5 h-5 text-gray-700" />}
-                            {method.method_name === 'koko' && <Wallet className="w-5 h-5 text-gray-700" />}
-                            {method.method_name === 'cod' && <Building2 className="w-5 h-5 text-gray-700" />}
-                            <span className="font-bold text-gray-900">{method.display_name}</span>
+                            {method.method_name === "debit_card" && (
+                              <div className="flex gap-1">
+                                <img
+                                  src="/images/payment_methods/visa.png"
+                                  alt="Visa"
+                                  className="h-5 w-auto object-contain"
+                                />
+                                <img
+                                  src="/images/payment_methods/master.png"
+                                  alt="Mastercard"
+                                  className="h-5 w-auto object-contain"
+                                />
+                              </div>
+                            )}
+                            {method.method_name === "koko_payment" && (
+                              <img
+                                src="/images/payment_methods/koko.png"
+                                alt="Koko Payment"
+                                className="h-6 w-auto object-contain"
+                              />
+                            )}
+                            {method.method_name === "bank_transfer" && (
+                              <Building2 className="w-5 h-5 text-blue-600" />
+                            )}
+                            <span className="font-bold text-gray-900">
+                              {method.display_name}
+                            </span>
                           </div>
-                          <p className="text-xs text-gray-600 mt-1">{method.description}</p>
-                          <p className="text-xs font-semibold text-red-600 mt-1">
-                            {getPaymentMethodInfo(method.method_name)}
+                          <p className="text-xs text-gray-600 mt-1">
+                            {method.description}
                           </p>
+                          {/* {method.method_name === "koko_payment" && (
+                            <p className="text-xs font-semibold text-amber-600 mt-2 bg-amber-50 px-2 py-1 rounded">
+                              ⚠️ Koko payment is currently under development
+                            </p>
+                          )} */}
+                          {/* <p className="text-xs font-semibold text-red-600 mt-1">
+                            {getPaymentMethodInfo(method.method_name)}
+                          </p> */}
                         </div>
                       </label>
                     ))}
@@ -963,7 +1204,10 @@ const Checkout = () => {
                           required
                           value={cardInfo.cardNumber}
                           onChange={(e) =>
-                            setCardInfo({ ...cardInfo, cardNumber: e.target.value })
+                            setCardInfo({
+                              ...cardInfo,
+                              cardNumber: e.target.value,
+                            })
                           }
                           placeholder="1234 5678 9012 3456"
                           maxLength="19"
@@ -980,7 +1224,10 @@ const Checkout = () => {
                           required
                           value={cardInfo.cardName}
                           onChange={(e) =>
-                            setCardInfo({ ...cardInfo, cardName: e.target.value })
+                            setCardInfo({
+                              ...cardInfo,
+                              cardName: e.target.value,
+                            })
                           }
                           placeholder="JOHN DOE"
                           className="w-full px-3 sm:px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:outline-none text-sm sm:text-base"
@@ -997,7 +1244,10 @@ const Checkout = () => {
                             required
                             value={cardInfo.expiryDate}
                             onChange={(e) =>
-                              setCardInfo({ ...cardInfo, expiryDate: e.target.value })
+                              setCardInfo({
+                                ...cardInfo,
+                                expiryDate: e.target.value,
+                              })
                             }
                             placeholder="MM/YY"
                             maxLength="5"
@@ -1053,7 +1303,9 @@ const Checkout = () => {
                       <button
                         onClick={() => {
                           if (!paymentMethod) {
-                            setError("Please select a payment method to continue.");
+                            setError(
+                              "Please select a payment method to continue."
+                            );
                             setPaymentMethodError(true);
                             return;
                           }
@@ -1090,14 +1342,20 @@ const Checkout = () => {
                     Shipping To:
                   </h3>
                   <p className="text-gray-700">
-                    {shippingInfo.firstName} {shippingInfo.lastName}<br />
-                    {shippingInfo.address}<br />
-                    {shippingInfo.city}, {shippingInfo.postalCode}<br />
+                    {shippingInfo.firstName} {shippingInfo.lastName}
+                    <br />
+                    {shippingInfo.address}
+                    <br />
+                    {shippingInfo.city}, {shippingInfo.postalCode}
+                    <br />
                     {shippingInfo.phone}
                   </p>
                   <p className="text-sm font-semibold text-blue-600 mt-2">
                     <TruckIcon className="w-4 h-4 inline mr-1" />
-                    {deliveryZones.find(z => z.id === selectedZone)?.zone_name}
+                    {
+                      deliveryZones.find((z) => z.id === selectedZone)
+                        ?.zone_name
+                    }
                   </p>
                 </div>
 
@@ -1123,20 +1381,20 @@ const Checkout = () => {
                     onClick={handleFinalSubmit}
                     disabled={isSubmitting || loading}
                     className={`w-full sm:flex-1 py-3 sm:py-4 rounded-xl font-black uppercase shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base ${
-                      isSubmitting || loading 
-                        ? 'bg-gray-400 cursor-not-allowed' 
-                        : 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
+                      isSubmitting || loading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
                     } text-white`}
                   >
                     <Lock className="w-4 sm:w-5 h-4 sm:h-5" />
-                    {isSubmitting || loading ? 'Processing...' : 'Place Order'}
+                    {isSubmitting || loading ? "Processing..." : "Place Order"}
                   </button>
                 </div>
               </motion.div>
             )}
 
             {/* Step 4: Bank Transfer Details */}
-            {step === 4 && paymentMethod === 'bank_transfer' && (
+            {step === 4 && paymentMethod === "bank_transfer" && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1150,8 +1408,10 @@ const Checkout = () => {
                 </div>
 
                 <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
-                  <h3 className="text-lg font-bold text-blue-900 mb-4">Please transfer the total amount to:</h3>
-                  
+                  <h3 className="text-lg font-bold text-blue-900 mb-4">
+                    Please transfer the total amount to:
+                  </h3>
+
                   <div className="space-y-3 text-gray-700">
                     <div className="flex justify-between">
                       <span className="font-semibold">Account Name:</span>
@@ -1178,23 +1438,27 @@ const Checkout = () => {
                       <span className="font-bold">NTBCLKLX</span>
                     </div>
                   </div>
-                  
+
                   <div className="mt-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg">
                     <p className="text-sm text-yellow-800 font-medium">
-                      <strong>Total Amount to Transfer:</strong> LKR {(cartSubtotal + deliveryCharge + paymentFee).toFixed(2)}
+                      <strong>Total Amount to Transfer:</strong> LKR{" "}
+                      {(cartSubtotal + deliveryCharge + paymentFee).toFixed(2)}
                     </p>
                   </div>
                 </div>
 
                 <div className="bg-green-50 border-2 border-green-200 rounded-xl p-6 mb-6">
-                  <h3 className="text-lg font-bold text-green-900 mb-3">After making the transfer:</h3>
+                  <h3 className="text-lg font-bold text-green-900 mb-3">
+                    After making the transfer:
+                  </h3>
                   <p className="text-green-700 mb-3">
-                    Please send the transfer receipt/screenshot to our WhatsApp number:
+                    Please send the transfer receipt/screenshot to our WhatsApp
+                    number:
                   </p>
                   <div className="flex items-center gap-2 justify-center">
-                    <a 
-                      href="https://wa.me/94777624028" 
-                      target="_blank" 
+                    <a
+                      href="https://wa.me/94777624028"
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl transition-colors flex items-center gap-2"
                     >
@@ -1222,11 +1486,15 @@ const Checkout = () => {
                       try {
                         setIsSubmitting(true);
                         setLoading(true);
-                        
+
                         // Generate unique order ID
                         const orderId = `ORD${Date.now()}`;
-                        const totalAmount = (cartSubtotal + deliveryCharge + paymentFee).toFixed(2);
-                        
+                        const totalAmount = (
+                          cartSubtotal +
+                          deliveryCharge +
+                          paymentFee
+                        ).toFixed(2);
+
                         // Convert shipping info to correct format with names instead of IDs
                         const processedShippingInfo = {
                           firstName: shippingInfo.firstName,
@@ -1235,11 +1503,17 @@ const Checkout = () => {
                           phone: shippingInfo.phone,
                           addressLine1: shippingInfo.addressLine1,
                           addressLine2: shippingInfo.addressLine2,
-                          city: cities.find(c => c.city_id == shippingInfo.city)?.city_name || '',
-                          district: districts.find(d => d.id == shippingInfo.district)?.name || '',
-                          province: provinces.find(p => p.id == shippingInfo.province)?.name || '',
+                          city:
+                            cities.find((c) => c.city_id == shippingInfo.city)
+                              ?.city_name || "",
+                          district:
+                            districts.find((d) => d.id == shippingInfo.district)
+                              ?.name || "",
+                          province:
+                            provinces.find((p) => p.id == shippingInfo.province)
+                              ?.name || "",
                           postalCode: shippingInfo.postalCode,
-                          country: shippingInfo.country
+                          country: shippingInfo.country,
                         };
 
                         // Save bank transfer order to database
@@ -1251,29 +1525,37 @@ const Checkout = () => {
                           total: totalAmount,
                           payment_method: paymentMethod,
                           shipping_info: processedShippingInfo,
-                          items: cartItems.map(item => ({
+                          items: cartItems.map((item) => ({
                             product_id: item.id,
                             product_name: item.name,
                             product_image: item.primary_image,
                             price: item.sale_price || item.price,
                             quantity: item.quantity,
-                            subtotal: (item.sale_price || item.price) * item.quantity
-                          }))
+                            subtotal:
+                              (item.sale_price || item.price) * item.quantity,
+                          })),
                         };
-                        
-                        const orderResponse = await orderAPI.createOrder(orderData);
-                        
+
+                        const orderResponse = await orderAPI.createOrder(
+                          orderData
+                        );
+
                         if (orderResponse.data.success) {
-                          setSuccess("Order placed successfully! Please complete the bank transfer and send the receipt to our WhatsApp.");
+                          setSuccess(
+                            "Order placed successfully! Please complete the bank transfer and send the receipt to our WhatsApp."
+                          );
                           // Clear cart after successful order
                           await clearCart();
-                          setTimeout(() => navigate('/'), 5000);
+                          setTimeout(() => navigate("/"), 5000);
                         } else {
-                          throw new Error('Failed to create order');
+                          throw new Error("Failed to create order");
                         }
                       } catch (error) {
-                        console.error('Error creating bank transfer order:', error);
-                        setError('Failed to create order. Please try again.');
+                        console.error(
+                          "Error creating bank transfer order:",
+                          error
+                        );
+                        setError("Failed to create order. Please try again.");
                       } finally {
                         setLoading(false);
                         setIsSubmitting(false);
@@ -1281,18 +1563,19 @@ const Checkout = () => {
                     }}
                     disabled={isSubmitting || loading}
                     className={`w-full sm:flex-1 py-3 sm:py-4 rounded-xl font-black uppercase shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base ${
-                      isSubmitting || loading 
-                        ? 'bg-gray-400 cursor-not-allowed' 
-                        : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
+                      isSubmitting || loading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
                     } text-white`}
                   >
                     <Check className="w-4 sm:w-5 h-4 sm:h-5" />
-                    {isSubmitting || loading ? 'Processing...' : 'Confirm Order'}
+                    {isSubmitting || loading
+                      ? "Processing..."
+                      : "Confirm Order"}
                   </button>
                 </div>
               </motion.div>
             )}
-
           </div>
 
           {/* Right Column - Order Summary */}
@@ -1311,7 +1594,12 @@ const Checkout = () => {
                   cartItems.map((item) => (
                     <div key={item.id} className="flex gap-4">
                       <img
-                        src={item.primary_image || item.image || item.images[0].image_path || '/placeholder-product.jpg'}
+                        src={
+                          item.primary_image ||
+                          item.image ||
+                          item.images[0].image_path ||
+                          "/placeholder-product.jpg"
+                        }
                         alt={item.name}
                         onClick={() => navigate(`/product/${item.id}`)}
                         className="w-16 h-16 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
@@ -1323,18 +1611,29 @@ const Checkout = () => {
                         >
                           {item.name}
                         </h3>
-                        <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+                        <p className="text-sm text-gray-600">
+                          Qty: {item.quantity}
+                        </p>
                         <p className="text-xs text-gray-500">
-                          {((item.weight || 1000) * item.quantity / 1000).toFixed(2)} kg
+                          {(
+                            ((item.weight || 1000) * item.quantity) /
+                            1000
+                          ).toFixed(2)}{" "}
+                          kg
                         </p>
                         <p className="font-bold text-red-500">
-                          Rs. {((item.sale_price || item.price) * item.quantity).toLocaleString()}
+                          Rs.{" "}
+                          {(
+                            (item.sale_price || item.price) * item.quantity
+                          ).toLocaleString()}
                         </p>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-500 text-center py-4">Your cart is empty</p>
+                  <p className="text-gray-500 text-center py-4">
+                    Your cart is empty
+                  </p>
                 )}
               </div>
 
@@ -1342,23 +1641,23 @@ const Checkout = () => {
               <div className="space-y-3">
                 <div className="flex justify-between text-gray-700">
                   <span>Subtotal:</span>
-                  <span className="font-semibold">Rs. {subtotal.toLocaleString()}</span>
+                  <span className="font-semibold">
+                    Rs. {(subtotal + paymentFee).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between text-gray-700">
                   <div className="flex items-center gap-1">
                     <TruckIcon className="w-4 h-4" />
                     <span>Delivery ({totalWeight.toFixed(2)} kg):</span>
                   </div>
-                  <span className="font-semibold">Rs. {deliveryCharge.toLocaleString()}</span>
+                  <span className="font-semibold">
+                    Rs. {deliveryCharge.toLocaleString()}
+                  </span>
                 </div>
-                {paymentFee > 0 && (
-                  <div className="flex justify-between text-gray-700">
-                    <span>Payment Processing:</span>
-                    <span className="font-semibold">Rs. {paymentFee.toLocaleString()}</span>
-                  </div>
-                )}
                 <div className="pt-3 border-t-2 border-gray-200 flex justify-between">
-                  <span className="text-xl font-black text-gray-900">Total:</span>
+                  <span className="text-xl font-black text-gray-900">
+                    Total:
+                  </span>
                   <span className="text-xl font-black text-red-500">
                     Rs. {Math.round(total).toLocaleString()}
                   </span>
@@ -1381,6 +1680,7 @@ const Checkout = () => {
       <WhatsAppButton />
       <ErrorPopup message={error} onClose={() => setError(null)} />
       <SuccessPopup message={success} onClose={() => setSuccess(null)} />
+      {kokoFormData && <KokoPaymentForm formData={kokoFormData} />}
     </div>
   );
 };

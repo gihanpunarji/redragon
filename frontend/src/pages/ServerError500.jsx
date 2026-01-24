@@ -191,7 +191,7 @@ const ServerError500 = () => {
                   If this issue persists, please report it to our support team. We appreciate your patience.
                 </p>
                 <a
-                  href="mailto:support@redragoncolombo.lk"
+                  href="mailto:info@redragoncolombo.lk"
                   className="inline-block bg-white text-red-600 px-6 py-2 rounded-lg font-bold uppercase tracking-wide hover:bg-gray-100 transition-all"
                 >
                   📧 Report Issue

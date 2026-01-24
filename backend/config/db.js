@@ -8,11 +8,10 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  acquireTimeout: 60000,
-  timeout: 60000,
+  timezone: '+05:30', // Sri Lanka timezone (UTC+5:30)
+  dateStrings: false, // Return dates as Date objects
   enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
-  reconnect: true
+  keepAliveInitialDelay: 0
 });
 
 const executeWithRetry = async (query, params = [], maxRetries = 3) => {
